@@ -1,0 +1,8 @@
+<linker>
+    <assembly fullname="LeanCloud.Core" preserve="all"/>
+    <assembly fullname="LeanCloud.Storage" preserve="all"/>
+    <assembly fullname="AssemblyLister" preserve="all"/>
+    <assembly fullname="Newtonsoft.Json" preserve="all"/>
+    <assembly fullname="OAuth2" preserve="all"/>
+    <assembly fullname="RestSharp" preserve="all"/>
+</linker>

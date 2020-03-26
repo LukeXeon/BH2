@@ -1,0 +1,161 @@
+fileFormatVersion: 2
+guid: b5c140a6e4cc44af89631234978cd0c3
+ModelImporter:
+  serializedVersion: 23
+  fileIDToRecycleName:
+    100000: //RootNode
+    100002: Screen_A
+    100004: Screen_B
+    100006: Screen_C
+    100008: Screen_D
+    100010: Computer_Multi_01
+    100012: Screen_E
+    100014: TV_Monitor_003
+    100016: TV_Monitor_004
+    100018: TV_Monitor_005
+    100020: TV_Monitor_006
+    400000: //RootNode
+    400002: Screen_A
+    400004: Screen_B
+    400006: Screen_C
+    400008: Screen_D
+    400010: Computer_Multi_01
+    400012: Screen_E
+    400014: TV_Monitor_003
+    400016: TV_Monitor_004
+    400018: TV_Monitor_005
+    400020: TV_Monitor_006
+    2300000: //RootNode
+    2300002: Screen_A
+    2300004: Screen_B
+    2300006: Screen_C
+    2300008: Screen_D
+    2300010: Computer_Multi_01
+    2300012: Screen_E
+    3300000: //RootNode
+    3300002: Screen_A
+    3300004: Screen_B
+    3300006: Screen_C
+    3300008: Screen_D
+    3300010: Computer_Multi_01
+    3300012: Screen_E
+    4300000: Computer_Multi_01
+    4300002: Screen_A
+    4300004: Screen_B
+    4300006: Screen_C
+    4300008: Screen_D
+    4300010: Screen_E
+    9500000: //RootNode
+    2186277476908879412: ImportLogs
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Computer_And_Stuff_01
+    second: {fileID: 2100000, guid: 2b71a5ff927794926a9f2e89111c842e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: LCD_Monitor
+    second: {fileID: 2100000, guid: 778d27529417e7e42be9cf8c376bcf42, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Monitor_And_Stuff_01
+    second: {fileID: 2100000, guid: 395d8a14b2b4e430593b6daf869842a3, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Technical_And_Stuff_01
+    second: {fileID: 2100000, guid: e3bedb94da2b948b7a99f0a37c646b67, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Technical_And_Stuff_02
+    second: {fileID: 2100000, guid: 2e65bd846791741b5b57d6cfadc90599, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Walls_And_Stuff_01
+    second: {fileID: 2100000, guid: 299b77df2eaac459c86a409635d65cc4, type: 2}
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 0
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 0.01
+    meshCompression: 0
+    addColliders: 0
+    importVisibility: 0
+    importBlendShapes: 1
+    importCameras: 0
+    importLights: 0
+    swapUVChannels: 0
+    generateSecondaryUV: 1
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    preserveHierarchy: 0
+    indexFormat: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 0
+    previousCalculatedGlobalScale: 0.01
+    hasPreviousCalculatedGlobalScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 4
+    normalCalculationMode: 0
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 0
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

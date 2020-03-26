@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 90b53a7f3dec47c5b7b3e59be2965bad, type: 3}
+  m_Name: KIANA Player
+  m_EditorClassIdentifier: 
+  typeId: 0
+  icon: {fileID: 21300000, guid: 0f65130df0d85f74abd9465ec30ea449, type: 3}
+  skel: {fileID: 11400000, guid: 3fd64a00f4443d745b455ee64217772b, type: 2}
+  displayName: "\u742A\u4E9A\u5A1C"
+  jieShao: {fileID: 0}
+  gongJiLi: 0
+  fangYuLi: 0
+  shengMingZhi: 0
+  nengLiangZhi: 0
+  gongJiLi2: 0
+  fangYuLi2: 0
+  shengMingZhi2: 0
+  nengLiangZhi2: 0

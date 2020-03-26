@@ -1,0 +1,69 @@
+Modern UI Pack - v3.1.1
+
+Import TextMesh Pro and its essentials from Package Manager if you haven't already!
+
+Contact me via:
+E-mail: isa.steam@outlook.com
+Website: https://www.michsky.com
+Discord: https://discord.gg/VXpHyUt
+YouTube: https://www.youtube.com/c/michsky
+Steam: https://steamcommunity.com/id/geezjesus
+Unity Connect: https://connect.unity.com/u/isa-kocak
+
+Special thanks to:
+Geno (Contributor)
+Filmos (Tester)
+Kabbouchi (Tester)
+Takashi Sakai (https://github.com/mob-sakai)
+
+Changelog v3.1.1
+----------------------------------------
+• Added List View preset
+• Added UI Manager support to Radial PB
+• Improved Horizontal Selector API
+• Improved UI Manager backend
+• Fixed Progress Bar flickering
+----------------------------------------
+
+Changelog v3.1.0
+----------------------------------------
+• Added new Progress Bar features
+• Added Multi-Line Input Field preset
+• Added dynamic value to Radial Slider
+• Added Dropdown save system
+• Improved Dropdown system
+• Improved UI Manager
+• Fixed Dropdown priorty feature
+• Fixed some minor issues
+----------------------------------------
+
+Changelog v3.0.2
+----------------------------------------
+• Improved Progress Bar (Filled)
+• Slightly improved Range slider
+• Fixed some minor issues
+----------------------------------------
+
+Changelog v3.0.1
+----------------------------------------
+• Added 5 new Animated Icons
+• Added 22 new Icons
+• Added UI Manager system
+• New Demo scene
+• New Editor workflow
+• New Animated Icon system
+• New Button system
+• New Modal Window system
+• New Notification system
+• New Switch system
+• New Tooltip system
+• Improved Dropdown
+• Improved Editor window
+• Improved Horizontal Selector
+• Improved Icon resolution (256px)
+• Improved Input Field
+• Improved Progress Bar
+• Improved Slider
+• Improved Toggle
+• Organized Asset folders even more
+----------------------------------------

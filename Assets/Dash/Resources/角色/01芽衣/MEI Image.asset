@@ -1,0 +1,16 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6b194f808b1af6499c93410e504af42, type: 3}
+  m_Name: MEI Image
+  m_EditorClassIdentifier: 
+  atlasFile: {fileID: 4900000, guid: f581157b94d3fd84bb70530448a59f96, type: 3}
+  materials:
+  - {fileID: 2100000, guid: 461027d38aea4044f8776ab2ae8ea1f9, type: 2}

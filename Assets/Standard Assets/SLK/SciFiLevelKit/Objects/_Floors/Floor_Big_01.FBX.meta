@@ -1,0 +1,691 @@
+fileFormatVersion: 2
+guid: 87c3a6521aaab40fbbd9b78ffcb9b7f8
+ModelImporter:
+  serializedVersion: 23
+  fileIDToRecycleName:
+    100000: //RootNode
+    100002: Air_Grid_01
+    100004: Base
+    100006: Bed_01
+    100008: Bench_Wall_01
+    100010: Blower_Big_01
+    100012: Box003
+    100014: Ceiling_Big_01
+    100016: Ceiling_Long_01
+    100018: Ceiling_Small_01
+    100020: Ceiling_VerySmall_01
+    100022: Column_01
+    100024: Column_02
+    100026: Column_03
+    100028: Commander_Chair_01
+    100030: Commander_Table_01
+    100032: Computer_Big_01
+    100034: Computer_Multi_01
+    100036: Console_Panel_Vert_002
+    100038: Console_Panel_Vert_01
+    100040: Corner_Long_02
+    100042: Corner_Short_01
+    100044: Corner_Short_02
+    100046: Corner_Short_Left_03
+    100048: Corner_Short_Left_04
+    100050: Corner_Short_Right_03
+    100052: Corner_Short_Right_04
+    100054: Corner_Simple_01_B
+    100056: Corner_Window_Long_01
+    100058: Corner_Window_Short_01
+    100060: CrateBase
+    100062: CrateTop
+    100064: Door
+    100066: Door_Base_01
+    100068: Door_Long_01_A
+    100070: Door_Short_01_A
+    100072: DoorMovable_Long_01
+    100074: DoorMovable_Long_02
+    100076: DoorMovable_Short_01
+    100078: Fence_Vert_01
+    100080: Fence_Vert_02
+    100082: Fence_Vert_Long_01
+    100084: FenceAngleLeft_Vert_02
+    100086: FenceAngleRight_Vert_02
+    100088: FenceLine_Vert_02
+    100090: Floor_Big_01
+    100092: Floor_HalfSmall_01
+    100094: Floor_Small_01
+    100096: Half_Dome_Center_02
+    100098: Half_Dome_Left_01
+    100100: Half_Dome_Right_01
+    100102: Intercom_Wall_01
+    100104: Lamp
+    100106: Lamp 1
+    100108: Lamp 2
+    100110: Locker_01
+    100112: Man_003
+    100114: Man_02
+    100116: Neon
+    100118: Neon 1
+    100120: Neon 2
+    100122: Neon_Up_01
+    100124: Neon_Up_02
+    100126: Neon_Up_02 1
+    100128: Neon_Up_04
+    100130: Neon_Up_05
+    100132: Neon_Up_06
+    100134: Neons
+    100136: Neons 1
+    100138: Neons 2
+    100140: Object017
+    100142: PipeGroup_Vert_01
+    100144: Platform_01
+    100146: Pylon_Vert_01
+    100148: Pylon_Vert_02
+    100150: Ramp_Center_PlateForm_01
+    100152: Ramp_Coin_PlateForm_01
+    100154: Ramp_Line_PlateForm_01
+    100156: Ramp_Slope_PlateForm_01
+    100158: Reference_Grid (DO NOT DELETE)
+    100160: Rotor
+    100162: Rounded_Angle_01
+    100164: Rounded_Angle_02
+    100166: Screen
+    100168: Screen 1
+    100170: Screen 2
+    100172: Screen 3
+    100174: Screen_A
+    100176: Screen_B
+    100178: Screen_C
+    100180: Screen_D
+    100182: Screen_E
+    100184: Screen_Left
+    100186: Screen_Left 1
+    100188: Screen_Right
+    100190: Screen_Right 1
+    100192: Seat_AngleIn_01
+    100194: Seat_AngleOut_01
+    100196: Seat_EndLeft_01
+    100198: Seat_EndRight_01
+    100200: Seat_Middle_01
+    100202: Sidewalk_Border_01
+    100204: Sidewalk_Plain_01
+    100206: Sidewalk_Round_01
+    100208: Small_Green_Lamp_01
+    100210: Small_Red_Lamp_01
+    100212: Small_White_Lamp_01
+    100214: Stair_3_Step_01
+    100216: Stair_3_Step_Small_01
+    100218: Stair_7_Step_01
+    100220: tempo01
+    100222: TV_Monitor_01
+    100224: TV_Monitor_02
+    100226: Wall_Long_01
+    100228: Wall_Long_02
+    100230: Wall_Short_01
+    100232: Wall_Short_02
+    100234: Wall_Window_Long_01_A
+    100236: Wall_Window_Short_002
+    100238: Wall_Window_Short_01_A
+    100240: Wall_Window_Short_01_B
+    100242: Wall_Window_Short_01_B 1
+    400000: //RootNode
+    400002: Air_Grid_01
+    400004: Base
+    400006: Bed_01
+    400008: Bench_Wall_01
+    400010: Blower_Big_01
+    400012: Box003
+    400014: Ceiling_Big_01
+    400016: Ceiling_Long_01
+    400018: Ceiling_Small_01
+    400020: Ceiling_VerySmall_01
+    400022: Column_01
+    400024: Column_02
+    400026: Column_03
+    400028: Commander_Chair_01
+    400030: Commander_Table_01
+    400032: Computer_Big_01
+    400034: Computer_Multi_01
+    400036: Console_Panel_Vert_002
+    400038: Console_Panel_Vert_01
+    400040: Corner_Long_02
+    400042: Corner_Short_01
+    400044: Corner_Short_02
+    400046: Corner_Short_Left_03
+    400048: Corner_Short_Left_04
+    400050: Corner_Short_Right_03
+    400052: Corner_Short_Right_04
+    400054: Corner_Simple_01_B
+    400056: Corner_Window_Long_01
+    400058: Corner_Window_Short_01
+    400060: CrateBase
+    400062: CrateTop
+    400064: Door
+    400066: Door_Base_01
+    400068: Door_Long_01_A
+    400070: Door_Short_01_A
+    400072: DoorMovable_Long_01
+    400074: DoorMovable_Long_02
+    400076: DoorMovable_Short_01
+    400078: Fence_Vert_01
+    400080: Fence_Vert_02
+    400082: Fence_Vert_Long_01
+    400084: FenceAngleLeft_Vert_02
+    400086: FenceAngleRight_Vert_02
+    400088: FenceLine_Vert_02
+    400090: Floor_Big_01
+    400092: Floor_HalfSmall_01
+    400094: Floor_Small_01
+    400096: Half_Dome_Center_02
+    400098: Half_Dome_Left_01
+    400100: Half_Dome_Right_01
+    400102: Intercom_Wall_01
+    400104: Lamp
+    400106: Lamp 1
+    400108: Lamp 2
+    400110: Locker_01
+    400112: Man_003
+    400114: Man_02
+    400116: Neon
+    400118: Neon 1
+    400120: Neon 2
+    400122: Neon_Up_01
+    400124: Neon_Up_02
+    400126: Neon_Up_02 1
+    400128: Neon_Up_04
+    400130: Neon_Up_05
+    400132: Neon_Up_06
+    400134: Neons
+    400136: Neons 1
+    400138: Neons 2
+    400140: Object017
+    400142: PipeGroup_Vert_01
+    400144: Platform_01
+    400146: Pylon_Vert_01
+    400148: Pylon_Vert_02
+    400150: Ramp_Center_PlateForm_01
+    400152: Ramp_Coin_PlateForm_01
+    400154: Ramp_Line_PlateForm_01
+    400156: Ramp_Slope_PlateForm_01
+    400158: Reference_Grid (DO NOT DELETE)
+    400160: Rotor
+    400162: Rounded_Angle_01
+    400164: Rounded_Angle_02
+    400166: Screen
+    400168: Screen 1
+    400170: Screen 2
+    400172: Screen 3
+    400174: Screen_A
+    400176: Screen_B
+    400178: Screen_C
+    400180: Screen_D
+    400182: Screen_E
+    400184: Screen_Left
+    400186: Screen_Left 1
+    400188: Screen_Right
+    400190: Screen_Right 1
+    400192: Seat_AngleIn_01
+    400194: Seat_AngleOut_01
+    400196: Seat_EndLeft_01
+    400198: Seat_EndRight_01
+    400200: Seat_Middle_01
+    400202: Sidewalk_Border_01
+    400204: Sidewalk_Plain_01
+    400206: Sidewalk_Round_01
+    400208: Small_Green_Lamp_01
+    400210: Small_Red_Lamp_01
+    400212: Small_White_Lamp_01
+    400214: Stair_3_Step_01
+    400216: Stair_3_Step_Small_01
+    400218: Stair_7_Step_01
+    400220: tempo01
+    400222: TV_Monitor_01
+    400224: TV_Monitor_02
+    400226: Wall_Long_01
+    400228: Wall_Long_02
+    400230: Wall_Short_01
+    400232: Wall_Short_02
+    400234: Wall_Window_Long_01_A
+    400236: Wall_Window_Short_002
+    400238: Wall_Window_Short_01_A
+    400240: Wall_Window_Short_01_B
+    400242: Wall_Window_Short_01_B 1
+    2300000: //RootNode
+    2300002: Air_Grid_01
+    2300004: Base
+    2300006: Bed_01
+    2300008: Bench_Wall_01
+    2300010: Blower_Big_01
+    2300012: Box003
+    2300014: Ceiling_Big_01
+    2300016: Ceiling_Long_01
+    2300018: Ceiling_Small_01
+    2300020: Ceiling_VerySmall_01
+    2300022: Column_01
+    2300024: Column_02
+    2300026: Column_03
+    2300028: Commander_Chair_01
+    2300030: Commander_Table_01
+    2300032: Computer_Big_01
+    2300034: Computer_Multi_01
+    2300036: Console_Panel_Vert_002
+    2300038: Console_Panel_Vert_01
+    2300040: Corner_Long_02
+    2300042: Corner_Short_01
+    2300044: Corner_Short_02
+    2300046: Corner_Short_Left_03
+    2300048: Corner_Short_Left_04
+    2300050: Corner_Short_Right_03
+    2300052: Corner_Short_Right_04
+    2300054: Corner_Simple_01_B
+    2300056: Corner_Window_Long_01
+    2300058: Corner_Window_Short_01
+    2300060: CrateBase
+    2300062: CrateTop
+    2300064: Door
+    2300066: Door_Base_01
+    2300068: Door_Long_01_A
+    2300070: Door_Short_01_A
+    2300072: DoorMovable_Long_01
+    2300074: DoorMovable_Long_02
+    2300076: DoorMovable_Short_01
+    2300078: Fence_Vert_01
+    2300080: Fence_Vert_02
+    2300082: Fence_Vert_Long_01
+    2300084: FenceAngleLeft_Vert_02
+    2300086: FenceAngleRight_Vert_02
+    2300088: FenceLine_Vert_02
+    2300090: Floor_Big_01
+    2300092: Floor_HalfSmall_01
+    2300094: Floor_Small_01
+    2300096: Half_Dome_Center_02
+    2300098: Half_Dome_Left_01
+    2300100: Half_Dome_Right_01
+    2300102: Intercom_Wall_01
+    2300104: Lamp
+    2300106: Lamp 1
+    2300108: Lamp 2
+    2300110: Locker_01
+    2300112: Man_003
+    2300114: Man_02
+    2300116: Neon
+    2300118: Neon 1
+    2300120: Neon 2
+    2300122: Neon_Up_01
+    2300124: Neon_Up_02
+    2300126: Neon_Up_02 1
+    2300128: Neon_Up_04
+    2300130: Neon_Up_05
+    2300132: Neon_Up_06
+    2300134: Neons
+    2300136: Neons 1
+    2300138: Neons 2
+    2300140: PipeGroup_Vert_01
+    2300142: Platform_01
+    2300144: Pylon_Vert_01
+    2300146: Pylon_Vert_02
+    2300148: Ramp_Center_PlateForm_01
+    2300150: Ramp_Coin_PlateForm_01
+    2300152: Ramp_Line_PlateForm_01
+    2300154: Ramp_Slope_PlateForm_01
+    2300156: Reference_Grid (DO NOT DELETE)
+    2300158: Rotor
+    2300160: Rounded_Angle_01
+    2300162: Rounded_Angle_02
+    2300164: Screen
+    2300166: Screen 1
+    2300168: Screen 2
+    2300170: Screen 3
+    2300172: Screen_A
+    2300174: Screen_B
+    2300176: Screen_C
+    2300178: Screen_D
+    2300180: Screen_E
+    2300182: Screen_Left
+    2300184: Screen_Left 1
+    2300186: Screen_Right
+    2300188: Screen_Right 1
+    2300190: Seat_AngleIn_01
+    2300192: Seat_AngleOut_01
+    2300194: Seat_EndLeft_01
+    2300196: Seat_EndRight_01
+    2300198: Seat_Middle_01
+    2300200: Sidewalk_Border_01
+    2300202: Sidewalk_Plain_01
+    2300204: Sidewalk_Round_01
+    2300206: Small_Green_Lamp_01
+    2300208: Small_Red_Lamp_01
+    2300210: Small_White_Lamp_01
+    2300212: Stair_3_Step_01
+    2300214: Stair_3_Step_Small_01
+    2300216: Stair_7_Step_01
+    2300218: tempo01
+    2300220: TV_Monitor_01
+    2300222: TV_Monitor_02
+    2300224: Wall_Long_01
+    2300226: Wall_Long_02
+    2300228: Wall_Short_01
+    2300230: Wall_Short_02
+    2300232: Wall_Window_Long_01_A
+    2300234: Wall_Window_Short_01_A
+    2300236: Wall_Window_Short_01_B
+    2300238: Wall_Window_Short_01_B 1
+    3300000: //RootNode
+    3300002: Air_Grid_01
+    3300004: Base
+    3300006: Bed_01
+    3300008: Bench_Wall_01
+    3300010: Blower_Big_01
+    3300012: Box003
+    3300014: Ceiling_Big_01
+    3300016: Ceiling_Long_01
+    3300018: Ceiling_Small_01
+    3300020: Ceiling_VerySmall_01
+    3300022: Column_01
+    3300024: Column_02
+    3300026: Column_03
+    3300028: Commander_Chair_01
+    3300030: Commander_Table_01
+    3300032: Computer_Big_01
+    3300034: Computer_Multi_01
+    3300036: Console_Panel_Vert_002
+    3300038: Console_Panel_Vert_01
+    3300040: Corner_Long_02
+    3300042: Corner_Short_01
+    3300044: Corner_Short_02
+    3300046: Corner_Short_Left_03
+    3300048: Corner_Short_Left_04
+    3300050: Corner_Short_Right_03
+    3300052: Corner_Short_Right_04
+    3300054: Corner_Simple_01_B
+    3300056: Corner_Window_Long_01
+    3300058: Corner_Window_Short_01
+    3300060: CrateBase
+    3300062: CrateTop
+    3300064: Door
+    3300066: Door_Base_01
+    3300068: Door_Long_01_A
+    3300070: Door_Short_01_A
+    3300072: DoorMovable_Long_01
+    3300074: DoorMovable_Long_02
+    3300076: DoorMovable_Short_01
+    3300078: Fence_Vert_01
+    3300080: Fence_Vert_02
+    3300082: Fence_Vert_Long_01
+    3300084: FenceAngleLeft_Vert_02
+    3300086: FenceAngleRight_Vert_02
+    3300088: FenceLine_Vert_02
+    3300090: Floor_Big_01
+    3300092: Floor_HalfSmall_01
+    3300094: Floor_Small_01
+    3300096: Half_Dome_Center_02
+    3300098: Half_Dome_Left_01
+    3300100: Half_Dome_Right_01
+    3300102: Intercom_Wall_01
+    3300104: Lamp
+    3300106: Lamp 1
+    3300108: Lamp 2
+    3300110: Locker_01
+    3300112: Man_003
+    3300114: Man_02
+    3300116: Neon
+    3300118: Neon 1
+    3300120: Neon 2
+    3300122: Neon_Up_01
+    3300124: Neon_Up_02
+    3300126: Neon_Up_02 1
+    3300128: Neon_Up_04
+    3300130: Neon_Up_05
+    3300132: Neon_Up_06
+    3300134: Neons
+    3300136: Neons 1
+    3300138: Neons 2
+    3300140: PipeGroup_Vert_01
+    3300142: Platform_01
+    3300144: Pylon_Vert_01
+    3300146: Pylon_Vert_02
+    3300148: Ramp_Center_PlateForm_01
+    3300150: Ramp_Coin_PlateForm_01
+    3300152: Ramp_Line_PlateForm_01
+    3300154: Ramp_Slope_PlateForm_01
+    3300156: Reference_Grid (DO NOT DELETE)
+    3300158: Rotor
+    3300160: Rounded_Angle_01
+    3300162: Rounded_Angle_02
+    3300164: Screen
+    3300166: Screen 1
+    3300168: Screen 2
+    3300170: Screen 3
+    3300172: Screen_A
+    3300174: Screen_B
+    3300176: Screen_C
+    3300178: Screen_D
+    3300180: Screen_E
+    3300182: Screen_Left
+    3300184: Screen_Left 1
+    3300186: Screen_Right
+    3300188: Screen_Right 1
+    3300190: Seat_AngleIn_01
+    3300192: Seat_AngleOut_01
+    3300194: Seat_EndLeft_01
+    3300196: Seat_EndRight_01
+    3300198: Seat_Middle_01
+    3300200: Sidewalk_Border_01
+    3300202: Sidewalk_Plain_01
+    3300204: Sidewalk_Round_01
+    3300206: Small_Green_Lamp_01
+    3300208: Small_Red_Lamp_01
+    3300210: Small_White_Lamp_01
+    3300212: Stair_3_Step_01
+    3300214: Stair_3_Step_Small_01
+    3300216: Stair_7_Step_01
+    3300218: tempo01
+    3300220: TV_Monitor_01
+    3300222: TV_Monitor_02
+    3300224: Wall_Long_01
+    3300226: Wall_Long_02
+    3300228: Wall_Short_01
+    3300230: Wall_Short_02
+    3300232: Wall_Window_Long_01_A
+    3300234: Wall_Window_Short_01_A
+    3300236: Wall_Window_Short_01_B
+    3300238: Wall_Window_Short_01_B 1
+    4300000: Floor_Big_01
+    4300002: Reference_Grid (DO NOT DELETE)
+    4300004: Ramp_Coin_PlateForm_01
+    4300006: Ramp_Slope_PlateForm_01
+    4300008: Ramp_Center_PlateForm_01
+    4300010: Stair_3_Step_01
+    4300012: Stair_3_Step_Small_01
+    4300014: Man_02
+    4300016: Intercom_Wall_01
+    4300018: Screen
+    4300020: Wall_Window_Long_01_A
+    4300022: Wall_Window_Short_01_A
+    4300024: Wall_Short_01
+    4300026: Door_Long_01_A
+    4300028: DoorMovable_Short_01
+    4300030: Bench_Wall_01
+    4300032: Rounded_Angle_01
+    4300034: Rounded_Angle_02
+    4300036: Computer_Big_01
+    4300038: Screen_Right
+    4300040: Screen_Left
+    4300042: Fence_Vert_01
+    4300044: Man_003
+    4300046: Platform_01
+    4300048: Sidewalk_Round_01
+    4300050: Sidewalk_Border_01
+    4300052: Sidewalk_Plain_01
+    4300054: Fence_Vert_Long_01
+    4300056: Half_Dome_Center_02
+    4300058: Corner_Simple_01_B
+    4300060: Wall_Window_Short_01_B
+    4300062: Stair_7_Step_01
+    4300064: Air_Grid_01
+    4300066: Neon_Up_02
+    4300068: Neons
+    4300070: TV_Monitor_01
+    4300072: Screen
+    4300074: Wall_Short_02
+    4300076: Wall_Long_01
+    4300078: Wall_Long_02
+    4300080: Column_01
+    4300082: Corner_Window_Short_01
+    4300084: Corner_Window_Long_01
+    4300086: Wall_Window_Short_01_B
+    4300088: Corner_Short_01
+    4300090: Corner_Short_02
+    4300092: Corner_Long_02
+    4300094: Column_03
+    4300096: Corner_Short_Left_04
+    4300098: Neon_Up_02
+    4300100: Neon
+    4300102: Corner_Short_Right_03
+    4300104: Pylon_Vert_01
+    4300106: Pylon_Vert_02
+    4300108: Column_02
+    4300110: Console_Panel_Vert_01
+    4300112: Screen_Left
+    4300114: Screen_Right
+    4300116: Console_Panel_Vert_002
+    4300118: Corner_Short_Left_03
+    4300120: Corner_Short_Right_04
+    4300122: Ceiling_Long_01
+    4300124: Floor_Small_01
+    4300126: Ceiling_Big_01
+    4300128: Ceiling_Small_01
+    4300130: Ceiling_VerySmall_01
+    4300132: Floor_HalfSmall_01
+    4300134: Door_Short_01_A
+    4300136: Ramp_Line_PlateForm_01
+    4300138: Half_Dome_Left_01
+    4300140: Computer_Multi_01
+    4300142: Screen_A
+    4300144: Screen_B
+    4300146: Screen_C
+    4300148: Screen_D
+    4300150: Screen_E
+    4300152: TV_Monitor_02
+    4300154: Screen
+    4300156: Half_Dome_Right_01
+    4300158: CrateBase
+    4300160: CrateTop
+    4300162: Blower_Big_01
+    4300164: Rotor
+    4300166: Door_Base_01
+    4300168: Base
+    4300170: Commander_Chair_01
+    4300172: Commander_Table_01
+    4300174: Screen
+    4300176: DoorMovable_Long_02
+    4300178: DoorMovable_Long_01
+    4300180: Seat_Middle_01
+    4300182: Box003
+    4300184: Seat_AngleIn_01
+    4300186: Seat_EndRight_01
+    4300188: Seat_EndLeft_01
+    4300190: Seat_AngleOut_01
+    4300192: Bed_01
+    4300194: Neon_Up_01
+    4300196: Neons
+    4300198: Neon_Up_04
+    4300200: Neon
+    4300202: Neon_Up_06
+    4300204: Neon
+    4300206: Neon_Up_05
+    4300208: Neons
+    4300210: Locker_01
+    4300212: Door
+    4300214: tempo01
+    4300216: PipeGroup_Vert_01
+    4300218: Small_White_Lamp_01
+    4300220: Lamp
+    4300222: Small_Red_Lamp_01
+    4300224: Lamp
+    4300226: Small_Green_Lamp_01
+    4300228: Lamp
+    4300230: Fence_Vert_02
+    4300232: FenceAngleLeft_Vert_02
+    4300234: FenceAngleRight_Vert_02
+    4300236: FenceLine_Vert_02
+    9500000: //RootNode
+  externalObjects: {}
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 0
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 0.01
+    meshCompression: 0
+    addColliders: 0
+    importVisibility: 0
+    importBlendShapes: 1
+    importCameras: 0
+    importLights: 0
+    swapUVChannels: 0
+    generateSecondaryUV: 1
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    preserveHierarchy: 0
+    indexFormat: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 0
+    previousCalculatedGlobalScale: 1
+    hasPreviousCalculatedGlobalScale: 0
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 4
+    normalCalculationMode: 0
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 0
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
