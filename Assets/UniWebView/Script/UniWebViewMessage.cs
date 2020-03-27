@@ -1,87 +1,102 @@
-﻿//
-//    UniWebViewMessage.cs
-//  Created by Wang Wei(@onevcat) on 2013-10-20.
+//
+//  UniWebViewMessage.cs
+//  Created by Wang Wei(@onevcat) on 2017-05-12.
+//
+//  This file is a part of UniWebView Project (https://uniwebview.com)
+//  By purchasing the asset, you are allowed to use this code in as many as projects 
+//  you want, only if you publish the final products under the name of the same account
+//  used for the purchase. 
+//
+//  This asset and all corresponding files (such as source code) are provided on an 
+//  “as is” basis, without warranty of any kind, express of implied, including but not 
+//  limited to the warranties of merchantability, fitness for a particular purpose, and 
+//  noninfringement. In no event shall the authors or copyright holders be liable for any 
+//  claim, damages or other liability, whether in action of contract, tort or otherwise, 
+//  arising from, out of or in connection with the software or the use of other dealing in the software.
 //
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
+
+#if UNITY_2017_3_OR_NEWER
+using Net = UnityEngine.Networking.UnityWebRequest;
+#else
+using Net = UnityEngine.WWW;
+#endif
 
 /// <summary>
-/// This structure represent a message from webview.
+/// A structure represents a message from webview.
 /// </summary>
-/// <description>
-/// All url with a scheme of "uniwebview" in the webpage clicked will raise
-/// the OnReceivedMessage with a UniWebViewMessage object. You can listen to 
-/// that event and get path and param from webpage.
-/// </description>
 public struct UniWebViewMessage {
     /// <summary>
-    /// Gets the raw message.
+    /// Gets the raw message. It is the original url which initialized this message.
     /// </summary>
-    /// <value>
-    /// The raw message received from UniWebView. It should be a url containing information 
-    /// delivered from webview.
-    /// </value>
-    public string rawMessage {get; private set;}
+    public string RawMessage {get; private set;}
 
     /// <summary>
-    /// The url scheme of this UniWebViewMessage
+    /// The url scheme of this UniWebViewMessage. "uniwebview" was added to message scheme list
+    /// by default. You can add your own scheme by using `UniWebView.AddUrlScheme`.
     /// </summary>
-    /// <value>The scheme.</value>
-    /// <description>
-    /// Every message UniWebView can get is a url in a registered scheme.
-    /// The default scheme is "uniwebview". You can register your own scheme by
-    /// using the RegisterScheme method on UniWebView object.
-    /// </description>
-    public string scheme {get; private set;}
+    public string Scheme {get; private set;}
 
     /// <summary>
-    /// The path of this UniWebViewMessage
+    /// The path of this UniWebViewMessage.
+    /// This will be the decoded value for the path of original url.
     /// </summary>
-    /// <value>The path.</value>
-    /// <description>
-    /// A url "uniwebview://yourPath?param1=value1&param2=value2", path = yourPath
-    /// </description>
-    public string path {get; private set;}
+    public string Path {get; private set;}
 
     /// <summary>
-    /// The arguments of this UniWebViewMessage
+    /// The arguments of this UniWebViewMessage.
+    ///
+    /// When received url "uniwebview://yourPath?param1=value1&param2=value2", 
+    /// the args is a Dictionary with: Args["param1"] = value1, Args["param2"] = value2
+    /// 
+    /// Both the key and valud will be url decoded from the original url.
     /// </summary>
-    /// <value>The arguments.</value>
-    /// <description>
-    /// A url "uniwebview://yourPath?param1=value1&param2=value2", args[param1] = value1, args[param2] = value2
-    /// </description>
-    public Dictionary<string, string> args{get; private set;}
+    public Dictionary<string, string> Args{get; private set;}
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="UniWebViewMessage"/> struct.
+    /// Initializes a new instance of the `UniWebViewMessage` struct.
     /// </summary>
     /// <param name="rawMessage">Raw message which will be parsed to a UniWebViewMessage.</param>
-    public UniWebViewMessage(string rawMessage) : this() {
-        this.rawMessage = rawMessage;
+    public UniWebViewMessage(string rawMessage): this() {
+        UniWebViewLogger.Instance.Debug("Try to parse raw message: " + rawMessage);
+        this.RawMessage = rawMessage;
+        
         string[] schemeSplit = rawMessage.Split(new string[] {"://"}, System.StringSplitOptions.None);
         if (schemeSplit.Length >= 2) {
-            this.scheme = schemeSplit[0];
+            this.Scheme = schemeSplit[0];
+            UniWebViewLogger.Instance.Debug("Get scheme: " + this.Scheme);
+
             string pathAndArgsString = "";
             int index = 1;
             while (index < schemeSplit.Length) {
                 pathAndArgsString = string.Concat(pathAndArgsString, schemeSplit[index]);
                 index++;
             }
-
+            UniWebViewLogger.Instance.Verbose("Build path and args string: " + pathAndArgsString);
+            
             string[] split = pathAndArgsString.Split("?"[0]);
             
-            this.path = split[0].TrimEnd('/');
-            this.args = new Dictionary<string, string>();
+            this.Path = Net.UnEscapeURL(split[0].TrimEnd('/'));
+            this.Args = new Dictionary<string, string>();
             if (split.Length > 1) {
                 foreach (string pair in split[1].Split("&"[0])) {
                     string[] elems = pair.Split("="[0]);
                     if (elems.Length > 1) {
-                        args[elems[0]] = WWW.UnEscapeURL(elems[1]);
+                        var key = Net.UnEscapeURL(elems[0]);
+                        if (Args.ContainsKey(key)) {
+                            var existingValue = Args[key];
+                            Args[key] = existingValue + "," + Net.UnEscapeURL(elems[1]);
+                        } else {
+                            Args[key] = Net.UnEscapeURL(elems[1]);
+                        }
+                        UniWebViewLogger.Instance.Debug("Get arg, key: " + key + " value: " + Args[key]);
                     }
                 }
             }
         } else {
-            Debug.LogError("Bad url scheme. Can not be parsed to UniWebViewMessage: " + rawMessage);
+            UniWebViewLogger.Instance.Critical("Bad url scheme. Can not be parsed to UniWebViewMessage: " + rawMessage);
         }
     }
 }

@@ -38,20 +38,8 @@ namespace Dash.Scripts
             AVObject.RegisterSubclass<EShengHen>();
             AVObject.RegisterSubclass<EWeapon>();
             DontDestroyOnLoad(this.gameObject);
-            var task = Task.Run(() => IRtcEngine.QueryEngine() ?? IRtcEngine.GetEngine(info.agoraAppId));
-            Task.WhenAny(task, Task.Delay(1000)).GetAwaiter().OnCompleted(() =>
-            {
-                if (!task.IsCompleted)
-                {
-                    Debug.Log("声网又挂了！！！");
-                    IRtcEngine.Destroy();
-                }
-                else
-                {
-                    Debug.Log("声网没挂。");
-                }
-            });
-            Application.quitting += () => { Task.Run(IRtcEngine.Destroy); };
+            IRtcEngine.GetEngine(info.agoraAppId);
+            Application.quitting += IRtcEngine.Destroy;
             cb = (a, b, c) =>
             {
                 if (c == LogType.Exception)

@@ -170,10 +170,10 @@ namespace Dash.Scripts.UIManager
                     Application.platform == RuntimePlatform.WindowsPlayer ||
                     Application.platform == RuntimePlatform.WindowsEditor
                         ? "Prefab/WebView/Win32Webview"
-                        : "Prefab/WebView/MobileWebview");
+                        : "Prefab/WebView/MobileWebview"
+                );
                 go = Instantiate(go, canvas.transform);
                 var b = go.GetComponent<IWebUIManager>();
-                Thread waiter;
                 var url = CloudManager.GetGithubUrlAndWaitToken(
                     (e, t) =>
                     {
@@ -199,7 +199,8 @@ namespace Dash.Scripts.UIManager
                                     }
                                 });
                         }
-                    }, out waiter);
+                    }, out var waiter);
+                
                 b.Init(url, () =>
                 {
                     waiter.Abort();

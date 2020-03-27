@@ -1,1017 +1,1178 @@
-#if UNITY_IOS || UNITY_ANDROID || UNITY_WP8
 //
-//    UniWebView.cs
-//  Created by Wang Wei(@onevcat) on 2013-10-20.
+//  UniWebView.cs
+//  Created by Wang Wei(@onevcat) on 2017-04-11.
+//
+//  This file is a part of UniWebView Project (https://uniwebview.com)
+//  By purchasing the asset, you are allowed to use this code in as many as projects 
+//  you want, only if you publish the final products under the name of the same account
+//  used for the purchase. 
+//
+//  This asset and all corresponding files (such as source code) are provided on an 
+//  “as is” basis, without warranty of any kind, express of implied, including but not
+//  limited to the warranties of merchantability, fitness for a particular purpose, and 
+//  noninfringement. In no event shall the authors or copyright holders be liable for any 
+//  claim, damages or other liability, whether in action of contract, tort or otherwise, 
+//  arising from, out of or in connection with the software or the use of other dealing in the software.
 //
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using System;
 
 /// <summary>
-/// The main class of UniWebView.
+/// Main class of UniWebView. Any `GameObject` instance with this script represent a webview object in system. 
+/// Use this class to create, load, show and interact with a web view.
 /// </summary>
-/// <description>
-/// Each gameObject with this script represent a webview object
-/// in system. Be careful: when this script's Awake() get called, it will change the name of
-/// the gameObject to make it unique in the game. So make sure this script is appeneded to a
-/// gameObject that you don't care its name.
-/// </description>
-public class UniWebView : MonoBehaviour {
-    #region Events and Delegate
-    //Delegate and event
-    public delegate void LoadCompleteDelegate(UniWebView webView, bool success, string errorMessage);
+public class UniWebView: MonoBehaviour {
     /// <summary>
-    /// Occurs when a UniWebView finished loading a webpage.
+    /// Delegate for page started event.
     /// </summary>
-    /// <description>
-    /// If loading finished successfully, success will be true, otherwise false and with an errorMessage.
-    /// </description>
-    public event LoadCompleteDelegate OnLoadComplete;
-
-    public delegate void LoadBeginDelegate(UniWebView webView, string loadingUrl);
+    /// <param name="webView">The web view component which raises this event.</param>
+    /// <param name="url">The url which the web view begins to load.</param>
+    public delegate void PageStartedDelegate(UniWebView webView, string url);
     /// <summary>
-    /// Occurs when a UniWebView began to load a webpage.
+    /// Raised when the web view starts loading a url.
+    /// 
+    /// This event will be invoked for both url loading with `Load` method or by a link navigating from page.
     /// </summary>
-    /// <description>
-    /// You can do something with the UniWebView passed by parameter to get some info
-    /// or do your things when a url begins to load
-    /// Sometimes, the webpage contains some other parts besides of the main frame. Whenever these parts
-    /// begin to load, this event will be fired. You can get the url from parameter to know what url is
-    /// about to be loaded.
-    /// It is useful when you want to get some parameters from url when user clicked a link.
-    /// </description>
-    public event LoadBeginDelegate OnLoadBegin;
+    public event PageStartedDelegate OnPageStarted;
 
-    public delegate void ReceivedMessageDelegate(UniWebView webView, UniWebViewMessage message);
     /// <summary>
-    /// Occurs when a UniWebView received message.
+    /// Delegate for page finished event.
     /// </summary>
-    /// <description>
-    /// If a url with format of "uniwebview://yourPath?param1=value1&param2=value2" clicked,
-    /// this event will get raised with a <see cref="UniWebViewMessage"/> object.
-    /// </description>
-    public event ReceivedMessageDelegate OnReceivedMessage;
-
-    public delegate void EvalJavaScriptFinishedDelegate(UniWebView webView, string result);
+    /// <param name="webView">The web view component which raises this event.</param>
+    /// <param name="statusCode">HTTP status code received from response.</param>
+    /// <param name="url">The url which the web view loaded.</param>
+    public delegate void PageFinishedDelegate(UniWebView webView, int statusCode, string url);
     /// <summary>
-    /// Occurs when a UniWebView finishes eval a javascript and returned something.
+    /// Raised when the web view finished to load a url successully.
+    /// 
+    /// This method will be invoked when a valid response received from the url, regardless the response status.
+    /// If a url loading fails before reaching to the server and getting a response, `OnPageErrorReceived` will be 
+    /// raised instead.
     /// </summary>
-    /// <description>
-    /// You can use EvaluatingJavaScript method to make the webview to eval a js.
-    /// The string-returned version of EvaluatingJavaScript is removed. You should
-    /// always listen this event to get the result of js.
-    /// </description>
-    public event EvalJavaScriptFinishedDelegate OnEvalJavaScriptFinished;
+    public event PageFinishedDelegate OnPageFinished;
 
-    public delegate bool WebViewShouldCloseDelegate(UniWebView webView);
     /// <summary>
-    /// Occurs when on web view will be closed by native. Ask if this webview should be closed or not.
+    /// Delegate for page error received event.
     /// </summary>
-    /// The users can close the webView by tapping back button (Android) or done button (iOS).
-    /// When the webview will be closed, this event will be raised.
-    /// If you return false, the webview will not be closed. If you did not implement it, webview will be closed.
-    /// </description>
-    public event WebViewShouldCloseDelegate OnWebViewShouldClose;
-
-    public delegate void ReceivedKeyCodeDelegate(UniWebView webView, int keyCode);
+    /// <param name="webView">The web view component which raises this event.</param>
+    /// <param name="errorCode">
+    /// The error code which indicates the error type. 
+    /// It is different from systems and platforms.
+    /// </param>
+    /// <param name="errorMessage">The error message which indicates the error.</param>
+    public delegate void PageErrorReceivedDelegate(UniWebView webView, int errorCode, string errorMessage);
     /// <summary>
-    /// Occurs when users clicks or taps any key while webview is actived. This event only fired on Android.
+    /// Raised when an error encountered during the loading process. 
+    /// Such as host not found or no Internet connection will raise this event.
     /// </summary>
-    /// <description>
-    /// On Android, the key down event can not be passed back to Unity due to some issue in Unity 4.3's Android Player.
-    /// As result, you are not able to get the key input on Android by just using Unity's Input.GetKeyDown or GetKey method.
-    /// If you want to know the user input while the webview on, you can subscribe this event.
-    /// This event will be fired with a int number indicating the key code tapped as parameter.
-    /// You can refer to Android's documentation to find out which key is tapped (http://developer.android.com/reference/android/view/KeyEvent.html)
-    /// This event will be never raised on iOS, because iOS forbids the tracking of user's keyboard or device button events.
-    /// </description>
-    public event ReceivedKeyCodeDelegate OnReceivedKeyCode;
+    public event PageErrorReceivedDelegate OnPageErrorReceived;
 
-    public delegate UniWebViewEdgeInsets InsetsForScreenOreitationDelegate(UniWebView webView, UniWebViewOrientation orientation);
     /// <summary>
-    /// Called when the webview need to know the insets for calculating webview's frame.
+    /// Delegate for message received event.
     /// </summary>
-    /// <description>
-    /// If you need to show web content in both portrait and landscpace mode, you might want to
-    /// specify different insets for the screen orientation separately.
-    /// This event will be called when the Show() method gets called and the screen orientation
-    /// changes. You can implement this method and check current orientation, then return correct insets.
-    /// If this event is not implemented, the old insets value will be used to resize the webview size.
-    /// If you do not use auto-rotating in your webview, you can ignore this method and just set the <see cref="insets"/>
-    /// property directly.
-    /// </description>
-    public event InsetsForScreenOreitationDelegate InsetsForScreenOreitation;
+    /// <param name="webView">The web view component which raises this event.</param>
+    /// <param name="message">Message received from web view.</param>
+    public delegate void MessageReceivedDelegate(UniWebView webView, UniWebViewMessage message);
+    /// <summary>
+    /// Raised when a message from web view is received. 
+    /// 
+    /// Generally, the message comes from a navigation to 
+    /// a scheme which is observed by current web view. You could use `AddUrlScheme` and 
+    /// `RemoveUrlScheme` to manipulate the scheme list.
+    /// 
+    /// "uniwebview://" scheme is default in the list, so a clicking on link starts with "uniwebview://"
+    /// will raise this event, if it is not removed.
+    /// </summary>
+    public event MessageReceivedDelegate OnMessageReceived;
 
-    #endregion
+    /// <summary>
+    /// Delegate for should close event.
+    /// </summary>
+    /// <param name="webView">The web view component which raises this event.</param>
+    /// <returns>Whether the web view should be closed and destroyed.</returns>
+    public delegate bool ShouldCloseDelegate(UniWebView webView);
+    /// <summary>
+    /// Raised when the web view is about to close itself.
+    /// 
+    /// This event is raised when the users close the web view by Back button on Android, Done button on iOS,
+    /// or Close button on Unity Editor. It gives a chance to make final decision whether the web view should 
+    /// be closed and destroyed. You should also clean all related resources you created (such as a reference to
+    /// the web view.)
+    /// </summary>
+    public event ShouldCloseDelegate OnShouldClose;
+
+    /// <summary>
+    /// Delegate for code keycode received event.
+    /// </summary>
+    /// <param name="webView">The web view component which raises this event.</param>
+    /// <param name="keyCode">The key code of pressed key. See [Android API for keycode](https://developer.android.com/reference/android/view/KeyEvent.html#KEYCODE_0) to know the possible values.</param>
+    public delegate void KeyCodeReceivedDelegate(UniWebView webView, int keyCode);
+    /// <summary>
+    /// Raised when a key (like back button or volume up) on the device is pressed.
+    /// 
+    /// This event only raised on Android. It is useful when you disabled the back button but still need to 
+    /// get the back button event. On iOS, user's key action is not avaliable and this event will never be 
+    /// raised.
+    /// </summary>
+    public event KeyCodeReceivedDelegate OnKeyCodeReceived;
+
+    /// <summary>
+    /// Delegate for orientation changed event.
+    /// </summary>
+    /// <param name="webView">The web view component which raises this event.</param>
+    /// <param name="orientation">The screen orientation for current state.</param>
+    public delegate void OrientationChangedDelegate(UniWebView webView, ScreenOrientation orientation);
+    /// <summary>
+    /// Raised when the screen orientation is changed. It is a good time to set the web view frame if you 
+    /// need to support multiple orientations in your game.
+    /// </summary>
+    public event OrientationChangedDelegate OnOrientationChanged;
+
+    /// <summary>
+    /// Delegate for content loading terminated event.
+    /// </summary>
+    /// <param name="webView">The web view component which raises this event.</param>
+    public delegate void OnWebContentProcessTerminatedDelegate(UniWebView webView);
+    /// <summary>
+    /// Raised when on iOS, when system calls `webViewWebContentProcessDidTerminate` method. 
+    /// It is usually due to a low memory when loading the web content and leave you a blank white screen. 
+    /// You need to free as much as memory you could and then do a page reload.
+    /// </summary>
+    public event OnWebContentProcessTerminatedDelegate OnWebContentProcessTerminated;
+
+    private string id = Guid.NewGuid().ToString();
+    private UniWebViewNativeListener listener;
+
+    private bool isPortrait;
+    [SerializeField]
+
+    #pragma warning disable 0649 
+    private string urlOnStart;
+    [SerializeField]
+    private bool showOnStart = false;
 
     [SerializeField]
-    private UniWebViewEdgeInsets _insets = new UniWebViewEdgeInsets(0,0,0,0);
+    private bool fullScreen;
 
-    /// <summary>
-    /// Gets or sets the insets of a UniWebView object.
-    /// </summary>
-    /// <value>The insets in point from top, left, bottom and right edge from the screen.</value>
-    /// <description>
-    /// Default value is UniWebViewEdgeInsets(0,0,0,0), which means a full screen webpage.
-    /// If you want use different insets in portrait and landscape screen, use <see cref="InsetsForScreenOreitation"/>
-    /// </description>
-    public UniWebViewEdgeInsets insets {
-        get {
-            return _insets;
-        }
-        set {
-            if (_insets != value) {
-                ForceUpdateInsetsInternal(value);
-            }
-        }
-    }
+    [SerializeField]
+    private bool useToolbar;
 
-    private void ForceUpdateInsetsInternal(UniWebViewEdgeInsets insets) {
-        _insets = insets;
-        UniWebViewPlugin.ChangeInsets(gameObject.name,
-                                      this.insets.top,
-                                      this.insets.left,
-                                      this.insets.bottom,
-                                      this.insets.right);
-        #if UNITY_EDITOR
-        CreateTexture(this.insets.left,
-                      this.insets.bottom,
-                      Screen.width - this.insets.left - this.insets.right,
-                      Screen.height - this.insets.top - this.insets.bottom
-                      );
-        #endif
-    }
+        
+    [SerializeField]
+    private UniWebViewToolbarPosition toolbarPosition;
 
-    /// <summary>
-    /// The url this UniWebView should load. You should set it before loading webpage.
-    /// Do not use this value when you want to get the url of current page. It is only for loading the first page.
-    /// The value will not change as the users navigating between the pages.
-    /// Use <seealso cref="currentUrl"/> if you want to know current url.
-    /// </summary>
-    public string url;
+    #pragma warning restore 0649
 
-    /// <summary>
-    /// If true, load the set url when in script's Start() method.
-    /// Otherwise, you should call Load() method yourself.
-    /// </summary>
-    public bool loadOnStart;
+    // Action callback holders
+    private Dictionary<String, Action> actions = new Dictionary<String, Action>();
+    private Dictionary<String, Action<UniWebViewNativeResultPayload>> payloadActions = new Dictionary<String, Action<UniWebViewNativeResultPayload>>();
 
-    /// <summary>
-    /// If true, show the webview automatically when it finished loading.
-    /// Otherwise, you should listen the OnLoadComplete event and call Show() method your self.
-    /// </summary>
-    public bool autoShowWhenLoadComplete;
-
-    /// <summary>
-    /// Gets the current URL of the web page.
-    /// </summary>
-    /// <value>The current URL of this webview.</value>
-    /// <description>
-    /// This value indicates the main frame url of the webpage.
-    /// It will be updated only when the webpage finishs or fails loading.
-    /// </description>
-    public string currentUrl {
-        get {
-            return UniWebViewPlugin.GetCurrentUrl(gameObject.name);
-        }
-    }
-
-    private bool _backButtonEnable = true;
-    private bool _bouncesEnable;
-    private bool _zoomEnable;
-    private string _currentGUID;
-    private int _lastScreenHeight;
-    private bool _immersiveMode = true;
-
-    private Action _showTransitionAction = null;
-    private Action _hideTransitionAction = null;
-
-    /// <summary>
-    /// Gets or sets a value indicating whether the back button of this <see cref="UniWebView"/> is enabled.
-    /// </summary>
-    /// <description>
-    /// It is only for Android and Windows Phone 8. If set true, users can use the back button of these devices to goBack or close the web view
-    /// if there is nothing to goBack. Otherwise, the back button will do nothing when the webview is shown.
-    /// When set true, Unity will not receive the Input.KeyDown or other similar event in Android. You could use <seealso cref="OnReceivedKeyCode"/> to watch the key event instead.
-    /// This value means nothing for iOS, since there is no back button for iOS devices.
-    /// </description>
-    /// <value><c>true</c> if back button enabled; otherwise, <c>false</c>. Default is true</value>.
-    public bool backButtonEnable {
-        get {
-            return _backButtonEnable;
-        }
-        set {
-            if (_backButtonEnable != value) {
-                _backButtonEnable = value;
-                #if (UNITY_ANDROID || UNITY_WP8) && !UNITY_EDITOR
-                UniWebViewPlugin.SetBackButtonEnable(gameObject.name, _backButtonEnable);
-                #endif
-            }
-        }
-    }
-
-    /// <summary>
-    /// Gets or sets a value indicating whether this <see cref="UniWebView"/> can bounces or not.
-    /// </summary>
-    /// <description>
-    /// The default iOS webview has a bounces effect when drag out of edge.
-    /// The default Android webview has a color indicator when drag beyond the edge.
-    /// UniWebView disabled these bounces effect by default. If you want the bounces, set this property to true.
-    /// This property does noting in editor or Windows Phone 8.
-    /// </description>
-    /// <value><c>true</c> if bounces enable; otherwise, <c>false</c>.</value>
-    public bool bouncesEnable {
-        get {
-            return _bouncesEnable;
-        }
-        set {
-            if (_bouncesEnable != value) {
-                _bouncesEnable = value;
-                #if !UNITY_EDITOR
-                UniWebViewPlugin.SetBounces(gameObject.name, _bouncesEnable);
-                #endif
-            }
-        }
-    }
-
-    /// <summary>
-    /// Gets or sets a value indicating whether this <see cref="UniWebView"/> can be zoomed or not.
-    /// </summary>
-    /// <description>
-    /// If true, users can zoom in or zoom out the webpage by a pinch gesture.
-    /// This propery will valid immediately on Android. But on iOS, it will not valid until the next page loaded.
-    /// You can set this property before page loading, or use Reload() to refresh current page to make it valid.
-    /// This property does noting in Windows Phone 8, since there is no way to control the default behavior for it.
-    /// If you need to disable users zoom or pinch guesture, you need to add a viewport tag with "user-scalable=no" to your page.
-    /// </description>
-    /// <value><c>true</c> if zoom enabled; otherwise, <c>false</c>.</value> Default is false.
-    public bool zoomEnable {
-        get {
-            return _zoomEnable;
-        }
-        set {
-            if (_zoomEnable != value) {
-                _zoomEnable = value;
-                #if !UNITY_EDITOR
-                UniWebViewPlugin.SetZoomEnable(gameObject.name, _zoomEnable);
-                #endif
-            }
-        }
-    }
-
-    /// <summary>
-    /// Get the user agent of this webview.
-    /// </summary>
-    /// <value>The string of user agent using by the webview.</value>
-    /// <description>
-    /// It is a read-only property of webview. Once it is set when the webview gets created, the user agent can not be changed again.
-    /// If you want to use a customized user agent, you should call <see cref="SetUserAgent"/> method before create a webview component.
-    /// </description>
-    public string userAgent {
-        get {
-            return UniWebViewPlugin.GetUserAgent(gameObject.name);
-        }
-    }
-
-    /// <summary>
-    /// Get or set the alpha of current webview.
-    /// </summary>
-    /// <value>The alpha.</value>
-    /// <description>
-    /// This value indicates the alpha of webview.
-    /// The value should be between 0.0~1.0, which 1.0 means opaque and 0.0 is transparent.
-    /// This property will work on iOS, Android and WP8. In editor it will be always 1.0 and opaque.
-    /// </description>
-    public float alpha {
-        get {
-            return UniWebViewPlugin.GetAlpha(gameObject.name);
-        }
-        set {
-            UniWebViewPlugin.SetAlpha(gameObject.name, Mathf.Clamp01(value));
-        }
-    }
     
+    [SerializeField]
+    private Rect frame;
     /// <summary>
-    /// Whether the new page should be opened in an external browser when user clicks a link. 
+    /// Get or Set the frame of current web view. The value is based on current `Screen.width` and `Screen.height`.
+    /// The first two values of `Rect` is `x` and `y` position and the followed two `width` and `height`.
     /// </summary>
-    /// <value>A boolean indicates link clicking should be opened externally or not.</value>
-    /// <description>
-    /// If true, when user clicks on a link, an external web page browser on the device will be opened 
-    /// and direct to the target link. It will be useful if you need navigate your user to a device installed
-    /// browser (like Mobile Safari on iOS or Chrome on Android). 
-    /// This will only work when your user click a link in your page. Due to the lack detection of Android web view,  
-    /// some javascript embedded link will not be able to open externally correctly. If you need more control of it, 
-    /// consider to add all http/https scheme with AddUrlScheme method and handle them case by case in the OnReceivedMessage callback.
-    /// The default value is false, which means all link clicking will be opened in place. 
-    /// </description>
-    public bool openLinksInExternalBrowser {
-        get {
-            return UniWebViewPlugin.GetOpenLinksInExternalBrowser(gameObject.name);
-        }
+    public Rect Frame {
+        get { return frame; }
         set {
-            UniWebViewPlugin.SetOpenLinksInExternalBrowser(gameObject.name, value);
+            frame = value;
+            UpdateFrame();
         }
     }
 
+    [SerializeField]
+    private RectTransform referenceRectTransform;
     /// <summary>
-    /// Get or set a value indicating whether this <see cref="UniWebView"/> is in immersive mode.
+    /// A reference rect transform which the web view should change its position and size to.
+    /// Set it to a Unity UI element (which contains a `RectTransform`) under a canvas to determine 
+    /// the web view frame by a certain UI element. 
+    /// 
+    /// By using this, you could get benefit from [Multiple Resolutions UI](https://docs.unity3d.com/Manual/HOWTO-UIMultiResolution.html).
+    /// 
     /// </summary>
-    /// <value><c>true</c> if immersive mode; otherwise, <c>false</c>.</value>
-    /// <description>
-    ///
-    /// </description>
-    public bool immersiveMode {
+    public RectTransform ReferenceRectTransform {
         get {
-            return _immersiveMode;
+            return referenceRectTransform;
         }
         set {
+            referenceRectTransform = value;
+            UpdateFrame();
+        }
+    }
+
+    private bool started;
+
+    /// <summary>
+    /// The url of current loaded web page.
+    /// </summary>
+    public string Url {
+        get { return UniWebViewInterface.GetUrl(listener.Name); } 
+    }
+
+    /// <summary>
+    /// Update and set current frame of web view to match the setting.
+    /// 
+    /// This is useful if the `referenceRectTransform` is changed and you need to sync the frame change
+    /// to the web view. This method follows the frame determining rules.
+    /// </summary>
+    public void UpdateFrame() {
+        Rect rect = NextFrameRect();
+        UniWebViewInterface.SetFrame(listener.Name, (int)rect.x, (int)rect.y, (int)rect.width, (int)rect.height);
+    }
+
+    Rect NextFrameRect() {
+        if (referenceRectTransform == null) {
+            UniWebViewLogger.Instance.Info("Using Frame setting to determine web view frame.");
+            return frame;
+        } else {
+            UniWebViewLogger.Instance.Info("Using reference RectTransform to determine web view frame.");
+            var worldCorners = new Vector3[4];
+            
+            referenceRectTransform.GetWorldCorners(worldCorners);
+            
+            var bottomLeft = worldCorners[0];
+            var topLeft = worldCorners[1];
+            var topRight = worldCorners[2];
+            var bottomRight = worldCorners[3];
+
+            var canvas = referenceRectTransform.GetComponentInParent<Canvas>();
+            if (canvas == null) {
+                return frame;
+            }
+
+            switch (canvas.renderMode) {
+                case RenderMode.ScreenSpaceOverlay:
+                    break;
+                case RenderMode.ScreenSpaceCamera:
+                case RenderMode.WorldSpace:
+                    var camera = canvas.worldCamera;
+                    if (camera == null) {
+                        UniWebViewLogger.Instance.Critical(@"You need a render camera 
+                        or event camera to use RectTransform to determine correct 
+                        frame for UniWebView.");
+                        UniWebViewLogger.Instance.Info("No camera found. Fall back to ScreenSpaceOverlay mode.");
+                    } else {
+                        bottomLeft = camera.WorldToScreenPoint(bottomLeft);
+                        topLeft = camera.WorldToScreenPoint(topLeft);
+                        topRight = camera.WorldToScreenPoint(topRight);
+                        bottomRight = camera.WorldToScreenPoint(bottomRight);
+                    }
+                    break;
+            }
+
+            float x = topLeft.x;
+            float y = Screen.height - topLeft.y;
+            float width = bottomRight.x - topLeft.x;
+            float height = topLeft.y - bottomRight.y;
+            return new Rect(x, y, width, height);
+        }
+    }
+
+    void Awake() {
+        var listenerObject = new GameObject(id);
+        listener = listenerObject.AddComponent<UniWebViewNativeListener>();
+        listenerObject.transform.parent = transform;
+        listener.webView = this;
+        UniWebViewNativeListener.AddListener(listener);
+
+        Rect rect;
+        if (fullScreen) {
+            rect = new Rect(0, 0, Screen.width, Screen.height);
+        } else {
+            rect = NextFrameRect();
+        }
+
+        UniWebViewInterface.Init(listener.Name, (int)rect.x, (int)rect. y, (int)rect.width, (int)rect.height);
+        isPortrait = Screen.height >= Screen.width;
+    }
+
+    void Start() {
+        if (showOnStart) {
+            Show();
+        }
+        if (!string.IsNullOrEmpty(urlOnStart)) {
+            Load(urlOnStart);
+        }
+        started = true;
+        if (referenceRectTransform != null) {
+            UpdateFrame();
+        }
+    }
+
+    void Update() {
+        var newIsPortrait = Screen.height >= Screen.width;
+        if (isPortrait != newIsPortrait) {
+            isPortrait = newIsPortrait;
+            if (OnOrientationChanged != null) {
+                OnOrientationChanged(this, isPortrait ? ScreenOrientation.Portrait : ScreenOrientation.Landscape);
+            }
+            if (referenceRectTransform != null) {
+                UpdateFrame();
+            }
+        }
+    }
+
+    void OnEnable() {
+        if (started) {
             #if UNITY_ANDROID && !UNITY_EDITOR
-            _immersiveMode = value;
-            UniWebViewPlugin.SetImmersiveModeEnabled(gameObject.name, _immersiveMode);
+            UniWebViewInterface.ShowWebViewDialog(listener.Name, true);
+            #endif
+            Show();
+        }
+    }
+
+    void OnDisable() {
+        if (started) {
+            Hide();
+            #if UNITY_ANDROID && !UNITY_EDITOR
+            UniWebViewInterface.ShowWebViewDialog(listener.Name, false);
             #endif
         }
     }
 
     /// <summary>
-    /// Set user agent string for webview. This method has no effect on the webviews which are already initiated.
-    /// The user agent of a UniWebView component can not be changed once it is created.
-    /// If you want to change the user agent for the webview, you have to call it before creating the UniWebView instance.
+    /// Load a url in current web view.
     /// </summary>
-    /// <param name="value">The value user agent should be. Set it to null will reset the user agent to the default one.</param>
-    public static void SetUserAgent(string value) {
-        UniWebViewPlugin.SetUserAgent(value);
+    /// <param name="url">The url to be loaded. This url should start with `http://` or `https://` scheme. You could even load a non-ascii url text if it is valid.</param>
+    /// <param name="skipEncoding">
+    /// Whether UniWebView should skip encoding the url or not. If set to `false`, UniWebView will try to encode the url parameter before
+    /// loading it. Otherwise, your original url string will be used as the url if it is valid. Default is `false`.
+    /// </param>
+    /// <param name="readAccessURL">
+    /// The URL to allow read access to. This parameter is only used when loading from the filesystem in iOS, and passed
+    /// to `loadFileURL:allowingReadAccessToURL:` method of WebKit. By default, the parent folder of the `url` parameter will be read accessible.
+    /// </param>
+    public void Load(string url, bool skipEncoding = false, string readAccessURL = null) {
+        UniWebViewInterface.Load(listener.Name, url, skipEncoding, readAccessURL);
     }
 
     /// <summary>
-    /// Reset the user agent of webview. This method has no effect on the webviews which are already initiated.
-    /// The user agent of a UniWebView component can not be changed once it is created.
-    /// If you want to set user agent, use the <see cref="SetUserAgent"/> method.
+    /// Load an HTML string in current web view.
     /// </summary>
-    public static void ResetUserAgent() {
-        SetUserAgent(null);
-    }
-    
-    /// <summary>
-    /// Set the text in Done button of tool bar in iOS.
-    /// User could use this button in iOS to close the web view. By default, "Done" will be shown for this button.
-    /// If you want to change the text of tool bar done button for the webview, you have to call it before creating the UniWebView instance.
-    /// This method only works for iOS. See <seealso cref="ShowToolBar"/>.
-    /// </summary>
-    /// <param name="text">The text you want to show for the Done button. Set it to null will reset it to "Done".</param>
-    public static void SetDoneButtonText(string text) {
-        #if UNITY_IOS && !UNITY_EDITOR
-        UniWebViewPlugin.SetDoneButtonText(text);
-        #endif
+    /// <param name="htmlString">The HTML string to use as the contents of the webpage.</param>
+    /// <param name="baseUrl">The url to use as the page's base url.</param>
+    /// <param name="skipEncoding">
+    /// Whether UniWebView should skip encoding the baseUrl or not. If set to `false`, UniWebView will try to encode the baseUrl parameter before
+    /// using it. Otherwise, your original url string will be used as the baseUrl if it is valid. Default is `false`.
+    /// </param>
+    public void LoadHTMLString(string htmlString, string baseUrl, bool skipEncoding = false) {
+        UniWebViewInterface.LoadHTMLString(listener.Name, htmlString, baseUrl, skipEncoding);
     }
 
     /// <summary>
-    /// Load the url set in <seealso cref="url"/> property of this UniWebView.
-    /// </summary>
-    public void Load() {
-        string loadUrl = String.IsNullOrEmpty(url) ? "about:blank" : url.Trim();
-        UniWebViewPlugin.Load(gameObject.name, loadUrl);
-    }
-
-    /// <summary>
-    /// A alias method to load a specified url.
-    /// </summary>
-    /// <param name="aUrl">A url to set and load</param>
-    /// <description>
-    /// It will set the url of this UniWebView and then call Load it.
-    /// </description>
-    public void Load(string aUrl) {
-        url = aUrl;
-        Load();
-    }
-
-    /// <summary>
-    /// Load a HTML string.
-    /// </summary>
-    /// <param name="htmlString">The content HTML string for the web page.</param>
-    /// <param name="baseUrl">The base URL in which the webview should to refer other resources</param>
-    /// <description>
-    /// If you want to specify a local baseUrl, you need to encode it to proper format.
-    /// See the "Can I load some html string by using UniWebView?" section in FAQ page (http://uniwebview.onevcat.com/faqs.html) for more.
-    /// </description>
-    public void LoadHTMLString(string htmlString, string baseUrl) {
-        UniWebViewPlugin.LoadHTMLString(gameObject.name, htmlString, baseUrl);
-    }
-
-    /// <summary>
-    /// Reload current page.
+    /// Reloads the current page.
     /// </summary>
     public void Reload() {
-        UniWebViewPlugin.Reload(gameObject.name);
+        UniWebViewInterface.Reload(listener.Name);
     }
 
     /// <summary>
-    /// Stop loading the current request. It will do nothing if the webpage is not loading.
+    /// Stops loading all resources on the current page.
     /// </summary>
     public void Stop() {
-        UniWebViewPlugin.Stop(gameObject.name);
+        UniWebViewInterface.Stop(listener.Name);
     }
 
     /// <summary>
-    /// Show this UniWebView on screen.
+    /// Gets whether there is a back page in the back-forward list that can be navigated to.
     /// </summary>
-    /// <description>
-    /// Usually, it should be called when you get the LoadCompleteDelegate raised with a success flag true.
-    /// The webview will not be visible until this method is called.
-    /// </description>
-    public void Show(bool fade = false, UniWebViewTransitionEdge direction = UniWebViewTransitionEdge.None, float duration = 0.4f, Action finishAction = null) {
-        _lastScreenHeight = UniWebViewHelper.screenHeight;
-        ResizeInternal();
-
-        UniWebViewPlugin.Show(gameObject.name, fade, (int)direction, duration);
-        _showTransitionAction = finishAction;
-
-        if (toolBarShow) {
-            ShowToolBar(true);
+    public bool CanGoBack {
+        get {
+            return UniWebViewInterface.CanGoBack(listener.name);
         }
-
-        #if UNITY_EDITOR
-        _webViewId = UniWebViewPlugin.GetId(gameObject.name);
-        _hidden = false;
-        #endif
     }
 
     /// <summary>
-    /// Hide this UniWebView.
+    /// Gets whether there is a forward page in the back-forward list that can be navigated to.
     /// </summary>
-    /// <description>
-    /// Calling this method on a UniWebView will hide it.
-    /// </description>
-    public void Hide(bool fade = false, UniWebViewTransitionEdge direction = UniWebViewTransitionEdge.None, float duration = 0.4f, Action finishAction = null) {
-        #if UNITY_EDITOR
-        _hidden = true;
-        #endif
-        UniWebViewPlugin.Hide(gameObject.name, fade, (int)direction, duration);
-        _hideTransitionAction = finishAction;
-    }
-
-
-    /// <summary>
-    /// Send a piece of javascript to the web page and evaluate (execute) it.
-    /// </summary>
-    /// <param name="javaScript">A single javascript method call to be sent to and executed in web page</param>
-    /// <description>
-    /// Although you can write complex javascript code and evaluate it at once, a suggest way is calling this method with a single js method name.
-    /// The webview will try evaluate (execute) the javascript. When it finished, OnEvalJavaScriptFinished will be raised with the result.
-    /// You can add your js function to the html page by referring to the js file in your html page, or add it by using AddJavaScript(string javaScript) method.
-    /// </description>
-    public void EvaluatingJavaScript(string javaScript) {
-        UniWebViewPlugin.EvaluatingJavaScript(gameObject.name, javaScript);
+    public bool CanGoForward {
+        get {
+            return UniWebViewInterface.CanGoForward(listener.name);
+        }
     }
 
     /// <summary>
-    /// Add some javascript to the web page.
-    /// </summary>
-    /// <param name="javaScript">Some javascript code you want to add to the page.</param>
-    /// <description>
-    /// This method will execute the input javascript code without raising an
-    /// OnEvalJavaScriptFinished event. You can use this method to add some customized js
-    /// function to the web page, then use EvaluatingJavaScript(string javaScript) to execute it.
-    /// This method will add js in a async way in Android, so you should call it earlier than EvaluatingJavaScript
-    /// </description>
-    public void AddJavaScript(string javaScript) {
-        UniWebViewPlugin.AddJavaScript(gameObject.name, javaScript);
-    }
-    
-    /// <summary>
-    /// Clean the cache of this UniWebView.
-    /// </summary>
-    public void CleanCache() {
-        UniWebViewPlugin.CleanCache(gameObject.name);
-    }
-
-    /// <summary>
-    /// Clean the cookie using in the app.
-    /// </summary>
-    /// <param name="key">The key under which you want to clean the cache.</param>
-    /// <description>
-    /// Try to clean cookies under the specified key using in the app.
-    /// If you leave the key as null or send an empty string as key, all cache will be cleared.
-    /// This method will clear the cookies in memory and try to
-    /// sync the change to disk. The memory opreation will return
-    /// right away, but the disk operation is async and could take some time.
-    /// Caution, in Android, there is no way to remove a specified cookie.
-    /// So this method will call setCookie method with the key to set
-    /// it to an empty value instead. Please refer to Android
-    /// documentation on CookieManager for more information.
-    /// The key parameter will be ignored at all on Windows Phone 8. All cookie will be cleared.
-    /// </description>
-    public void CleanCookie(string key = null) {
-        UniWebViewPlugin.CleanCookie(gameObject.name, key);
-    }
-
-    /// <summary>
-    /// Set the background of webview to transparent.
-    /// </summary>
-    /// <description>
-    /// In iOS, there is a grey background in webview. If you don't want it, just call this method to set it transparent.
-    /// There is no way to set Windows Phone 8 background to transparent, so this method will do noting on Windows Phone.
-    /// </description>
-    [Obsolete("SetTransparentBackground is deprecated, please use SetBackgroundColor instead.")]
-    public void SetTransparentBackground(bool transparent = true) {
-        UniWebViewPlugin.TransparentBackground(gameObject.name, transparent);
-    }
-
-    /// <summary>
-    /// Set the background color of webview.
-    /// </summary>
-    /// <description>
-    /// Set the background color of the webview. In iOS, it will only take in action when the web page has no background color from css.
-    /// There is no way to set Windows Phone 8, so this method will do noting on Windows Phone.
-    /// And in OSX Editor, it is limited and can be only used to set white or clear background.
-    /// </description>
-    public void SetBackgroundColor(Color color) {
-        UniWebViewPlugin.SetBackgroundColor(gameObject.name, color.r, color.g, color.b, color.a);
-    }
-
-    /// <summary>
-    /// If the tool bar is showing or not.
-    /// </summary>
-    /// <description>
-    /// This parameter is only available in iOS. In other platform, it will be always false.
-    /// It will take no effect when you set this after you call Show on the webview. Use `ShowToolBar` and `HideToolBar` instead if the webview is already showing.
-    /// </description>
-    public bool toolBarShow = false;
-
-    /// <summary>
-    /// Show the tool bar. The tool bar contains three buttons: go back, go forward and close webview.
-    /// </summary>
-    /// <param name="animate">If set to <c>true</c>, show it with an animation.</param>
-    /// <description>
-    /// The tool bar is only available in iOS. In Android and Windows Phone, you can use the back button of device to go back.
-    /// </description>
-    public void ShowToolBar(bool animate) {
-        #if UNITY_IOS && !UNITY_EDITOR
-        toolBarShow = true;
-        UniWebViewPlugin.ShowToolBar(gameObject.name,animate);
-        #endif
-    }
-
-    /// <summary>
-    /// Hide the tool bar. The tool bar contains three buttons: go back, go forward and close webview.
-    /// </summary>
-    /// <param name="animate">If set to <c>true</c>, show it with an animation.</param>
-    /// <description>
-    /// The tool bar is only available in iOS. For Android and Windows Phone, you can use the back button of device to go back.
-    /// </description>
-    public void HideToolBar(bool animate) {
-        #if UNITY_IOS && !UNITY_EDITOR
-        toolBarShow = false;
-        UniWebViewPlugin.HideToolBar(gameObject.name,animate);
-        #endif
-    }
-
-    /// <summary>
-    /// Set if a default spinner should show when loading the webpage.
-    /// </summary>
-    /// <description>
-    /// The default value is true, which means a spinner will show when the webview is on, and it is loading some thing.
-    /// The spinner contains a label and you can set a message to it. <see cref=""/>
-    /// You can set it false if you do not want a spinner show when loading.
-    /// A progress bar will be used in Windows Phone instead of a spinner.
-    /// </description>
-    /// <param name="show">If set to <c>true</c> show.</param>
-    public void SetShowSpinnerWhenLoading(bool show) {
-        UniWebViewPlugin.SetSpinnerShowWhenLoading(gameObject.name, show);
-    }
-
-    /// <summary>
-    /// Set the label text for the spinner showing when webview loading.
-    /// The default value is "Loading..."
-    /// </summary>
-    /// <param name="text">Text.</param>
-    /// <description>
-    /// There is no text for Windows Phone spinner, so it will do noting for it.
-    /// </description>
-    public void SetSpinnerLabelText(string text) {
-        UniWebViewPlugin.SetSpinnerText(gameObject.name, text);
-    }
-
-    /// <summary>
-    /// Set to use wide view port support or not.
-    /// </summary>
-    /// <param name="use">If set to <c>true</c> use view port tag in the html to determine the layout.</param>
-    /// <description>
-    /// This method only works (and be necessary) for Android. If you are using viewport tag in you page, you may
-    /// want to enable it before you loading and showing your page.
-    /// </description>
-    public void SetUseWideViewPort(bool use) {
-        #if UNITY_ANDROID && !UNITY_EDITOR
-        UniWebViewPlugin.SetUseWideViewPort(gameObject.name, use);
-        #endif
-    }
-
-    /// <summary>
-    /// Set to load with overview mode or not.
-    /// </summary>
-    /// <param name="overview">
-    /// If set to <c>true</c>, use overview mode to load the page.
-    /// </param>
-    /// <description>
-    /// This method only works for Android. If you need to load your page with overview mode, you may
-    /// want to enable it before you loading and showing your page.
-    /// </description>
-    public void LoadWithOverviewMode(bool overview) {
-        #if UNITY_ANDROID && !UNITY_EDITOR
-        UniWebViewPlugin.LoadWithOverviewMode(gameObject.name, overview);
-        #endif
-    }
-
-    /// <summary>
-    /// Determines whether the webview can go back.
-    /// </summary>
-    /// <returns><c>true</c> if this instance can go back, which means there is at least one page in the navigation stack below; 
-    /// otherwise, <c>false</c>.</returns>
-    public bool CanGoBack() {
-        return UniWebViewPlugin.CanGoBack(gameObject.name);
-    }
-
-    /// <summary>
-    /// Determines whether this webview can go forward.
-    /// </summary>
-    /// <returns><c>true</c> if this instance can go forward, which means the user did at least once back; 
-    /// otherwise, <c>false</c>.</returns>
-    public bool CanGoForward() {
-        return UniWebViewPlugin.CanGoForward(gameObject.name);
-    }
-
-    /// <summary>
-    /// Go to the previous page if there is any one.
+    /// Navigates to the back item in the back-forward list.
     /// </summary>
     public void GoBack() {
-        UniWebViewPlugin.GoBack(gameObject.name);
+        UniWebViewInterface.GoBack(listener.Name);
     }
 
     /// <summary>
-    /// Go to the next page if there is any one.
+    /// Navigates to the forward item in the back-forward list.
     /// </summary>
     public void GoForward() {
-        UniWebViewPlugin.GoForward(gameObject.name);
+        UniWebViewInterface.GoForward(listener.Name);
     }
 
     /// <summary>
-    /// Add a url to white list of permission request trust sites.
+    /// Sets whether the link clicking in the web view should open the page in an external browser.
     /// </summary>
-    /// <description>
-    /// This method only works in Android. In Android, if you request audio or video accessibility from web page,
-    /// you should add the site url to a white list by using this method, or it will not be granted to use those protected resources.
-    /// There is no need to call it in iOS, and this method will do nothing in platforms other than Android.
-    /// For more about Android protected permission, see https://developer.android.com/reference/android/webkit/PermissionRequest.html.
-    /// </description>
-    /// <param name="url">URL.</param>
-    public void AddPermissionRequestTrustSite(string url) {
-        #if UNITY_ANDROID && !UNITY_EDITOR
-        UniWebViewPlugin.AddPermissionRequestTrustSite(gameObject.name, url);
-        #endif
+    /// <param name="flag">The flag indicates whether a link should be opened externally.</param>
+    public void SetOpenLinksInExternalBrowser(bool flag) {
+        UniWebViewInterface.SetOpenLinksInExternalBrowser(listener.Name, flag);
     }
 
     /// <summary>
-    /// Adds the URL scheme. After be added, all link of this scheme will send a message when clicked.
+    /// Sets the web view visible on screen.
     /// </summary>
-    /// <param name="scheme">Scheme.</param>
-    /// <description>
-    /// The scheme should not contain "://". For example, if you want to receive a url like "xyz://mydomian.com", you can pass "xyz" here.
-    /// </description>
+    /// <param name="fade">Whether show with a fade in animation. Default is `false`.</param>
+    /// <param name="edge">The edge from which the web view showing. It simulates a modal effect when showing a web view. Default is `UniWebViewTransitionEdge.None`.</param>
+    /// <param name="duration">Duration of showing animation. Default is `0.4f`.</param>
+    /// <param name="completionHandler">Completion handler which will be called when showing finishes. Default is `null`.</param>
+    /// <returns>A bool value indicates whether the showing operation started.</returns>
+    public bool Show(bool fade = false, UniWebViewTransitionEdge edge = UniWebViewTransitionEdge.None, 
+                float duration = 0.4f, Action completionHandler = null) 
+    {
+        var identifier = Guid.NewGuid().ToString();
+        var showStarted = UniWebViewInterface.Show(listener.Name, fade, (int)edge, duration, identifier);
+        if (showStarted && completionHandler != null) {
+            var hasAnimation = (fade || edge != UniWebViewTransitionEdge.None);
+            if (hasAnimation) {
+                actions.Add(identifier, completionHandler);
+            } else {
+                completionHandler();
+            }
+        }
+        if (showStarted && useToolbar) {
+            var top = (toolbarPosition == UniWebViewToolbarPosition.Top);
+            SetShowToolbar(true, false, top, fullScreen);
+        }
+        return showStarted;
+    }
+
+    /// <summary>
+    /// Sets the web view invisible from screen.
+    /// </summary>
+    /// <param name="fade">Whether hide with a fade in animation. Default is `false`.</param>
+    /// <param name="edge">The edge from which the web view hiding. It simulates a modal effect when hiding a web view. Default is `UniWebViewTransitionEdge.None`.</param>
+    /// <param name="duration">Duration of hiding animation. Default is `0.4f`.</param>
+    /// <param name="completionHandler">Completion handler which will be called when hiding finishes. Default is `null`.</param>
+    /// <returns>A bool value indicates whether the hiding operation started.</returns>
+    public bool Hide(bool fade = false, UniWebViewTransitionEdge edge = UniWebViewTransitionEdge.None,
+                float duration = 0.4f, Action completionHandler = null)
+    {
+        var identifier = Guid.NewGuid().ToString();
+        var hideStarted = UniWebViewInterface.Hide(listener.Name, fade, (int)edge, duration, identifier);
+        if (hideStarted && completionHandler != null) {
+            var hasAnimation = (fade || edge != UniWebViewTransitionEdge.None);
+            if (hasAnimation) {
+                actions.Add(identifier, completionHandler);
+            } else {
+                completionHandler();
+            }
+        }
+        if (hideStarted && useToolbar) {
+            var top = (toolbarPosition == UniWebViewToolbarPosition.Top);
+            SetShowToolbar(false, false, top, fullScreen);
+        }
+        return hideStarted;
+    }
+
+    /// <summary>
+    /// Animates the web view from current position and size to another position and size.
+    /// </summary>
+    /// <param name="frame">The new `Frame` which the web view should be.</param>
+    /// <param name="duration">Duration of the animation.</param>
+    /// <param name="delay">Delay before the animation begins. Default is `0.0f`, which means the animation will start immediately.</param>
+    /// <param name="completionHandler">Completion handler which will be called when animation finishes. Default is `null`.</param>
+    /// <returns></returns>
+    public bool AnimateTo(Rect frame, float duration, float delay = 0.0f, Action completionHandler = null) {
+        var identifier = Guid.NewGuid().ToString();
+        var animationStarted = UniWebViewInterface.AnimateTo(listener.Name, 
+                    (int)frame.x, (int)frame.y, (int)frame.width, (int)frame.height, duration, delay, identifier);
+        if (animationStarted) {
+            this.frame = frame;
+            if (completionHandler != null) {
+                actions.Add(identifier, completionHandler);
+            }
+        }
+        return animationStarted;
+    }
+
+    /// <summary>
+    /// Adds a JavaScript to current page.
+    /// </summary>
+    /// <param name="jsString">The JavaScript code to add. It should be a valid JavaScript statement string.</param>
+    /// <param name="completionHandler">Called when adding JavaScript operation finishes. Default is `null`.</param>
+    public void AddJavaScript(string jsString, Action<UniWebViewNativeResultPayload> completionHandler = null) {
+        var identifier = Guid.NewGuid().ToString();
+        UniWebViewInterface.AddJavaScript(listener.Name, jsString, identifier);
+        if (completionHandler != null) {
+            payloadActions.Add(identifier, completionHandler);
+        }
+    }
+
+    /// <summary>
+    /// Evaluates a JavaScript string on current page.
+    /// </summary>
+    /// <param name="jsString">The JavaScript string to evaluate.</param>
+    /// <param name="completionHandler">Called when evaluating JavaScript operation finishes. Default is `null`.</param>
+    public void EvaluateJavaScript(string jsString, Action<UniWebViewNativeResultPayload> completionHandler = null) {
+        var identifier = Guid.NewGuid().ToString();
+        UniWebViewInterface.EvaluateJavaScript(listener.Name, jsString, identifier);
+        if (completionHandler != null) {
+            payloadActions.Add(identifier, completionHandler);
+        }
+    }
+
+    /// <summary>
+    /// Adds a url scheme to UniWebView message system interpreter.
+    /// All following url navigation to this scheme will be sent as a message to UniWebView instead.
+    /// </summary>
+    /// <param name="scheme">The url scheme to add. It should not contain "://" part. You could even add "http" and/or "https" to prevent all resource loading on the page. "uniwebview" is added by default. Nothing will happen if you try to add a dulplicated scheme.</param>
     public void AddUrlScheme(string scheme) {
-        UniWebViewPlugin.AddUrlScheme(gameObject.name, scheme);
+        if (scheme == null) {
+            UniWebViewLogger.Instance.Critical("The scheme should not be null.");
+            return;
+        }
+
+        if (scheme.Contains("://")) {
+            UniWebViewLogger.Instance.Critical("The scheme should not include invalid characters '://'");
+            return;
+        }
+        UniWebViewInterface.AddUrlScheme(listener.Name, scheme);
     }
 
     /// <summary>
-    /// Removes the URL scheme. After be removed, this kind of url will be handled by the webview.
+    /// Removes a url scheme from UniWebView message system interpreter.
     /// </summary>
-    /// <param name="scheme">Scheme.</param>
+    /// <param name="scheme">The url scheme to remove. Nothing will happen if the scheme is not in the message system.</param>
     public void RemoveUrlScheme(string scheme) {
-        UniWebViewPlugin.RemoveUrlScheme(gameObject.name, scheme);
+        if (scheme == null) {
+            UniWebViewLogger.Instance.Critical("The scheme should not be null.");
+            return;
+        }
+        if (scheme.Contains("://")) {
+            UniWebViewLogger.Instance.Critical("The scheme should not include invalid characters '://'");
+            return;
+        }
+        UniWebViewInterface.RemoveUrlScheme(listener.Name, scheme);
     }
 
     /// <summary>
-    /// Set the header field.
+    /// Adds a domain to the SSL checking white list.
+    /// If you are trying to access a web site with untrusted or expired certification, 
+    /// the web view will prevent its loading. If you could confirm that this site is trusted,
+    /// you can add the domain as an SSL exception, so you could visit it.
     /// </summary>
-    /// <description>
-    /// Specify customized header field for the next url loading.
-    /// You could call this method multiple times to add key/value pairs for different fields.
-    /// Only the requests by using Load() method of current web view will use these setting for header.
-    /// </description>
-    /// <param name="key">Key of the header field. Empty string or null will be ignored.</param>
-    /// <param name="value">Value of the header field. Pass null to remove an existing value. Empty string will be ignored.</param>
-    public void SetHeaderField(string key, string value) {
-        #if UNITY_WP8
-        Debug.LogWarning("Not implemented for Windows Phone 8.");
-        #else
-        UniWebViewPlugin.SetHeaderField(gameObject.name, key, value);
-        #endif
-    }
-    
-    /// <summary>
-    /// Set visibility of vertical bar for the web view.
-    /// </summary>
-    /// <description>
-    /// This method will not work for editor and Windows Phone 8. 
-    /// </description>
-    /// <param name="show">Whether the vertical scroll bar should be visible or not when the web view is being scrolled.</param>
-    public void SetVerticalScrollBarShow(bool show) {
-        #if UNITY_WP8
-        Debug.LogWarning("Not implemented for Windows Phone 8.");        
-        #else
-        UniWebViewPlugin.SetVerticalScrollBarShow(gameObject.name, show);
-        #endif
-    }
-    
-    /// <summary>
-    /// Set visibility of horizontal bar for the web view.
-    /// </summary>
-    /// <description>
-    /// This method will not work for editor and Windows Phone 8. 
-    /// </description>
-    /// <param name="show">Whether the horizontal scroll bar should be visible or not when the web view is being scrolled.</param>
-    public void SetHorizontalScrollBarShow(bool show) {
-        #if UNITY_WP8
-        Debug.LogWarning("Not implemented for Windows Phone 8.");        
-        #else
-        UniWebViewPlugin.SetHorizontalScrollBarShow(gameObject.name, show);
-        #endif
+    /// <param name="domain">The domain to add. It should not contain any scheme or path part in url.</param>
+    public void AddSslExceptionDomain(string domain) {
+        if (domain == null) {
+            UniWebViewLogger.Instance.Critical("The domain should not be null.");
+            return;
+        }
+        if (domain.Contains("://")) {
+            UniWebViewLogger.Instance.Critical("The domain should not include invalid characters '://'");
+            return;
+        }
+        UniWebViewInterface.AddSslExceptionDomain(listener.Name, domain);
     }
 
     /// <summary>
-    /// Set web content could be debug or not. Only works for Android. 
+    /// Removes a domain from the SSL checking white list.
     /// </summary>
-    /// <description>
-    /// You can enable Remote Debugging for Android devices by calling this method and passing true. See Google's 
-    /// Remote Debugging Android Devices documentation for more about it.
-    /// https://developers.google.com/web/tools/chrome-devtools/debug/remote-debugging/remote-debugging
+    /// <param name="domain">The domain to remove. It should not contain any scheme or path part in url.</param>
+    public void RemoveSslExceptionDomain(string domain) {
+        if (domain == null) {
+            UniWebViewLogger.Instance.Critical("The domain should not be null.");
+            return;
+        }
+        if (domain.Contains("://")) {
+            UniWebViewLogger.Instance.Critical("The domain should not include invalid characters '://'");
+            return;
+        }
+        UniWebViewInterface.RemoveSslExceptionDomain(listener.Name, domain);
+    }
+
+    /// <summary>
+    /// Sets a customized header field for web view requests.
     /// 
-    /// This method will do nothing for iOS or editor. 
-    /// </description>
-    /// <param name="enabled">Whether this page could be debug or not.</param>
-    public static void SetWebContentsDebuggingEnabled(bool enabled) {
-        #if UNITY_ANDROID && !UNITY_EDITOR
-        UniWebViewPlugin.SetWebContentsDebuggingEnabled(enabled);
+    /// The header field will be used for all subsequence reqeust. 
+    /// Pass `null` as value to unset a header field.
+    /// 
+    /// Some reserved headers like user agent are not be able to override by setting here, 
+    /// use the `SetUserAgent` method for them instead.
+    /// </summary>
+    /// <param name="key">The key of customized header field.</param>
+    /// <param name="value">The value of customized header field. `null` if you want to unset the field.</param>
+    public void SetHeaderField(string key, string value) {
+        if (key == null) {
+            UniWebViewLogger.Instance.Critical("Header key should not be null.");
+            return;
+        }
+        UniWebViewInterface.SetHeaderField(listener.Name, key, value);
+    }
+
+    /// <summary>
+    /// Sets the user agent used in the web view. 
+    /// If the string is null or empty, the system default value will be used. 
+    /// </summary>
+    /// <param name="agent">The new user agent string to use.</param>
+    public void SetUserAgent(string agent) {
+        UniWebViewInterface.SetUserAgent(listener.Name, agent);
+    }
+
+    /// <summary>
+    /// Gets the user agent string currently used in web view.
+    /// If a customized user agent is not set, the default user agent in current platform will be returned.
+    /// </summary>
+    /// <returns>The user agent string in use.</returns>
+    public string GetUserAgent() {
+        return UniWebViewInterface.GetUserAgent(listener.Name);
+    }
+
+    /// <summary>
+    /// Set allow auto play for current web view. By default, 
+    /// users need to touch the play button to start playing a media resource.
+    /// By setting this to `true`, you could start the playing automatically through
+    /// corresponding media tag attributes.
+    /// </summary>
+    /// <param name="flag">A flag indicates whether autoplaying of media is allowed or not.</param>
+    public static void SetAllowAutoPlay(bool flag) {
+        UniWebViewInterface.SetAllowAutoPlay(flag);
+    }
+
+    /// <summary>
+    /// Set allow inline play for current web view. By default, on iOS, the video 
+    /// can only be played in a new full screen view.
+    /// By setting this to `true`, you could play a video inline the page, instead of opening 
+    /// a new full screen window.
+    /// 
+    /// This only works for iOS and macOS Editor. 
+    /// On Android, you could play videos inline by default and calling this method does nothing.
+    /// </summary>
+    /// <param name="flag">A flag indicates whether inline playing of media is allowed or not.</param>
+    public static void SetAllowInlinePlay(bool flag) {
+        #if (UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX || UNITY_IOS) && !UNITY_EDITOR_WIN
+        UniWebViewInterface.SetAllowInlinePlay(flag);
         #endif
     }
-    
-    private bool OrientationChanged() {
-        int newHeight = UniWebViewHelper.screenHeight;
-        if (_lastScreenHeight != newHeight) {
-            _lastScreenHeight = newHeight;
-            return true;
+
+    /// <summary>
+    /// Sets whether JavaScript should be enabled in current web view. Default is enabled.
+    /// </summary>
+    /// <param name="enabled">Whether JavaScript should be enabled.</param>
+    public static void SetJavaScriptEnabled(bool enabled) {
+        UniWebViewInterface.SetJavaScriptEnabled(enabled);
+    }
+
+    /// <summary>
+    /// Sets whether JavaScript can open windows without user interaction.
+    /// 
+    /// By setting this to `true`, an automatically JavaScript navigation will be allowed in the web view.
+    /// </summary>
+    /// <param name="flag">Whether JavaScript could open window automatically.</param>
+    public static void SetAllowJavaScriptOpenWindow(bool flag) {
+        UniWebViewInterface.SetAllowJavaScriptOpenWindow(flag);
+    }
+
+    /// <summary>
+    /// Clean web view cache. This removes cached local data of web view. 
+    /// 
+    /// If you need to clear all cookies, use `ClearCookies` instead.
+    /// </summary>
+    public void CleanCache() {
+        UniWebViewInterface.CleanCache(listener.Name);
+    }
+
+    /// <summary>
+    /// Clears all cookies from web view.
+    /// 
+    /// This will clear cookies from all domains in the web view and previous.
+    /// If you only need to remove cookies from a certain domain, use `SetCookie` instead.
+    /// </summary>
+    public static void ClearCookies() {
+        UniWebViewInterface.ClearCookies();
+    }
+
+    /// <summary>
+    /// Sets a cookie for a certain url.
+    /// </summary>
+    /// <param name="url">The url to which cookie will be set.</param>
+    /// <param name="cookie">The cookie string to set.</param>
+    /// <param name="skipEncoding">
+    /// Whether UniWebView should skip encoding the url or not. If set to `false`, UniWebView will try to encode the url parameter before
+    /// using it. Otherwise, your original url string will be used to set the cookie if it is valid. Default is `false`.
+    /// </param>
+    public static void SetCookie(string url, string cookie, bool skipEncoding = false) {
+        UniWebViewInterface.SetCookie(url, cookie, skipEncoding);
+    }
+
+    /// <summary>
+    /// Gets the cookie value under a url and key.
+    /// </summary>
+    /// <param name="url">The url (domain) where the target cookie is.</param>
+    /// <param name="key">The key for target cookie value.</param>
+    /// <param name="skipEncoding">
+    /// Whether UniWebView should skip encoding the url or not. If set to `false`, UniWebView will try to encode the url parameter before
+    /// using it. Otherwise, your original url string will be used to get the cookie if it is valid. Default is `false`.
+    /// </param>
+    /// <returns>Value of the target cookie under url.</returns>
+    public static string GetCookie(string url, string key, bool skipEncoding = false) {
+        return UniWebViewInterface.GetCookie(url, key, skipEncoding);
+    }
+
+    /// <summary>
+    /// Clears any saved credentials for HTTP authentication for both Basic and Digest.
+    /// 
+    /// On both iOS and Android, the user input credentials will be stored permanently across session.
+    /// It could prevent your users to input username and password again until they changed. If you need the 
+    /// credentials only living in a shorter lifetime, call this method at proper timing.
+    /// 
+    /// On iOS, it will clear the credentials immediately and completely from both disk and network cache. 
+    /// On Android, it only clears from disk database, the authentication might be still cached in the network stack
+    /// and will not be removed until next session (app restarting). 
+    /// 
+    /// The client logout mechanism should be implemented by the Web site designer (such as server sending a HTTP 
+    /// 401 for invalidating credentials).
+    /// 
+    /// </summary>
+    /// <param name="host">The host to which the credentials apply. It should not contain any thing like scheme or path part.</param>
+    /// <param name="realm">The realm to which the credentials apply.</param>
+    public static void ClearHttpAuthUsernamePassword(string host, string realm) {
+        UniWebViewInterface.ClearHttpAuthUsernamePassword(host, realm);
+    }
+
+    private Color backgroundColor = Color.white;
+    /// <summary>
+    /// Gets or sets the background color of web view. The default value is `Color.white`.
+    /// </summary>
+    public Color BackgroundColor {
+        get {
+            return backgroundColor;
+        }
+        set {
+            backgroundColor = value;
+            UniWebViewInterface.SetBackgroundColor(listener.Name, value.r, value.g, value.b, value.a);
+        }
+    }
+
+    /// <summary>
+    /// Gets or sets the alpha value of the whole web view.
+    /// 
+    /// You could make the game scene behind web view visible to make the web view transparent.
+    /// 
+    /// Default is `1.0f`, which means totally opaque. Set it to `0.0f` will make the web view totally transparent.
+    /// </summary>
+    public float Alpha {
+        get {
+            return UniWebViewInterface.GetWebViewAlpha(listener.Name);
+        }
+        set {
+            UniWebViewInterface.SetWebViewAlpha(listener.Name, value);
+         }
+    }
+
+    /// <summary>
+    /// Sets whether to show a loading indicator while the loading is in progress.
+    /// </summary>
+    /// <param name="flag">Whether an indicator should show.</param>
+    public void SetShowSpinnerWhileLoading(bool flag) {
+        UniWebViewInterface.SetShowSpinnerWhileLoading(listener.Name, flag);
+    }
+
+    /// <summary>
+    /// Sets the text displayed in the loading indicator, if `SetShowSpinnerWhileLoading` is set to `true`.
+    /// </summary>
+    /// <param name="text">The text to display while loading indicator visible. Default is "Loading..."</param>
+    public void SetSpinnerText(string text) {
+        UniWebViewInterface.SetSpinnerText(listener.Name, text);
+    }
+
+    /// <summary>
+    /// Sets whether the horizontal scroll bar should show when the web content beyonds web view bounds.
+    /// 
+    /// This only works on mobile platforms. It will do nothing on macOS Editor.
+    /// </summary>
+    /// <param name="enabled">Whether enable the scroll bar or not.</param>
+    public void SetHorizontalScrollBarEnabled(bool enabled) {
+        UniWebViewInterface.SetHorizontalScrollBarEnabled(listener.Name, enabled);
+    }
+
+    /// <summary>
+    /// Sets whether the vertical scroll bar should show when the web content beyonds web view bounds.
+    /// 
+    /// This only works on mobile platforms. It will do nothing on macOS Editor.
+    /// </summary>
+    /// <param name="enabled">Whether enable the scroll bar or not.</param>
+    public void SetVerticalScrollBarEnabled(bool enabled) {
+        UniWebViewInterface.SetVerticalScrollBarEnabled(listener.Name, enabled);
+    }
+
+    /// <summary>
+    /// Sets whether the web view should show with a bounces effect when scrolling to page edge.
+    /// 
+    /// This only works on mobile platforms. It will do nothing on macOS Editor.
+    /// </summary>
+    /// <param name="enabled">Whether the bounces effect should be applied or not.</param>
+    public void SetBouncesEnabled(bool enabled) {
+        UniWebViewInterface.SetBouncesEnabled(listener.Name, enabled);
+    }
+
+    /// <summary>
+    /// Sets whether the web view supports zoom guesture to change content size. 
+    /// Default is `false`, which means the zoom guesture is not supported.
+    /// </summary>
+    /// <param name="enabled">Whether the zoom guesture is allowed or not.</param>
+    public void SetZoomEnabled(bool enabled) {
+        UniWebViewInterface.SetZoomEnabled(listener.Name, enabled);
+    }
+
+    /// <summary>
+    /// Adds a trusted domain to white list and allow permission requests from the domain.
+    /// 
+    /// You only need this on Android devices with system before 6.0 when a site needs the location or camera 
+    /// permission. It will allow the permission gets approved so you could access the corresponding devices.
+    /// From Android 6.0, the permission requests method is changed and this is not needed anymore.
+    /// </summary>
+    /// <param name="domain">The domain to add to the white list.</param>
+    public void AddPermissionTrustDomain(string domain) {
+        #if UNITY_ANDROID && !UNITY_EDITOR
+        UniWebViewInterface.AddPermissionTrustDomain(listener.Name, domain);
+        #endif
+    }
+
+    /// <summary>
+    /// Removes a trusted domain from white list.
+    /// </summary>
+    /// <param name="domain">The domain to remove from white list.</param>
+    public void RemovePermissionTrustDomain(string domain) {
+        #if UNITY_ANDROID && !UNITY_EDITOR
+        UniWebViewInterface.RemovePermissionTrustDomain(listener.Name, domain);
+        #endif
+    }
+
+    /// <summary>
+    /// Sets whether the device back button should be enabled to execute "go back" or "closing" operation.
+    /// 
+    /// On Android, the device back button in navigation bar will navigate users to a back page. If there is 
+    /// no any back page avaliable, the back button clicking will try to raise a `OnShouldClose` event and try 
+    /// to close the web view if `true` is return from the event. If the `OnShouldClose` is not listened, 
+    /// the web view will be closed and the UniWebView component will be destroyed to release using resource.
+    /// 
+    /// Listen to `OnKeyCodeReceived` if you need to disable the back button, but still want to get the back 
+    /// button key pressing event.
+    /// 
+    /// Default is enabled.
+    /// </summary>
+    /// <param name="enabled">Whether the back button should perform go back or closing operation to web view.</param>
+    public void SetBackButtonEnabled(bool enabled) {
+        #if UNITY_ANDROID && !UNITY_EDITOR
+        UniWebViewInterface.SetBackButtonEnabled(listener.Name, enabled);
+        #endif
+    }
+
+    /// <summary>
+    /// Sets whether the web view should enable support for the "viewport" HTML meta tag or should use a wide viewport.
+    /// </summary>
+    /// <param name="flag">Whether to enable support for the viewport meta tag.</param>
+    public void SetUseWideViewPort(bool flag) {
+        #if UNITY_ANDROID && !UNITY_EDITOR
+        UniWebViewInterface.SetUseWideViewPort(listener.Name, flag);
+        #endif
+    } 
+
+    /// <summary>
+    /// Sets whether the web view loads pages in overview mode, that is, zooms out the content to fit on screen by width. 
+    /// 
+    /// This method is only for Android. Default is disabled.
+    /// </summary>
+    /// <param name="flag"></param>
+    public void SetLoadWithOverviewMode(bool flag) {
+        #if UNITY_ANDROID && !UNITY_EDITOR
+        UniWebViewInterface.SetLoadWithOverviewMode(listener.Name, flag);
+        #endif
+    }
+
+    /// <summary>
+    /// Sets whether the web view should behave in immersive mode, that is, 
+    /// hides the status bar and navigation bar with a sticky style.
+    /// 
+    /// This method is only for Android. Default is enabled.
+    /// </summary>
+    /// <param name="enabled"></param>
+    public void SetImmersiveModeEnabled(bool enabled) {
+        #if UNITY_ANDROID && !UNITY_EDITOR
+        UniWebViewInterface.SetImmersiveModeEnabled(listener.Name, enabled);
+        #endif
+    } 
+
+    /// <summary>
+    /// Sets whether to show a toolbar which contains navigation buttons and Done button.
+    /// 
+    /// You could choose to show or hide the tool bar. By configuring the `animated` and `onTop` 
+    /// parameters, you can control the animating and position of the toolbar. If the toolbar is 
+    /// overlapping with some part of your web view, pass `adjustInset` with `true` to have the 
+    /// web view reloacating itself to avoid the overlap.
+    /// 
+    /// This method is only for iOS. The toolbar is hidden by default.
+    /// </summary>
+    /// <param name="show">Whether the toolbar should show or hide.</param>
+    /// <param name="animated">Whether the toolbar state changing should be with animation. Default is `false`.</param>
+    /// <param name="onTop">Whether the toolbar should snap to top of screen or to bottom of screen. Default is `true`</param>
+    /// <param name="adjustInset">Whether the toolbar transition should also afjust web view position and size if overlapped. Default is `false`</param>
+    public void SetShowToolbar(bool show, bool animated = false, bool onTop = true, bool adjustInset = false) {
+        #if (UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX || UNITY_IOS) && !UNITY_EDITOR_WIN
+        UniWebViewInterface.SetShowToolbar(listener.Name, show, animated, onTop, adjustInset);
+        #endif
+    }
+
+    /// <summary>
+    /// Sets the done button text in toolbar.
+    /// 
+    /// By default, UniWebView will show a "Done" button at bottom-right corner in the 
+    /// toolbar. You could change its title by passing a text.
+    /// 
+    /// This method is only for iOS, since there is no toolbar on Android.
+    /// </summary>
+    /// <param name="text">The text needed to be set as done button title.</param>
+    public void SetToolbarDoneButtonText(string text) {
+        #if (UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX || UNITY_IOS) && !UNITY_EDITOR_WIN
+        UniWebViewInterface.SetToolbarDoneButtonText(listener.Name, text);
+        #endif
+    }
+
+    /// <summary>
+    /// Enables debugging of web contents. You could inspect of the content of a 
+    /// web view by using a browser development tool of Chrome for Android or Safari for macOS.
+    /// 
+    /// This method is only for Android and macOS Editor. On iOS, you do not need additional step. 
+    /// You could open Safari's developer tools to debug a web view on iOS.
+    /// </summary>
+    /// <param name="enabled">Whether the content debugging should be enabled.</param>
+    public static void SetWebContentsDebuggingEnabled(bool enabled) {
+        UniWebViewInterface.SetWebContentsDebuggingEnabled(enabled);
+    }
+
+    /// <summary>
+    /// Enables user resizing for web view window. By default, you can only set the window size
+    /// by setting its frame on mac Editor. By enabling user resizing, you would be able to resize 
+    /// the window by dragging its border as a normal macOS window.
+    /// 
+    /// This method only works for macOS for debugging purpose. It does nothing on iOS and Android.
+    /// </summary>
+    /// <param name="enabled">Whether the window could be able to be resized by cursor.</param>
+    public void SetWindowUserResizeEnabled(bool enabled) {
+        #if (UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX || UNITY_IOS) && !UNITY_EDITOR_WIN
+        UniWebViewInterface.SetWindowUserResizeEnabled(listener.name, enabled);
+        #endif
+    }
+
+    /// <summary>
+    /// Gets the HTML content from current page by accessing its outerHTML with JavaScript.
+    /// </summary>
+    /// <param name="handler">Called after the JavaScript executed. The parameter string is the content read from page.</param>
+    public void GetHTMLContent(Action<string> handler) {
+        EvaluateJavaScript("document.documentElement.outerHTML", payload => {
+            if (handler != null) {
+                handler(payload.data);
+            }
+        });
+    }
+
+    /// <summary>
+    /// Sets whether file access from file URLs is allowed.
+    /// 
+    /// By setting with `true`, access to file URLs inside the web view will be enabled and you could access sub-resources or 
+    /// make cross origin requests from local HTML files. This method only works on iOS. The file accessing from file URLs on
+    /// Android is available by default.
+    /// </summary>
+    /// <param name="flag">Whether the file access from file URLs is allowed or not.</param>
+    public void SetAllowFileAccessFromFileURLs(bool flag) {
+        #if (UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX || UNITY_IOS) && !UNITY_EDITOR_WIN
+        UniWebViewInterface.SetAllowFileAccessFromFileURLs(listener.name, flag);
+        #endif
+    }
+
+    /// <summary>
+    /// Sets whether a prompt alert should be displayed for collection username and password when the web view receives an
+    /// HTTP authentication challenge (HTTP Basic or HTTP Digest) from server.
+    /// 
+    /// By setting with `false`, no prompt will be shown and the user cannot login with input credentials. In this case,
+    /// you can only access this page by providing username and password through the URL like: "http://username:password@example.com".
+    /// If the username and password does not match, normally an error with 401 as status code would be returned (this behavior depends
+    /// on the server implementation). If set with `true`, a prompt will be shown when there is no credentials provided or it is not
+    /// correct in the URL.
+    /// 
+    /// Default is `true`.
+    /// </summary>
+    /// <param name="flag">Whether a prompt alert should be shown for HTTP authentication challenge or not.</param>
+    public void SetAllowHTTPAuthPopUpWindow(bool flag) {
+        UniWebViewInterface.SetAllowHTTPAuthPopUpWindow(listener.name, flag);
+    }
+
+    /// <summary>
+    /// Sets whether a callout (context) menu should be displayed when user long tapping on certain web view content.
+    /// 
+    /// When enabled, when user long presses an image or link in the web page, a context menu would be show up to ask 
+    /// user's action. On iOS, it is a action sheet to ask whether opening the target link or saving the image. On 
+    /// Android it is a pop up dialog to ask whether saving the image to local disk. On iOS, the preview page triggered 
+    /// by force touch on iOS is also considered as a callout menu.
+    /// 
+    /// Default is `true`, means that the callout menu will be displayed. Call this method with `false` to disable 
+    /// it on the web view.
+    /// </summary>
+    /// <param name="enabled">
+    /// Whether a callout menu should be displayed when user long pressing or force touching a certain web page element.
+    /// </param>
+    public void SetCalloutEnabled(bool enabled) {
+        UniWebViewInterface.SetCalloutEnabled(listener.name, enabled);
+    }
+
+    /// <summary>
+    /// Sets whether the drag interaction should be enabled on iOS.
+    /// 
+    /// From iOS 11, the iPad web view supports the drag interaction when user long presses an image, link or text.
+    /// Setting this to `false` would disable the drag feather on the web view.
+    /// 
+    /// This method only works on iOS. It does nothing on Android or macOS editor. Default is `true`, which means
+    /// drag interaction on iPad is enabled.
+    /// </summary>
+    /// <param name="enabled">
+    /// Whether the drag interaction should be enabled.
+    /// </param>
+    public void SetDragInteractionEnabled(bool enabled) {
+        #if (UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX || UNITY_IOS) && !UNITY_EDITOR_WIN
+        UniWebViewInterface.SetDragInteractionEnabled(listener.name, enabled);
+        #endif
+    }
+
+    /// <summary>
+    /// Prints current page.
+    /// 
+    /// By calling this method, a native print preview panel will be brought up on iOS and Android. 
+    /// This method does nothing on macOS editor.
+    /// On iOS and Android, the web view does not support JavaScript (window.print()), 
+    /// you can only initialize a print job from Unity by this method.
+    /// </summary>
+    public void Print() {
+        UniWebViewInterface.Print(listener.name);
+    }
+
+    void OnDestroy() {
+        UniWebViewNativeListener.RemoveListener(listener.Name);
+        UniWebViewInterface.Destroy(listener.Name);
+        Destroy(listener.gameObject);
+    }
+
+    void OnApplicationPause(bool pause) {
+        #if UNITY_ANDROID && !UNITY_EDITOR
+        UniWebViewInterface.ShowWebViewDialog(listener.Name, !pause);
+        #endif
+    }
+
+    /* //////////////////////////////////////////////////////
+    // Internal Listener Interface
+    ////////////////////////////////////////////////////// */
+    internal void InternalOnShowTransitionFinished(string identifier) {
+        Action action;
+        if (actions.TryGetValue(identifier, out action)) {
+            action();
+            actions.Remove(identifier);
+        }
+    }
+
+    internal void InternalOnHideTransitionFinished(string identifier) {
+        Action action;
+        if (actions.TryGetValue(identifier, out action)) {
+            action();
+            actions.Remove(identifier);
+        }
+    }
+
+    internal void InternalOnAnimateToFinished(string identifier) {
+        Action action;
+        if (actions.TryGetValue(identifier, out action)) {
+            action();
+            actions.Remove(identifier);
+        }
+    }
+
+    internal void InternalOnAddJavaScriptFinished(UniWebViewNativeResultPayload payload) {
+        Action<UniWebViewNativeResultPayload> action;
+        var identifier = payload.identifier;
+        if (payloadActions.TryGetValue(identifier, out action)) {
+            action(payload);
+            payloadActions.Remove(identifier);
+        }
+    }
+
+    internal void InternalOnEvalJavaScriptFinished(UniWebViewNativeResultPayload payload) {
+        Action<UniWebViewNativeResultPayload> action;
+        var identifier = payload.identifier;
+        if (payloadActions.TryGetValue(identifier, out action)) {
+            action(payload);
+            payloadActions.Remove(identifier);
+        }
+    }
+
+    internal void InternalOnPageFinished(UniWebViewNativeResultPayload payload) {
+        if (OnPageFinished != null) {
+            int code = -1;
+            if (int.TryParse(payload.resultCode, out code)) {
+                OnPageFinished(this, code, payload.data);
+            } else {
+                UniWebViewLogger.Instance.Critical("Invalid status code received: " + payload.resultCode);
+            }
+        }
+    }
+
+    internal void InternalOnPageStarted(string url) {
+        if (OnPageStarted != null) {
+            OnPageStarted(this, url);
+        }
+    }
+
+    internal void InternalOnPageErrorReceived(UniWebViewNativeResultPayload payload) {
+        if (OnPageErrorReceived != null) {
+            int code = -1;
+            if (int.TryParse(payload.resultCode, out code)) {
+                OnPageErrorReceived(this, code, payload.data);
+            } else {
+                UniWebViewLogger.Instance.Critical("Invalid error code received: " + payload.resultCode);
+            }
+        }
+    }
+
+    internal void InternalOnMessageReceived(string result) {
+         var message = new UniWebViewMessage(result);
+         if (OnMessageReceived != null) {
+             OnMessageReceived(this, message);
+         }
+    }
+
+    internal void InternalOnWebViewKeyDown(int keyCode) {
+        if (OnKeyCodeReceived != null) {
+            OnKeyCodeReceived(this, keyCode);
+        }
+    }
+
+    internal void InternalOnShouldClose() {
+        if (OnShouldClose != null) {
+            var shouldClose = OnShouldClose(this);
+            if (shouldClose) {
+                Destroy(this);
+            }
         } else {
-            return false;
-        }
-    }
-
-    private void ResizeInternal() {
-        int newHeight = UniWebViewHelper.screenHeight;
-        int newWidth = UniWebViewHelper.screenWidth;
-
-        UniWebViewEdgeInsets newInset = this.insets;
-        if (InsetsForScreenOreitation != null) {
-            UniWebViewOrientation orientation =
-                newHeight >= newWidth ? UniWebViewOrientation.Portrait : UniWebViewOrientation.LandScape;
-            newInset = InsetsForScreenOreitation(this, orientation);
-        }
-
-        ForceUpdateInsetsInternal(newInset);
-    }
-
-    #region Messages from native
-    private void LoadComplete(string message) {
-        bool loadSuc = string.Equals(message, "");
-        bool hasCompleteListener = (OnLoadComplete != null);
-
-        if (loadSuc) {
-            if (hasCompleteListener) {
-                OnLoadComplete(this, true, null);
-            }
-            if (autoShowWhenLoadComplete) {
-                Show();
-            }
-        } else {
-            Debug.LogWarning("Web page load failed: " + gameObject.name + "; url: " + url + "; error:" + message);
-
-#if UNITY_EDITOR
-            if (message.Contains("App Transport Security")) {
-                Debug.LogWarning("It seems that ATS is enabled in Editor. You can not load http pages when it is on. Please visit our help center for more information: https://onevcat.zendesk.com/hc/en-us/articles/215527307-I-cannot-open-the-web-page-in-Unity-Editor-");
-            }
-#endif
-            if (hasCompleteListener) {
-                OnLoadComplete(this, false, message);
-            }
-        }
-    }
-
-    private void LoadBegin(string url) {
-        if (OnLoadBegin != null) {
-            OnLoadBegin(this, url);
-        }
-    }
-
-    private void ReceivedMessage(string rawMessage) {
-        UniWebViewMessage message = new UniWebViewMessage(rawMessage);
-        if (OnReceivedMessage != null) {
-            OnReceivedMessage(this,message);
-        }
-    }
-
-    private void WebViewDone(string message) {
-        bool destroy = true;
-        if (OnWebViewShouldClose != null) {
-            destroy = OnWebViewShouldClose(this);
-        }
-
-        if (destroy) {
-            Hide();
             Destroy(this);
         }
     }
 
-    private void WebViewKeyDown(string message) {
-        int keyCode = Convert.ToInt32(message);
-        if (OnReceivedKeyCode != null) {
-            OnReceivedKeyCode(this, keyCode);
+    internal void InternalWebContentProcessDidTerminate() {
+        if (OnWebContentProcessTerminated != null) {
+            OnWebContentProcessTerminated(this);
         }
     }
 
-    private void EvalJavaScriptFinished(string result) {
-        if (OnEvalJavaScriptFinished != null) {
-            OnEvalJavaScriptFinished(this, result);
-        }
-    }
+    [Obsolete("OreintationChangedDelegate is a typo and deprecated. Use `OrientationChangedDelegate` instead.", true)]
+    public delegate void OreintationChangedDelegate(UniWebView webView, ScreenOrientation orientation);
 
-    private void AnimationFinished(string identifier) {
-
-    }
-
-    private void ShowTransitionFinished(string message) {
-        if (_showTransitionAction != null) {
-            _showTransitionAction();
-            _showTransitionAction = null;
-        }
-    }
-
-    private void HideTransitionFinished(string message) {
-        if (_hideTransitionAction != null) {
-            _hideTransitionAction();
-            _hideTransitionAction = null;
-        }
-    } 
-
-    private IEnumerator LoadFromJarPackage(string jarFilePath) {
-        WWW stream = new WWW(jarFilePath);
-        yield return stream;
-        if (stream.error != null) {
-            if (OnLoadComplete != null) {
-                OnLoadComplete(this,false,stream.error);
-            }
-            yield break;
-        } else {
-            LoadHTMLString(stream.text, "");
-        }
-    }
-
-    #endregion
-
-    #region Life Cycle
-    void Awake() {
-        _currentGUID = System.Guid.NewGuid().ToString();
-        gameObject.name = gameObject.name + _currentGUID;
-        UniWebViewPlugin.Init(gameObject.name,
-                              this.insets.top,
-                              this.insets.left,
-                              this.insets.bottom,
-                              this.insets.right);
-        _lastScreenHeight = UniWebViewHelper.screenHeight;
-
-        #if UNITY_EDITOR
-        _screenScale = UniWebViewHelper.screenScale;
-        CreateTexture(this.insets.left,
-                      this.insets.bottom,
-                      Screen.width - this.insets.left - this.insets.right,
-                      Screen.height - this.insets.top - this.insets.bottom
-                      );
-        #endif
-    }
-
-    void Start() {
-        if (loadOnStart) {
-            Load();
-        }
-    }
-
-    private void OnDestroy() {
-        #if UNITY_EDITOR
-        Clean();
-        #endif
-
-        RemoveAllListeners();
-
-        UniWebViewPlugin.Destroy(gameObject.name);
-        gameObject.name = gameObject.name.Replace(_currentGUID, "");
-    }
-
-    private void RemoveAllListeners() {
-        this.OnLoadBegin = null;
-        this.OnLoadComplete = null;
-        this.OnReceivedMessage = null;
-        this.OnReceivedKeyCode = null;
-        this.OnEvalJavaScriptFinished = null;
-        this.OnWebViewShouldClose = null;
-        this.InsetsForScreenOreitation = null;
-    }
-
-    #endregion
-
-    private void Update() {
-        #if UNITY_EDITOR
-        if (Application.platform == RuntimePlatform.OSXEditor) {
-            if (_webViewId != 0 && !_hidden) {
-                if (Input.GetKeyDown(KeyCode.Escape)) {
-                    if (UniWebViewPlugin.CanGoBack(gameObject.name)) {
-                        UniWebViewPlugin.GoBack(gameObject.name);
-                    } else {
-                        WebViewDone("");
-                    }
-                } else {
-                    _inputString += Input.inputString;
-                }
-            }
-        }
-        #endif
-
-        //Handle screen auto orientation.
-        if (OrientationChanged()) {
-            ResizeInternal();
-        }
-    }
-
-    #region UnityEditor Debug
-    #if UNITY_EDITOR
-    private Rect _webViewRect;
-    private Texture2D _texture;
-    private string _inputString;
-    private int _webViewId;
-    private bool _hidden;
-    private IntPtr _renderCallback;
-    private int _screenScale;
-
-    private void CreateTexture(int x, int y, int width, int height) {
-        if (Application.platform == RuntimePlatform.OSXEditor) {
-            _webViewRect = new Rect(x, y, width, height);
-            _texture = new Texture2D(width * 2, height * 2, TextureFormat.ARGB32, false);
-            _texture = new Texture2D(width * _screenScale, height * _screenScale, TextureFormat.ARGB32, false);
-        }    
-    }
-
-    private void Clean() {
-        if (Application.platform == RuntimePlatform.OSXEditor) {
-            Destroy(_texture);
-            _webViewId = 0;
-            _texture = null;
-        }
-    }
-
-    private void OnGUI()
-    {
-        if (Application.platform == RuntimePlatform.OSXEditor) {
-            if (_webViewId != 0 && !_hidden) {
-                Vector3 pos = Input.mousePosition;
-                bool down = Input.GetMouseButton(0);
-                bool press = Input.GetMouseButtonDown(0);
-                bool release = Input.GetMouseButtonUp(0);
-                float deltaY = Input.GetAxis("Mouse ScrollWheel");
-                bool keyPress = false;
-                string keyChars = "";
-                short keyCode = 0;
-                if (!string.IsNullOrEmpty(_inputString)) {
-                    keyPress = true;
-                    keyChars = _inputString.Substring(0, 1);
-                    keyCode = (short)_inputString[0];
-                    _inputString = _inputString.Substring(1);
-                }
-
-                var id = _texture.GetNativeTexturePtr().ToInt32();
-                UniWebViewPlugin.InputEvent(gameObject.name,
-                                            (int)(pos.x - _webViewRect.x), (int)(pos.y - _webViewRect.y), deltaY,
-                                            down, press, release, keyPress, keyCode, keyChars,
-                                            id);
-#if UNITY_5_0 || UNITY_5_1 || UNITY_5_2_0
-                GL.IssuePluginEvent(_webViewId);
-#else
-                
-                GL.IssuePluginEvent(UniWebViewPlugin.GetRenderEventFunc(), _webViewId);
-#endif
-                Matrix4x4 m = GUI.matrix;
-                GUI.matrix = Matrix4x4.TRS(new Vector3(0, Screen.height, 0),
-                                           Quaternion.identity, new Vector3(1, -1, 1));
-                GUI.DrawTexture(_webViewRect, _texture);
-                GUI.matrix = m;
-            }
-        }
-    }
-    #endif
-    #endregion
+    [Obsolete("OnOreintationChanged is a typo and deprecated. Use `OnOrientationChanged` instead.", true)]
+    #pragma warning disable CS0067
+    public event OrientationChangedDelegate OnOreintationChanged;
 }
-#endif //UNITY_IOS || UNITY_ANDROID

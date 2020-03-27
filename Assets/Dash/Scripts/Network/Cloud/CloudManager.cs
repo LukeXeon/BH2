@@ -24,7 +24,7 @@ namespace Dash.Scripts.Network.Cloud
 
         private static string GetCallbackUrl()
         {
-            return $"http://localhost:{FreePort.GetFirstAvailablePort()}/oauth/redirect/";
+            return @"http://localhost:10086/oauth/redirect/";
         }
 
         private static EUserMate localUserMate;
@@ -497,6 +497,7 @@ namespace Dash.Scripts.Network.Cloud
                 }
                 else
                 {
+                    Debug.Log(request.responseCode);
                     callback(errorMessage);
                 }
             };
