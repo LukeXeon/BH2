@@ -49,6 +49,7 @@ namespace Dash.Scripts.UIManager
             back.onClick.AddListener(Close);
             var info = GameInfoManager.weaponTable[weapon.typeId];
             image.sprite = info.sprite;
+            image.SetNativeSize();
             displayName.text = info.displayName;
             var runtime = RuntimeWeaponInfo.Build(weapon);
             gongJiLi.text = runtime.gongJiLi.ToString();

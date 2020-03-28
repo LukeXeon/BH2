@@ -22,6 +22,15 @@ namespace Dash.Scripts.Network.Cloud
 
         private const string errorMessageInternal = "游戏内部错误";
 
+        public static string GetLogInUrl()
+        {
+            var info = GameSDKManager.instance.info;
+            var login = new Url("https://github.com/login/oauth/authorize");
+            login.SetQueryParam("client_id", info.githubClientId);
+            login.SetQueryParam("redirect_uri", GetCallbackUrl());
+            return login.ToString();
+        }
+
         private static string GetCallbackUrl()
         {
             return @"http://localhost:10086/oauth/redirect/";
@@ -426,24 +435,19 @@ namespace Dash.Scripts.Network.Cloud
             AVUser.LogInAsync(username, password).Post(t => LoginToPost(t, callback));
         }
 
-        public static string GetGithubUrlAndWaitToken(Action<string, string> callback, out Thread waitThread)
+        public static Thread GetGithubUrlAndWaitToken(Action<string, string> callback)
         {
             var info = GameSDKManager.instance.info;
-            var callbackUrl = GetCallbackUrl();
-            var login = new Url("https://github.com/login/oauth/authorize");
-            login.SetQueryParam("client_id", info.githubClientId);
-            login.SetQueryParam("redirect_uri", callbackUrl);
-            var url = login.ToString();
-            waitThread = new Thread(async () =>
+            var waitThread = new Thread(async () =>
             {
+                var http = new HttpListener {AuthenticationSchemes = AuthenticationSchemes.Anonymous};
                 try
                 {
-                    var http = new HttpListener {AuthenticationSchemes = AuthenticationSchemes.Anonymous};
-                    http.Prefixes.Add(callbackUrl);
+                    http.Prefixes.Add(GetCallbackUrl());
                     http.Start();
                     var ctx = await http.GetContextAsync();
                     var code = ctx.Request.QueryString["code"];
-                    http.Close();
+
                     Debug.Log(code);
                     var u = new Url("https://github.com/login/oauth/access_token");
                     u.SetQueryParam("client_id", info.githubClientId);
@@ -469,11 +473,12 @@ namespace Dash.Scripts.Network.Cloud
                 }
                 finally
                 {
+                    http.Close();
                     Debug.Log("Task Finish");
                 }
             }) {IsBackground = true};
             waitThread.Start();
-            return url;
+            return waitThread;
         }
 
         public static void LogInWithGithub(string token, Action<string> callback)

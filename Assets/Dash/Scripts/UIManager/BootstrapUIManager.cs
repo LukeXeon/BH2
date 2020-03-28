@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Threading;
 using Dash.Scripts.Network.Cloud;
 using LeanCloud;
 using Michsky.UI.ModernUIPack;
@@ -38,7 +36,7 @@ namespace Dash.Scripts.UIManager
 
         public Image progressBar;
 
-        public ModalWindowManager waitWindowManager;
+        public Animator waitWindow;
 
         public ModalWindowManager windowManager;
 
@@ -98,10 +96,10 @@ namespace Dash.Scripts.UIManager
                 var u = usernameInSignUp.text;
                 var p = passwordInSignUp.text;
                 var p2 = passwordInSignUp2.text;
-                waitWindowManager.OpenWindow();
+                OpenWaitWindow();
                 CloudManager.SignUp(u, p, p2, e =>
                 {
-                    StartCoroutine(CloseWaitWindow());
+                    CloseWaitWindow();
                     if (e != null)
                     {
                         notifyError.Show("注册失败", e);
@@ -119,10 +117,10 @@ namespace Dash.Scripts.UIManager
             {
                 var u = username.text;
                 var p = password.text;
-                waitWindowManager.OpenWindow();
+                OpenWaitWindow();
                 CloudManager.LogIn(u, p, e =>
                 {
-                    StartCoroutine(CloseWaitWindow());
+                    CloseWaitWindow();
                     if (e != null)
                     {
                         notifyError.Show("登录失败", e);
@@ -132,6 +130,7 @@ namespace Dash.Scripts.UIManager
                         notifySucceed.Show("登录成功", "您已成功登录");
                         windowManager.CloseWindow();
                         yiJingDengLuRoot.SetActive(true);
+                        ClearPrefs();
                         PlayerPrefs.SetString("password", p);
                         PlayerPrefs.SetString("username", u);
                         PlayerPrefs.Save();
@@ -145,20 +144,17 @@ namespace Dash.Scripts.UIManager
             });
             backToLogin.onClick.AddListener(() =>
             {
-                waitWindowManager.OpenWindow();
+                OpenWaitWindow();
                 CloudManager.LogOut(e =>
                 {
-                    StartCoroutine(CloseWaitWindow());
+                    CloseWaitWindow();
                     if (e != null)
                     {
                         notifyError.Show("退出登录失败", e);
                     }
                     else
                     {
-                        PlayerPrefs.DeleteKey("password");
-                        PlayerPrefs.DeleteKey("username");
-                        PlayerPrefs.DeleteKey("token");
-                        PlayerPrefs.Save();
+                        ClearPrefs();
                         yiJingDengLuRoot.SetActive(false);
                         StartCoroutine(ShowWindow1());
                     }
@@ -173,18 +169,19 @@ namespace Dash.Scripts.UIManager
                         : "Prefab/WebView/MobileWebview"
                 );
                 go = Instantiate(go, canvas.transform);
+                go.transform.SetSiblingIndex(waitWindow.transform.GetSiblingIndex());
                 var b = go.GetComponent<IWebUIManager>();
-                var url = CloudManager.GetGithubUrlAndWaitToken(
+                var waiter = CloudManager.GetGithubUrlAndWaitToken(
                     (e, t) =>
                     {
                         if (e == null)
                         {
                             Destroy(go);
-                            waitWindowManager.OpenWindow();
+                            OpenWaitWindow();
                             CloudManager.LogInWithGithub(t,
                                 e2 =>
                                 {
-                                    StartCoroutine(CloseWaitWindow());
+                                    CloseWaitWindow();
                                     if (e2 != null)
                                     {
                                         notifyError.Show("登录失败", e2);
@@ -194,20 +191,29 @@ namespace Dash.Scripts.UIManager
                                         notifySucceed.Show("登录成功", "您已成功登录");
                                         windowManager.CloseWindow();
                                         yiJingDengLuRoot.SetActive(true);
+                                        ClearPrefs();
                                         PlayerPrefs.SetString("token", t);
                                         PlayerPrefs.Save();
                                     }
                                 });
                         }
-                    }, out var waiter);
-                
-                b.Init(url, () =>
+                    });
+                b.Init(CloudManager.GetLogInUrl(), () =>
                 {
                     waiter.Abort();
                     Debug.Log("waiter abort");
                     Destroy(go);
                 });
             });
+        }
+
+
+        public static void ClearPrefs()
+        {
+            PlayerPrefs.DeleteKey("password");
+            PlayerPrefs.DeleteKey("username");
+            PlayerPrefs.DeleteKey("token");
+            PlayerPrefs.Save();
         }
 
 
@@ -223,7 +229,7 @@ namespace Dash.Scripts.UIManager
             }
             else
             {
-                if (t != null)
+                if (!string.IsNullOrEmpty(t))
                 {
                     CloudManager.LogInWithGithub(t,
                         e =>
@@ -262,16 +268,28 @@ namespace Dash.Scripts.UIManager
             windowManager.OpenWindow();
         }
 
-        public IEnumerator CloseWaitWindow()
+        public void OpenWaitWindow()
         {
-            yield return new WaitForEndOfFrame();
-            waitWindowManager.CloseWindow();
+            StartCoroutine(OpenWaitWindow0());
+        }
+
+        public IEnumerator OpenWaitWindow0()
+        {
+            waitWindow.gameObject.SetActive(true);
+            yield return null;
+            waitWindow.Play("Fade-in");
+        }
+
+        public void CloseWaitWindow()
+        {
+            waitWindow.gameObject.SetActive(false);
         }
 
         public IEnumerator LoadNext()
         {
             progressBarRoot.SetActive(true);
             loadSceneAsync = SceneManager.LoadSceneAsync("Desktop");
+            Debug.Log("Load Desktop");
             PhotonNetwork.AuthValues = new AuthenticationValues
             {
                 UserId = AVUser.CurrentUser.ObjectId
@@ -297,10 +315,6 @@ namespace Dash.Scripts.UIManager
             loadSceneAsync.allowSceneActivation = true;
         }
 
-        public override void OnJoinedLobby()
-        {
-            Debug.Log("PunCockpit:OnJoinedLobby()");
-        }
 
         public IEnumerator WaitFinish(float s, Action action)
         {

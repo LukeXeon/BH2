@@ -48,6 +48,7 @@ namespace Dash.Scripts.GamePlay
                 if (mainState == MainState.Idle)
                 {
                     myStateName = myWeaponTypeName + "_idle";
+                    skeletonAnimation.AnimationState.SetEmptyAnimation(1, 0.2f);
                 }
                 else
                 {
