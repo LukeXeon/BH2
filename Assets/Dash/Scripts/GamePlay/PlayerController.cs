@@ -6,15 +6,16 @@ namespace Dash.Scripts.GamePlay
 {
     public class PlayerController : MonoBehaviour
     {
-        public float speed = 0.01f;
+        public float speed;
         public PlayerSpineManager manager;
+        public new Rigidbody rigidbody;
 
-        private void Update()
+        private void FixedUpdate()
         {
             var h = ETCInput.GetAxis("Horizontal");
             var v = ETCInput.GetAxis("Vertical");
-            var move = new Vector3(Mathf.Abs(h) > 0 ? 1 * Mathf.Sign(h) : 0, 0,
-                           Mathf.Abs(v) > 0 ? Mathf.Sign(v) : 0) * speed;
+            var move = speed * Time.fixedDeltaTime * new Vector3(Mathf.Abs(h) > 0 ? 1 * Mathf.Sign(h) : 0, 0,
+                           Mathf.Abs(v) > 0 ? Mathf.Sign(v) : 0);
             if (move != Vector3.zero)
             {
                 manager.mainState = PlayerSpineManager.MainState.Run;
@@ -32,8 +33,7 @@ namespace Dash.Scripts.GamePlay
             {
                 manager.flip = true;
             }
-
-            transform.position += move;
+            rigidbody.MovePosition(rigidbody.position + move);
         }
     }
 }

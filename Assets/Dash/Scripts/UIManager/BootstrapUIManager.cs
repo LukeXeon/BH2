@@ -130,10 +130,12 @@ namespace Dash.Scripts.UIManager
                         notifySucceed.Show("登录成功", "您已成功登录");
                         windowManager.CloseWindow();
                         yiJingDengLuRoot.SetActive(true);
+                        ConnectToMaster();
                         ClearPrefs();
                         PlayerPrefs.SetString("password", p);
                         PlayerPrefs.SetString("username", u);
                         PlayerPrefs.Save();
+        
                     }
                 });
             });
@@ -156,6 +158,7 @@ namespace Dash.Scripts.UIManager
                     {
                         ClearPrefs();
                         yiJingDengLuRoot.SetActive(false);
+                        PhotonNetwork.Disconnect();
                         StartCoroutine(ShowWindow1());
                     }
                 });
@@ -191,6 +194,7 @@ namespace Dash.Scripts.UIManager
                                         notifySucceed.Show("登录成功", "您已成功登录");
                                         windowManager.CloseWindow();
                                         yiJingDengLuRoot.SetActive(true);
+                                        ConnectToMaster();
                                         ClearPrefs();
                                         PlayerPrefs.SetString("token", t);
                                         PlayerPrefs.Save();
@@ -241,6 +245,7 @@ namespace Dash.Scripts.UIManager
                             else
                             {
                                 yiJingDengLuRoot.SetActive(true);
+                                ConnectToMaster();
                             }
                         });
                 }
@@ -255,12 +260,22 @@ namespace Dash.Scripts.UIManager
                         else
                         {
                             yiJingDengLuRoot.SetActive(true);
+                            ConnectToMaster();
                         }
                     });
                 }
             }
         }
 
+        private void ConnectToMaster()
+        {
+            PhotonNetwork.AuthValues = new AuthenticationValues
+            {
+                UserId = AVUser.CurrentUser.ObjectId
+            };
+            PhotonNetwork.ConnectUsingSettings();
+        }
+        
         private IEnumerator ShowWindow1()
         {
             windowManager.gameObject.SetActive(true);
@@ -290,11 +305,6 @@ namespace Dash.Scripts.UIManager
             progressBarRoot.SetActive(true);
             loadSceneAsync = SceneManager.LoadSceneAsync("Desktop");
             Debug.Log("Load Desktop");
-            PhotonNetwork.AuthValues = new AuthenticationValues
-            {
-                UserId = AVUser.CurrentUser.ObjectId
-            };
-            PhotonNetwork.ConnectUsingSettings();
             loadSceneAsync.allowSceneActivation = false;
             progressBar.fillAmount = 0;
             while (loadSceneAsync.progress < 0.9f)
@@ -306,15 +316,17 @@ namespace Dash.Scripts.UIManager
 
             progressBar.fillAmount = 1;
             progressBarText.text = 100 + "%";
-            yield return new WaitForEndOfFrame();
-            progressBarText.text = "正在连接Master服务器";
+            yield return null;
+            loadSceneAsync.allowSceneActivation = PhotonNetwork.IsConnected;
         }
 
         public override void OnConnectedToMaster()
         {
-            loadSceneAsync.allowSceneActivation = true;
+            if (loadSceneAsync != null)
+            {
+                loadSceneAsync.allowSceneActivation = true;
+            }
         }
-
 
         public IEnumerator WaitFinish(float s, Action action)
         {

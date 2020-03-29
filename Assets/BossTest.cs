@@ -9,16 +9,12 @@ public class BossTest : MonoBehaviour
     public float distance;
     private static readonly int IS_RUN = Animator.StringToHash("isRun");
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        agent.updateRotation = true;
-    }
-
     // Update is called once per frame
     void Update()
     {
         var position = target.position;
         agent.destination = position;
+
+        animator.SetBool(IS_RUN, agent.velocity != Vector3.zero);
     }
 }
