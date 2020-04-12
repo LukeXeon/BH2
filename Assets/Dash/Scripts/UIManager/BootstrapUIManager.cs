@@ -317,6 +317,7 @@ namespace Dash.Scripts.UIManager
             yield return new WaitUntil(() => PhotonNetwork.NetworkClientState == ClientState.ConnectedToMasterServer);
             loadSceneAsync.allowSceneActivation = true;
         }
+        
 
         public IEnumerator WaitFinish(float s, Action action)
         {

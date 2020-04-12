@@ -636,5 +636,21 @@ namespace Dash.Scripts.Network.Cloud
         {
             return localUserMate.nameInGame;
         }
+
+        public static void SetNameInGame(string name, Action<string> callback)
+        {
+            localUserMate.nameInGame = name;
+            localUserMate.SaveAsync().RunOnUiThread(t =>
+            {
+                if (t.IsCanceled || t.IsFaulted)
+                {
+                    Debug.Log(t.Exception);
+                    callback(errorMessageInLogIn);
+                    return;
+                }
+
+                callback(null);
+            });
+        }
     }
 }

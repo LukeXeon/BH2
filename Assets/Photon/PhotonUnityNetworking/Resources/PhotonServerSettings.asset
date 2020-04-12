@@ -18,7 +18,7 @@ MonoBehaviour:
     AppIdVoice: 
     AppVersion: 
     UseNameServer: 0
-    FixedRegion: asia
+    FixedRegion: 
     Server: 175.24.83.68
     Port: 5055
     Protocol: 0
@@ -36,6 +36,7 @@ MonoBehaviour:
   - DestroySpaceship
   - Fire
   - RespawnSpaceship
+  - OnClientLoadScene
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

@@ -2916,7 +2916,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mainState: 0
-  weaponType: 4
+  weaponType: qingshouqiang
 --- !u!210 &1911431336
 SortingGroup:
   m_ObjectHideFlags: 0

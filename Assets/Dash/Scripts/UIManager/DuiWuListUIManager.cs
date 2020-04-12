@@ -46,6 +46,7 @@ namespace Dash.Scripts.UIManager
                 roomType = newItem.GetComponent<RoomTypeItemUIManager>();
                 roomType.Apply(guanQiaInfoAsset.Value.displayName, () => { });
             }
+
             back.onClick.AddListener(() =>
             {
                 if (PhotonNetwork.InLobby)
@@ -65,8 +66,9 @@ namespace Dash.Scripts.UIManager
                 BeginWaitNetwork();
                 var table = new Hashtable
                 {
-                    ["display_name"] = CloudManager.GetNameInGame(),
-                    ["player_ids"] = new[] {CloudManager.GetCurrentPlayer().typeId}
+                    ["displayName"] = CloudManager.GetNameInGame() + "的房间",
+                    ["playerIconIds"] = new[] {CloudManager.GetCurrentPlayer().typeId},
+                    ["typeId"] = 0,
                 };
                 PhotonNetwork.CreateRoom(null, new RoomOptions
                 {
@@ -106,11 +108,11 @@ namespace Dash.Scripts.UIManager
             {
                 var go = Instantiate(roomItem, roomsRoot);
                 var room = go.GetComponent<RoomItemUIManager>();
-//                var typeId = (int) info.CustomProperties["typeId"];
-//                var iconTypeIds = (int[]) info.CustomProperties["player_Ids"];
-//                var masterName = (string) info.CustomProperties["display_name"];
+                info.CustomProperties.TryGetValue("typeId", out var typeId);
+                info.CustomProperties.TryGetValue("playerIconIds", out var playerIconIds);
+                info.CustomProperties.TryGetValue("displayName", out var displayName);
                 var id = info.Name;
-                room.Apply("", 0, new int[0], () =>
+                room.Apply(displayName as string ?? "", typeId as int? ?? 0, playerIconIds as int[] ?? new int[0], () =>
                 {
                     BeginWaitNetwork();
                     PhotonNetwork.JoinRoom(id);
@@ -127,6 +129,7 @@ namespace Dash.Scripts.UIManager
         public override void OnJoinRoomFailed(short returnCode, string message)
         {
             EndWaitNetWork();
+            Debug.Log(message);
             notifyError.Show("失败", "加入房间失败");
         }
 

@@ -15,7 +15,7 @@ namespace Dash.Scripts.UIManager.ItemUIManager
 
         public void Apply(string name, int typeId, int[] iconTypeIds, Action callback)
         {
-            roomByUser.name = name + "的房间";
+            roomByUser.name = name;
             guanQiaMing.text = GameInfoManager.guanQiaInfoTable[typeId]?.name ?? "";
             for (var i = 0; i < iconTypeIds.Length; i++)
             {

@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Dash.Scripts.Config
 {
@@ -7,6 +8,7 @@ namespace Dash.Scripts.Config
     {
         public int typeId;
         public string displayName;
+        public string sceneName;
         public AudioClip music;
         public TextAsset miaoShu;
         public Sprite image;

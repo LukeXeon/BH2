@@ -1,4 +1,5 @@
-﻿using Spine.Unity;
+﻿using Photon.Realtime;
+using Spine.Unity;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -9,6 +10,7 @@ namespace Dash.Scripts.UIManager.ItemUIManager
     {
         public Camera renderCamera;
         public GameObject isReady;
+        public GameObject isMaster;
         public TextMeshProUGUI displayName;
         public SkeletonAnimation skeletonAnimation;
         public RawImage image;
@@ -25,6 +27,34 @@ namespace Dash.Scripts.UIManager.ItemUIManager
             image.texture = rt;
         }
 
+        public void Clear()
+        {
+            renderCamera.enabled = false;
+            skeletonAnimation.enabled = false;
+            image.enabled = false;
+            isReady.SetActive(false);
+            isMaster.SetActive(false);
+            displayName.text = null;
+        }
 
+        public void Apply(Player player)
+        {
+            renderCamera.enabled = true;
+            skeletonAnimation.enabled = true;
+            image.enabled = true;
+            player.CustomProperties.TryGetValue("displayName", out var displayNameValue);
+            player.CustomProperties.TryGetValue("isReady", out var isReadyValue);
+            this.displayName.text = displayNameValue as string ?? "...";
+            if (player.IsMasterClient)
+            {
+                isMaster.SetActive(true);
+                isReady.SetActive(false);
+            }
+            else
+            {
+                isMaster.SetActive(false);
+                isReady.SetActive(isReadyValue as bool? ?? false);
+            }
+        }
     }
 }

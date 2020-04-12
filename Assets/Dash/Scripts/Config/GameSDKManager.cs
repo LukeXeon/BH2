@@ -44,9 +44,14 @@ namespace Dash.Scripts.Config
                     Permission.RequestUserPermission(permission);
                 }
             }
+
             var engine = IRtcEngine.GetEngine(info.agoraAppId);
+            if (Application.isEditor)
+            {
+                Application.quitting += IRtcEngine.Destroy;
+            }
+
             engine.SetChannelProfile(CHANNEL_PROFILE.CHANNEL_PROFILE_GAME);
-            Application.quitting += IRtcEngine.Destroy;
             cb = (a, b, c) =>
             {
                 if (c == LogType.Exception)
