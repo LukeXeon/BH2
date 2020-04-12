@@ -4,7 +4,8 @@
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
@@ -20,7 +21,7 @@ MonoBehaviour:
     attachments:
     - name: jiatelin
       sprite: {fileID: 21300000, guid: ad11fb698dfa4b143bb5a7c53260f7e8, type: 3}
-  weaponType: 2
+  weaponType: {fileID: 11400000, guid: ba44732947c69ac4284e97b635631cad, type: 2}
   gongJiLi: 0
   sheSu: 0
   gongJiLi2: 0

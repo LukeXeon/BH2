@@ -22,151 +22,151 @@ namespace agora_gaming_rtc
     {
         #region set callback here for user
         // Find more efer to AgoraCallback.cs.
-        public OnJoinChannelSuccessHandler OnJoinChannelSuccess;
+        public event OnJoinChannelSuccessHandler OnJoinChannelSuccess;
 
-        public OnReJoinChannelSuccessHandler OnReJoinChannelSuccess;
+        public event OnReJoinChannelSuccessHandler OnReJoinChannelSuccess;
 
-        public OnConnectionLostHandler OnConnectionLost;
+        public event OnConnectionLostHandler OnConnectionLost;
 
-        public OnConnectionInterruptedHandler OnConnectionInterrupted;
+        public event OnConnectionInterruptedHandler OnConnectionInterrupted;
 
-        public OnRequestTokenHandler OnRequestToken;
+        public event OnRequestTokenHandler OnRequestToken;
 
-        public OnUserJoinedHandler OnUserJoined;
+        public event OnUserJoinedHandler OnUserJoined;
 
-        public OnUserOfflineHandler OnUserOffline;
+        public event OnUserOfflineHandler OnUserOffline;
 
-        public OnLeaveChannelHandler OnLeaveChannel;
+        public event OnLeaveChannelHandler OnLeaveChannel;
 
-        public OnVolumeIndicationHandler OnVolumeIndication;
+        public event OnVolumeIndicationHandler OnVolumeIndication;
 
-        public OnUserMutedAudioHandler OnUserMutedAudio;
+        public event OnUserMutedAudioHandler OnUserMutedAudio;
 
-        public OnSDKWarningHandler OnWarning;
+        public event OnSDKWarningHandler OnWarning;
 
-        public OnSDKErrorHandler OnError;
+        public event OnSDKErrorHandler OnError;
 
-        public OnRtcStatsHandler OnRtcStats;
+        public event OnRtcStatsHandler OnRtcStats;
 
-        public OnAudioMixingFinishedHandler OnAudioMixingFinished;
+        public event OnAudioMixingFinishedHandler OnAudioMixingFinished;
 
-        public OnAudioRouteChangedHandler OnAudioRouteChanged;
+        public event OnAudioRouteChangedHandler OnAudioRouteChanged;
 
-        public OnFirstRemoteVideoDecodedHandler OnFirstRemoteVideoDecoded;
+        public event OnFirstRemoteVideoDecodedHandler OnFirstRemoteVideoDecoded;
 
-        public OnVideoSizeChangedHandler OnVideoSizeChanged;
+        public event OnVideoSizeChangedHandler OnVideoSizeChanged;
 
-        public OnClientRoleChangedHandler OnClientRoleChanged;
+        public event OnClientRoleChangedHandler OnClientRoleChanged;
 
-        public OnUserMuteVideoHandler OnUserMuteVideo;
+        public event OnUserMuteVideoHandler OnUserMuteVideo;
 
-        public OnMicrophoneEnabledHandler OnMicrophoneEnabled;
+        public event OnMicrophoneEnabledHandler OnMicrophoneEnabled;
 
-        public OnFirstRemoteAudioFrameHandler OnFirstRemoteAudioFrame;
+        public event OnFirstRemoteAudioFrameHandler OnFirstRemoteAudioFrame;
 
-        public OnFirstLocalAudioFrameHandler OnFirstLocalAudioFrame;
+        public event OnFirstLocalAudioFrameHandler OnFirstLocalAudioFrame;
 
-        public OnApiExecutedHandler OnApiExecuted;
+        public event OnApiExecutedHandler OnApiExecuted;
 
-        public OnLastmileQualityHandler OnLastmileQuality;
+        public event OnLastmileQualityHandler OnLastmileQuality;
 
-        public OnAudioQualityHandler OnAudioQuality;
+        public event OnAudioQualityHandler OnAudioQuality;
 
-        public OnStreamInjectedStatusHandler OnStreamInjectedStatus;
+        public event OnStreamInjectedStatusHandler OnStreamInjectedStatus;
 
-        public OnStreamUnpublishedHandler OnStreamUnpublished;
+        public event OnStreamUnpublishedHandler OnStreamUnpublished;
 
-        public OnStreamPublishedHandler OnStreamPublished;
+        public event OnStreamPublishedHandler OnStreamPublished;
 
-        public OnStreamMessageErrorHandler OnStreamMessageError;
+        public event OnStreamMessageErrorHandler OnStreamMessageError;
 
-        public OnStreamMessageHandler OnStreamMessage;
+        public event OnStreamMessageHandler OnStreamMessage;
 
-        public OnConnectionBannedHandler OnConnectionBanned;
+        public event OnConnectionBannedHandler OnConnectionBanned;
 
-        public OnConnectionStateChangedHandler OnConnectionStateChanged;
+        public event OnConnectionStateChangedHandler OnConnectionStateChanged;
 
-        public OnTokenPrivilegeWillExpireHandler OnTokenPrivilegeWillExpire;
+        public event OnTokenPrivilegeWillExpireHandler OnTokenPrivilegeWillExpire;
 
-        public OnActiveSpeakerHandler OnActiveSpeaker;
+        public event OnActiveSpeakerHandler OnActiveSpeaker;
 
-        public OnVideoStoppedHandler OnVideoStopped;
+        public event OnVideoStoppedHandler OnVideoStopped;
 
-        public OnFirstLocalVideoFrameHandler OnFirstLocalVideoFrame;
+        public event OnFirstLocalVideoFrameHandler OnFirstLocalVideoFrame;
 
-        public OnFirstRemoteVideoFrameHandler OnFirstRemoteVideoFrame;
+        public event OnFirstRemoteVideoFrameHandler OnFirstRemoteVideoFrame;
 
-        public OnUserEnableVideoHandler OnUserEnableVideo;
+        public event OnUserEnableVideoHandler OnUserEnableVideo;
 
-        public OnUserEnableLocalVideoHandler OnUserEnableLocalVideo;
+        public event OnUserEnableLocalVideoHandler OnUserEnableLocalVideo;
 
-        public OnRemoteVideoStateChangedHandler OnRemoteVideoStateChanged;
+        public event OnRemoteVideoStateChangedHandler OnRemoteVideoStateChanged;
 
-        public OnLocalPublishFallbackToAudioOnlyHandler OnLocalPublishFallbackToAudioOnly;
+        public event OnLocalPublishFallbackToAudioOnlyHandler OnLocalPublishFallbackToAudioOnly;
 
-        public OnRemoteSubscribeFallbackToAudioOnlyHandler OnRemoteSubscribeFallbackToAudioOnly;
+        public event OnRemoteSubscribeFallbackToAudioOnlyHandler OnRemoteSubscribeFallbackToAudioOnly;
 
-        public OnNetworkQualityHandler OnNetworkQuality;
+        public event OnNetworkQualityHandler OnNetworkQuality;
 
-        public OnLocalVideoStatsHandler OnLocalVideoStats;
+        public event OnLocalVideoStatsHandler OnLocalVideoStats;
 
-        public OnRemoteVideoStatsHandler OnRemoteVideoStats;
+        public event OnRemoteVideoStatsHandler OnRemoteVideoStats;
 
-        public OnRemoteAudioStatsHandler OnRemoteAudioStats;
+        public event OnRemoteAudioStatsHandler OnRemoteAudioStats;
 
-        public OnAudioDeviceStateChangedHandler OnAudioDeviceStateChanged;
+        public event OnAudioDeviceStateChangedHandler OnAudioDeviceStateChanged;
 
-        public OnCameraReadyHandler OnCameraReady;
+        public event OnCameraReadyHandler OnCameraReady;
 
-        public OnCameraFocusAreaChangedHandler OnCameraFocusAreaChanged;
+        public event OnCameraFocusAreaChangedHandler OnCameraFocusAreaChanged;
 
-        public OnCameraExposureAreaChangedHandler OnCameraExposureAreaChanged;
+        public event OnCameraExposureAreaChangedHandler OnCameraExposureAreaChanged;
 
-        public OnRemoteAudioMixingBeginHandler OnRemoteAudioMixingBegin;
+        public event OnRemoteAudioMixingBeginHandler OnRemoteAudioMixingBegin;
 
-        public OnRemoteAudioMixingEndHandler OnRemoteAudioMixingEnd;
+        public event OnRemoteAudioMixingEndHandler OnRemoteAudioMixingEnd;
 
-        public OnAudioEffectFinishedHandler OnAudioEffectFinished;
+        public event OnAudioEffectFinishedHandler OnAudioEffectFinished;
 
-        public OnVideoDeviceStateChangedHandler OnVideoDeviceStateChanged;
+        public event OnVideoDeviceStateChangedHandler OnVideoDeviceStateChanged;
 
-        public OnRemoteVideoTransportStatsHandler OnRemoteVideoTransportStats;
+        public event OnRemoteVideoTransportStatsHandler OnRemoteVideoTransportStats;
 
-        public OnRemoteAudioTransportStatsHandler OnRemoteAudioTransportStats;
+        public event OnRemoteAudioTransportStatsHandler OnRemoteAudioTransportStats;
 
-        public OnTranscodingUpdatedHandler OnTranscodingUpdated;
+        public event OnTranscodingUpdatedHandler OnTranscodingUpdated;
 
-        public OnAudioDeviceVolumeChangedHandler OnAudioDeviceVolumeChanged;
+        public event OnAudioDeviceVolumeChangedHandler OnAudioDeviceVolumeChanged;
 
-        public OnMediaEngineStartCallSuccessHandler OnMediaEngineStartCallSuccess;
+        public event OnMediaEngineStartCallSuccessHandler OnMediaEngineStartCallSuccess;
 
-        public OnMediaEngineLoadSuccessHandler OnMediaEngineLoadSuccess;
+        public event OnMediaEngineLoadSuccessHandler OnMediaEngineLoadSuccess;
 
-        public OnAudioMixingStateChangedHandler OnAudioMixingStateChanged;
+        public event OnAudioMixingStateChangedHandler OnAudioMixingStateChanged;
 
-        public OnFirstRemoteAudioDecodedHandler OnFirstRemoteAudioDecoded;
+        public event OnFirstRemoteAudioDecodedHandler OnFirstRemoteAudioDecoded;
 
-        public OnLocalVideoStateChangedHandler OnLocalVideoStateChanged;
+        public event OnLocalVideoStateChangedHandler OnLocalVideoStateChanged;
 
-        public OnRtmpStreamingStateChangedHandler OnRtmpStreamingStateChanged;
+        public event OnRtmpStreamingStateChangedHandler OnRtmpStreamingStateChanged;
 
-        public OnNetworkTypeChangedHandler OnNetworkTypeChanged;
+        public event OnNetworkTypeChangedHandler OnNetworkTypeChanged;
 
-        public OnLastmileProbeResultHandler OnLastmileProbeResult;
+        public event OnLastmileProbeResultHandler OnLastmileProbeResult;
 
-        public OnLocalUserRegisteredHandler OnLocalUserRegistered;
+        public event OnLocalUserRegisteredHandler OnLocalUserRegistered;
 
-        public OnUserInfoUpdatedHandler OnUserInfoUpdated;
+        public event OnUserInfoUpdatedHandler OnUserInfoUpdated;
 
-        public OnLocalAudioStateChangedHandler OnLocalAudioStateChanged;
+        public event OnLocalAudioStateChangedHandler OnLocalAudioStateChanged;
 
-        public OnRemoteAudioStateChangedHandler OnRemoteAudioStateChanged;
+        public event OnRemoteAudioStateChangedHandler OnRemoteAudioStateChanged;
 
-        public OnLocalAudioStatsHandler OnLocalAudioStats;
+        public event OnLocalAudioStatsHandler OnLocalAudioStats;
 
-        public OnChannelMediaRelayEventHandler OnChannelMediaRelayEvent;
+        public event OnChannelMediaRelayEventHandler OnChannelMediaRelayEvent;
 
-        public OnChannelMediaRelayStateChangedHandler OnChannelMediaRelayStateChanged;
+        public event OnChannelMediaRelayStateChangedHandler OnChannelMediaRelayStateChanged;
 
         #endregion  set callback here for user
 

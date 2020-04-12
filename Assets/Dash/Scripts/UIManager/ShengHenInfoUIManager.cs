@@ -1,5 +1,5 @@
 using System;
-using Dash.Scripts.Assets;
+using Dash.Scripts.Config;
 using Dash.Scripts.GamePlay;
 using Dash.Scripts.GamePlay.Info;
 using Dash.Scripts.Network.Cloud;

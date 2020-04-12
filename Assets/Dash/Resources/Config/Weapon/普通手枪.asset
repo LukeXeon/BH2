@@ -21,7 +21,7 @@ MonoBehaviour:
     attachments:
     - name: qingshouqiang
       sprite: {fileID: 21300000, guid: 4543bd955bc985b4bba21a53b036fa22, type: 3}
-  weaponType: 3
+  weaponType: {fileID: 11400000, guid: ed8a641d0da0ffb47876b8f0da42870d, type: 2}
   gongJiLi: 0
   sheSu: 0
   gongJiLi2: 0

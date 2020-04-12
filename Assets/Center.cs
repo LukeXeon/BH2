@@ -1,19 +1,13 @@
-﻿using UnityEngine;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using UnityEngine;
 
-[ExecuteInEditMode]
 public class Center : MonoBehaviour
 {
-    public MeshRenderer target;
-
-
-    private void Update()
+    public void Test()
     {
-        if (target)
-        {
-            var bounds = target.bounds;
-            var transform1 = target.transform;
-            transform1.localPosition = transform.rotation * bounds.extents;
-            transform1.localRotation = Quaternion.identity;
-        }
+        Task.Run((() => Thread.Sleep(10000)))
+            .ContinueWith((t) => Debug.Log("1111"), TaskScheduler.FromCurrentSynchronizationContext());
     }
+    
 }

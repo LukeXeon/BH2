@@ -41,5 +41,12 @@ namespace Dash.Scripts.Network.Cloud
             get { return GetProperty<int>(nameof(tiLi)); }
             set { SetProperty(value, nameof(tiLi)); }
         }
+
+        [AVFieldName(nameof(nameInGame))]
+        public string nameInGame
+        {
+            get { return GetProperty<string>(nameof(nameInGame)); }
+            set { SetProperty(value, nameof(nameInGame)); }
+        }
     }
 }

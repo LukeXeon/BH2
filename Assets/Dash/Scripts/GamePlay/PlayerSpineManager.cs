@@ -1,4 +1,4 @@
-using Dash.Scripts.Assets;
+using Dash.Scripts.Config;
 using Spine;
 using Spine.Unity;
 using UnityEngine;
@@ -12,7 +12,7 @@ namespace Dash.Scripts.GamePlay
         private MainState? previousMainState;
         private string previousWeaponTypeName;
         public MainState mainState;
-        public WeaponType weaponType = WeaponType.QingShouQiang;
+        public string weaponType = "qingshouqiang";
 
         public enum FaceState
         {
@@ -39,7 +39,7 @@ namespace Dash.Scripts.GamePlay
 
         private void Update()
         {
-            var myWeaponTypeName = WeaponTypeEx.weaponNames[this.weaponType];
+            var myWeaponTypeName = weaponType;
             var newMainState = mainState;
 
             if (newMainState != previousMainState || myWeaponTypeName != previousWeaponTypeName)
@@ -67,7 +67,7 @@ namespace Dash.Scripts.GamePlay
 
         public void TaoQiang()
         {
-            var myWeaponTypeName = WeaponTypeEx.weaponNames[this.weaponType];
+            var myWeaponTypeName = weaponType;
             var myStateName = myWeaponTypeName;
             if (mainState == MainState.Run)
             {
@@ -85,7 +85,7 @@ namespace Dash.Scripts.GamePlay
 
         public void KaiQiang()
         {
-            var myWeaponTypeName = WeaponTypeEx.weaponNames[this.weaponType];
+            var myWeaponTypeName = weaponType;
             var myStateName = myWeaponTypeName;
             if (mainState == MainState.Run)
             {

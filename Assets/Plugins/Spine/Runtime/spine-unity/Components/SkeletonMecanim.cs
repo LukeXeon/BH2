@@ -470,15 +470,18 @@ namespace Spine.Unity {
 				interruptingClipTimeAddition = layerInfos.isLastFrameOfInterruption ? layerInfos.interruptingClipTimeAddition : 0;
 			}
 
-			Spine.Animation GetAnimation (AnimationClip clip) {
+			Spine.Animation GetAnimation(AnimationClip clip)
+			{
 				int clipNameHashCode;
-				if (!clipNameHashCodeTable.TryGetValue(clip, out clipNameHashCode)) {
+				if (!clipNameHashCodeTable.TryGetValue(clip, out clipNameHashCode))
+				{
 					clipNameHashCode = clip.name.GetHashCode();
 					clipNameHashCodeTable.Add(clip, clipNameHashCode);
 				}
+
 				Spine.Animation animation;
 				animationTable.TryGetValue(clipNameHashCode, out animation);
-				return animation;
+				return animation ?? AnimationState.EmptyAnimation;
 			}
 
 			class AnimationClipEqualityComparer : IEqualityComparer<AnimationClip> {

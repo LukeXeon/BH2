@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
 using Dash.Scripts.Network.Cloud;
+using Dash.Scripts.UI;
+using Dash.Scripts.UIManager.ItemUIManager;
 using Michsky.UI.ModernUIPack;
 using UnityEngine;
 using UnityEngine.UI;
@@ -49,31 +51,31 @@ namespace Dash.Scripts.UIManager
                             {
                                 animator.Play("Result-in");
                             }));
-                        LuckCardUIManager luckCardUiManager = null;
+                        LuckCardItemUIManager luckCardUiManager = null;
                         switch (r.resultType)
                         {
                             case LuckDrawResult.Type.UnLockPlayer:
                             {
                                 luckCardUiManager = Instantiate(playerUnLockCardPrefab, content.transform)
-                                    .GetComponent<LuckCardUIManager>();
+                                    .GetComponent<LuckCardItemUIManager>();
                             }
                                 break;
                             case LuckDrawResult.Type.AddPlayerExp:
                             {
                                 luckCardUiManager = Instantiate(playerAddExpCardPrefab, content.transform)
-                                    .GetComponent<LuckCardUIManager>();
+                                    .GetComponent<LuckCardItemUIManager>();
                             }
                                 break;
                             case LuckDrawResult.Type.Weapon:
                             {
                                 luckCardUiManager = Instantiate(weaponCardPrefab, content.transform)
-                                    .GetComponent<LuckCardUIManager>();
+                                    .GetComponent<LuckCardItemUIManager>();
                             }
                                 break;
                             case LuckDrawResult.Type.ShengHen:
                             {
                                 luckCardUiManager = Instantiate(shengHenPrefab, content.transform)
-                                    .GetComponent<LuckCardUIManager>();
+                                    .GetComponent<LuckCardItemUIManager>();
                             }
                                 break;
                         }

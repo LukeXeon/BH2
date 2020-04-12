@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Dash.Scripts.Assets;
+using Dash.Scripts.Config;
 using Dash.Scripts.Network.Cloud;
 
 namespace Dash.Scripts.GamePlay.Info

@@ -1,5 +1,5 @@
 using System;
-using Dash.Scripts.Assets;
+using Dash.Scripts.Config;
 using Dash.Scripts.Network.Cloud;
 using UnityEngine;
 using UnityEngine.UI;

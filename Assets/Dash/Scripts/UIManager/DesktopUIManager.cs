@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using Dash.Scripts.Network.Cloud;
+using Dash.Scripts.UI;
 using Michsky.UI.ModernUIPack;
 using UnityEngine;
 using UnityEngine.UI;
@@ -22,6 +23,8 @@ namespace Dash.Scripts.UIManager
 
         public AudioSource live2DAudioSource;
 
+        public AudioSource backgroundMusic;
+
         public AudioClip[] live2DAudioClips;
 
         public GameObject desktop;
@@ -34,9 +37,9 @@ namespace Dash.Scripts.UIManager
 
         public Button openCharacters;
 
-        [Header("PlayWay")] public Animator playWayWindow;
+        [Header("GuanQia")] public GuanQiaUIManager GuanQia;
 
-        public Button playWayBack;
+        public Button guanQiaBack;
 
         [Header("BuJi")] public Animator buJiAnimator;
 
@@ -91,8 +94,10 @@ namespace Dash.Scripts.UIManager
             });
             openPlayWay.onClick.AddListener(() =>
             {
-                playWayWindow.Play("Fade-in");
-                WaitAnimFinish(playWayWindow);
+                GuanQia.Open();
+                live2DAudioSource.Stop();
+                backgroundMusic.Stop();
+                desktopRoot.SetActive(false);
             });
             openBuJi.onClick.AddListener(() =>
             {
@@ -105,10 +110,13 @@ namespace Dash.Scripts.UIManager
                 WaitAnimFinish(zhuangBeiManager.animator);
             });
             //playWay
-            playWayBack.onClick.AddListener(() =>
+            guanQiaBack.onClick.AddListener(() =>
             {
-                CancelWaitFinish();
-                playWayWindow.Play("Fade-out");
+                GuanQia.Close();
+                desktopRoot.SetActive(true);
+                SetRandomLiveMotion();
+                backgroundMusic.time = 0;
+                backgroundMusic.Play();
             });
             //BuJi
             buJiBack.onClick.AddListener(() =>
@@ -135,11 +143,11 @@ namespace Dash.Scripts.UIManager
         {
             if (waitAnimCoroutine != null)
             {
-                desktopRoot.SetActive(true);
-                SetRandomLiveMotion();
                 StopCoroutine(waitAnimCoroutine);
                 waitAnimCoroutine = null;
             }
+            desktopRoot.SetActive(true);
+            SetRandomLiveMotion();
         }
 
         private void WaitAnimFinish(Animator animator)

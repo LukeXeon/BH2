@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
-using Dash.Scripts.Assets;
+using Dash.Scripts.Config;
 using Spine;
 using Spine.Unity.AttachmentTools;
 using UnityEngine;
@@ -18,7 +18,7 @@ namespace Dash.Scripts.GamePlay.Spine
             List<SpineReplaceInfo> li = new List<SpineReplaceInfo>();
             foreach (var s in item.slots)
             {
-                var ss = GenerateSpineReplaceInfo(item.weaponType, s, asset);
+                var ss = GenerateSpineReplaceInfo(item.weaponType.matchName, s, asset);
                 li.AddRange(ss);
             }
 
@@ -26,7 +26,7 @@ namespace Dash.Scripts.GamePlay.Spine
         }
 
         private static List<SpineReplaceInfo> GenerateSpineReplaceInfo(
-            WeaponType type,
+            string type,
             WeaponInfoAsset.SlotItem item,
             Skeleton asset
         )
@@ -37,7 +37,7 @@ namespace Dash.Scripts.GamePlay.Spine
         }
 
         private static SpineReplaceInfo GenerateSpineReplaceInfo(
-            WeaponType type,
+            string type,
             WeaponInfoAsset.AttachmentItem item,
             Skeleton asset,
             int slotIndex
@@ -55,7 +55,7 @@ namespace Dash.Scripts.GamePlay.Spine
                     y = 0,
                     width = w,
                     height = h
-                }, WeaponTypeEx.offsets[type]?? new Vector2(0.5f,0.5f),
+                }, GameInfoManager.weaponTypeTable[type]?.offset ?? new Vector2(0.5f, 0.5f),
                 100,
                 1,
                 SpriteMeshType.FullRect

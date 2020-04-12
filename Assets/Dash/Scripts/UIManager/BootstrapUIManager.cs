@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using Dash.Scripts.Network.Cloud;
+using Dash.Scripts.UI;
 using LeanCloud;
 using Michsky.UI.ModernUIPack;
 using Photon.Pun;
@@ -130,7 +131,6 @@ namespace Dash.Scripts.UIManager
                         notifySucceed.Show("登录成功", "您已成功登录");
                         windowManager.CloseWindow();
                         yiJingDengLuRoot.SetActive(true);
-                        ConnectToMaster();
                         ClearPrefs();
                         PlayerPrefs.SetString("password", p);
                         PlayerPrefs.SetString("username", u);
@@ -194,7 +194,6 @@ namespace Dash.Scripts.UIManager
                                         notifySucceed.Show("登录成功", "您已成功登录");
                                         windowManager.CloseWindow();
                                         yiJingDengLuRoot.SetActive(true);
-                                        ConnectToMaster();
                                         ClearPrefs();
                                         PlayerPrefs.SetString("token", t);
                                         PlayerPrefs.Save();
@@ -245,7 +244,6 @@ namespace Dash.Scripts.UIManager
                             else
                             {
                                 yiJingDengLuRoot.SetActive(true);
-                                ConnectToMaster();
                             }
                         });
                 }
@@ -260,21 +258,13 @@ namespace Dash.Scripts.UIManager
                         else
                         {
                             yiJingDengLuRoot.SetActive(true);
-                            ConnectToMaster();
                         }
                     });
                 }
             }
         }
 
-        private void ConnectToMaster()
-        {
-            PhotonNetwork.AuthValues = new AuthenticationValues
-            {
-                UserId = AVUser.CurrentUser.ObjectId
-            };
-            PhotonNetwork.ConnectUsingSettings();
-        }
+
         
         private IEnumerator ShowWindow1()
         {
@@ -300,8 +290,14 @@ namespace Dash.Scripts.UIManager
             waitWindow.gameObject.SetActive(false);
         }
 
+
         public IEnumerator LoadNext()
         {
+            PhotonNetwork.AuthValues = new AuthenticationValues
+            {
+                UserId = AVUser.CurrentUser.ObjectId
+            };
+            PhotonNetwork.ConnectUsingSettings();
             progressBarRoot.SetActive(true);
             loadSceneAsync = SceneManager.LoadSceneAsync("Desktop");
             Debug.Log("Load Desktop");
@@ -316,32 +312,16 @@ namespace Dash.Scripts.UIManager
 
             progressBar.fillAmount = 1;
             progressBarText.text = 100 + "%";
-            yield return null;
-            loadSceneAsync.allowSceneActivation = PhotonNetwork.IsConnected;
-        }
-
-        public override void OnConnectedToMaster()
-        {
-            if (loadSceneAsync != null)
-            {
-                loadSceneAsync.allowSceneActivation = true;
-            }
+            yield return new WaitForEndOfFrame();
+            progressBarText.text = "正在连接游戏主服务器";
+            yield return new WaitUntil(() => PhotonNetwork.NetworkClientState == ClientState.ConnectedToMasterServer);
+            loadSceneAsync.allowSceneActivation = true;
         }
 
         public IEnumerator WaitFinish(float s, Action action)
         {
             yield return new WaitForSeconds(s);
             action();
-        }
-    }
-
-    public static class Notifications
-    {
-        public static void Show(this NotificationManager v, string text, string text2)
-        {
-            v.transform.Find("Content/Title").GetComponent<TextMeshProUGUI>().text = text;
-            v.transform.Find("Content/Description").GetComponent<TextMeshProUGUI>().text = text2;
-            v.OpenNotification();
         }
     }
 }

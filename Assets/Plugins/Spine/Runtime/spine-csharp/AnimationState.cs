@@ -40,7 +40,7 @@ namespace Spine {
 	/// See <a href='http://esotericsoftware.com/spine-applying-animations/'>Applying Animations</a> in the Spine Runtimes Guide.</para>
 	/// </summary>
 	public class AnimationState {
-		static readonly Animation EmptyAnimation = new Animation("<empty>", new ExposedList<Timeline>(), 0);
+		internal static readonly Animation EmptyAnimation = new Animation("<empty>", new ExposedList<Timeline>(), 0);
 
 		/// 1) A previously applied timeline has set this property.<para />
 		/// Result: Mix from the current pose to the timeline pose.

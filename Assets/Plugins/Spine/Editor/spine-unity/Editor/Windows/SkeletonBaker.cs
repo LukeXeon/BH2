@@ -129,7 +129,7 @@ namespace Spine.Unity.Editor {
 					}
 				}
 			}
-
+			
 			foreach (var animations in data.Animations) {
 				string animationName = animations.Name; // Review for unsafe names. Requires runtime implementation too.
 				spineAnimationTable.Add(animationName, animations);
@@ -155,10 +155,13 @@ namespace Spine.Unity.Editor {
 						ParseEventTimeline((EventTimeline)t, clip, SendMessageOptions.DontRequireReceiver);
 				}
 
+				controller.AddMotion(clip);
+
 				EditorUtility.SetDirty(clip);
 				unityAnimationClipTable.Remove(animationName);
 			}
-
+			
+			
 			foreach (var clip in unityAnimationClipTable.Values) {
 				AnimationClip.DestroyImmediate(clip, true);
 			}

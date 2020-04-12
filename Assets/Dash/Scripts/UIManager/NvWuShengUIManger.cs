@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections;
 using System.Linq;
-using Dash.Scripts.Assets;
+using Dash.Scripts.Config;
 using Dash.Scripts.GamePlay;
 using Dash.Scripts.GamePlay.Info;
 using Dash.Scripts.GamePlay.Spine;
 using Dash.Scripts.Network.Cloud;
+using Dash.Scripts.UI;
 using Dash.Scripts.UIManager.ItemUIManager;
 using Michsky.UI.ModernUIPack;
 using Spine.Unity;
@@ -205,13 +206,13 @@ namespace Dash.Scripts.UIManager
 
                 if (withAnim)
                 {
-                    TiaoQiang(winfo.weaponType);
+                    TiaoQiang(winfo.weaponType.matchName);
                 }
                 else
                 {
                     skeletonAnimation.AnimationState.SetAnimation(
                         0,
-                        WeaponTypeEx.weaponNames[winfo.weaponType] + "_idle",
+                        winfo.weaponType.matchName + "_idle",
                         true
                     );
                 }
@@ -379,20 +380,20 @@ namespace Dash.Scripts.UIManager
             action();
         }
 
-        private void TiaoQiang(WeaponType weaponType)
+        private void TiaoQiang(string weaponType)
         {
             StartCoroutine(TiaoQiang0(weaponType));
         }
 
-        public IEnumerator TiaoQiang0(WeaponType weaponType)
+        public IEnumerator TiaoQiang0(string weaponType)
         {
             yield return new WaitForEndOfFrame();
             var track = skeletonAnimation.AnimationState.SetAnimation(0,
-                WeaponTypeEx.weaponNames[weaponType] + "_taoqiang", false);
+                weaponType + "_taoqiang", false);
             track.AttachmentThreshold = 1f;
             track.MixDuration = 0f;
             var track0 =
-                skeletonAnimation.AnimationState.AddAnimation(0, WeaponTypeEx.weaponNames[weaponType] + "_idle", true, 0);
+                skeletonAnimation.AnimationState.AddAnimation(0, weaponType + "_idle", true, 0);
             track0.MixDuration = 0.2f;
         }
 
