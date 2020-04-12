@@ -77,14 +77,7 @@ namespace Dash.Scripts.UIManager
                 });
             });
         }
-
-
-        public override void OnJoinRandomFailed(short returnCode, string message)
-        {
-            EndWaitNetWork();
-            notifyError.Show("匹配失败", "暂时没有可用的队伍");
-        }
-
+        
         public void Open()
         {
             animator.Play("Fade-in");
@@ -148,6 +141,7 @@ namespace Dash.Scripts.UIManager
         }
 
         
+        
         private void UpdateCachedRoomList(List<RoomInfo> roomList)
         {
             foreach (RoomInfo info in roomList)
@@ -176,6 +170,12 @@ namespace Dash.Scripts.UIManager
             }
         }
 
+        public override void OnJoinRandomFailed(short returnCode, string message)
+        {
+            EndWaitNetWork();
+            notifyError.Show("匹配失败", "暂时没有可用的队伍");
+        }
+        
         private void BeginWaitNetwork()
         {
             loadingMask.gameObject.SetActive(true);

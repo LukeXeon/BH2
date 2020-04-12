@@ -40,10 +40,6 @@ namespace Dash.Scripts.UIManager
             back.onClick.AddListener(() =>
             {
                 PhotonNetwork.LeaveRoom();
-                if (PhotonNetwork.InLobby)
-                {
-                    PhotonNetwork.JoinLobby();
-                }
             });
             ready.onClick.AddListener(() =>
             {

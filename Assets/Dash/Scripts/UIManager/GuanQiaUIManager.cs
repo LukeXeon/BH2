@@ -1,5 +1,6 @@
 ﻿using System;
 using Dash.Scripts.Config;
+using Photon.Pun;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -18,12 +19,19 @@ namespace Dash.Scripts.UIManager
         public Image image;
         public TextMeshProUGUI textContent;
         public DuiWuListUIManager duiWuList;
+        public Animator loadingMask;
 
         private void Awake()
         {
+            piPei.onClick.AddListener(() =>
+            {
+                BeginWaitNetwork();
+                PhotonNetwork.JoinRandomRoom();
+            });
             duiWu.onClick.AddListener(() => { duiWuList.Open(); });
         }
 
+        
         private int currentId;
 
         public void Open()
@@ -56,6 +64,17 @@ namespace Dash.Scripts.UIManager
             {
                 textContent.text = "";
             }
+        }
+
+        private void BeginWaitNetwork()
+        {
+            loadingMask.gameObject.SetActive(true);
+            loadingMask.Play("Fade-in");
+        }
+
+        private void EndWaitNetWork()
+        {
+            loadingMask.gameObject.SetActive(false);
         }
     }
 }
