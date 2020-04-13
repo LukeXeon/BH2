@@ -3,7 +3,7 @@ using UnityEngine;
 namespace Dash.Scripts.Config
 {
     [CreateAssetMenu(fileName = "SDKInfo", menuName = "Info/SDK")]
-    public class GameSDKInfoAsset : ScriptableObject
+    public class GameBootInfoAsset : ScriptableObject
     {
         [Header("LeanCloud")] public string leanCloudId;
 

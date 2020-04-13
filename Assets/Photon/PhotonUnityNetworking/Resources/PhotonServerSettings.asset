@@ -37,6 +37,10 @@ MonoBehaviour:
   - Fire
   - RespawnSpaceship
   - OnClientLoadScene
+  - OnClientLoaded
+  - NotifyClientLoadScene
+  - BeginLoadScene
+  - SceneLoaded
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

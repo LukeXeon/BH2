@@ -1,6 +1,6 @@
 using System;
 using System.Collections;
-using Dash.Scripts.Network.Cloud;
+using Dash.Scripts.Cloud;
 using Dash.Scripts.UI;
 using Dash.Scripts.UIManager.ItemUIManager;
 using Michsky.UI.ModernUIPack;

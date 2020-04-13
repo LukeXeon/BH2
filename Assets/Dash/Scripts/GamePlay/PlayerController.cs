@@ -1,37 +1,71 @@
+using Dash.Scripts.Config;
+using Photon.Pun;
+using Spine.Unity;
 using UnityEngine;
 
 namespace Dash.Scripts.GamePlay
 {
-    public class PlayerController : MonoBehaviour
+    public class PlayerController : MonoBehaviourPunCallbacks, IPunObservable
     {
         public float speed;
-        public PlayerSpineManager manager;
-        public new Rigidbody rigidbody;
+        public PoseManager poseManager;
+        public SkeletonMecanim mecanim;
+        public Animator animator;
+        private static readonly int IS_RUN = Animator.StringToHash("is_run");
+        [Header("Test")] public WeaponInfoAsset weapon;
+        public bool inTest;
+
+        private int flipX = 1;
+
+        private void Awake()
+        {
+            poseManager.SetPose(weapon);
+        }
 
         private void FixedUpdate()
         {
-            var h = ETCInput.GetAxis("Horizontal");
-            var v = ETCInput.GetAxis("Vertical");
-            var move = speed * Time.fixedDeltaTime * new Vector3(Mathf.Abs(h) > 0 ? 1 * Mathf.Sign(h) : 0, 0,
-                           Mathf.Abs(v) > 0 ? Mathf.Sign(v) : 0);
-            if (move != Vector3.zero)
+            if (photonView.IsMine || Application.isEditor && inTest)
             {
-                manager.mainState = PlayerSpineManager.MainState.Run;
+                var h = ETCInput.GetAxis("Horizontal");
+                var v = ETCInput.GetAxis("Vertical");
+                var move = speed * Time.fixedDeltaTime * new Vector3(Mathf.Abs(h) > 0 ? 1 * Mathf.Sign(h) : 0, 0,
+                               Mathf.Abs(v) > 0 ? Mathf.Sign(v) : 0);
+                if (move != Vector3.zero)
+                {
+                    animator.SetBool(IS_RUN, true);
+                }
+                else
+                {
+                    animator.SetBool(IS_RUN, false);
+                }
+
+                if (h > 0)
+                {
+                    flipX = 1;
+                }
+                else if (h < 0)
+                {
+                    flipX = -1;
+                }
+
+                //transform.position += move;
+                GetComponent<Rigidbody>().MovePosition(transform.position += move);
+            }
+
+
+            mecanim.Skeleton.ScaleX = flipX;
+        }
+
+        public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+        {
+            if (stream.IsWriting)
+            {
+                stream.SendNext(flipX);
             }
             else
             {
-                manager.mainState = PlayerSpineManager.MainState.Idle;
+                flipX = (int) stream.ReceiveNext();
             }
-
-            if (h > 0)
-            {
-                manager.flip = false;
-            }
-            else if (h < 0)
-            {
-                manager.flip = true;
-            }
-            rigidbody.MovePosition(rigidbody.position + move);
         }
     }
 }

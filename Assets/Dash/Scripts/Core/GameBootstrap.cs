@@ -1,34 +1,27 @@
 ﻿using System.Linq;
 using agora_gaming_rtc;
-using Dash.Scripts.Network.Cloud;
+using Dash.Scripts.Cloud;
+using Dash.Scripts.Config;
+using Dash.Scripts.GamePlay;
 using LeanCloud;
 using Photon.Pun;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Android;
 
-namespace Dash.Scripts.Config
+namespace Dash.Scripts.Core
 {
-    public class GameSDKManager : MonoBehaviour
+    public static class GameBootstrap
     {
-        public static GameSDKManager instance;
-
-        [HideInInspector] public GameSDKInfoAsset info;
-
-        private Application.LogCallback cb;
+        public static GameBootInfoAsset info;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-        public static void LoadSDKManager()
+        private static void LoadBoot()
         {
-            instance = new GameObject(typeof(GameSDKManager).Name, typeof(GameSDKManager))
-                .GetComponent<GameSDKManager>();
-        }
-
-        private void Awake()
-        {
+            Debug.Log("Boot Loaded");
             Application.targetFrameRate = 60;
             PhotonNetwork.LogLevel = Application.isEditor ? PunLogLevel.Full : PunLogLevel.ErrorsOnly;
-            info = Resources.LoadAll<GameSDKInfoAsset>("Config/Game").Single();
+            info = Resources.LoadAll<GameBootInfoAsset>("Config/Game").Single();
             AVClient.Initialize(info.leanCloudId, info.leanCloudKey, info.leanCloudUrl);
             AVObject.RegisterSubclass<EInUseWeapon>();
             AVObject.RegisterSubclass<EInUseShengHen>();
@@ -36,7 +29,6 @@ namespace Dash.Scripts.Config
             AVObject.RegisterSubclass<EPlayer>();
             AVObject.RegisterSubclass<EShengHen>();
             AVObject.RegisterSubclass<EWeapon>();
-            DontDestroyOnLoad(this.gameObject);
             foreach (string permission in new[] {Permission.Microphone, Permission.Camera})
             {
                 if (!Permission.HasUserAuthorizedPermission(permission))
@@ -46,22 +38,28 @@ namespace Dash.Scripts.Config
             }
 
             var engine = IRtcEngine.GetEngine(info.agoraAppId);
+            PhotonNetwork.PrefabPool = new GameplayPrefabPool();
+            engine.SetChannelProfile(CHANNEL_PROFILE.CHANNEL_PROFILE_GAME);
             if (Application.isEditor)
             {
                 Application.quitting += IRtcEngine.Destroy;
             }
-
-            engine.SetChannelProfile(CHANNEL_PROFILE.CHANNEL_PROFILE_GAME);
-            cb = (a, b, c) =>
+            else
             {
-                if (c == LogType.Exception)
+                void Callback(string a, string b, LogType c)
                 {
-                    Application.logMessageReceived -= cb;
-                    Instantiate(Resources.Load<GameObject>("Prefab/UI/Error/Error Canvas"))
-                            .GetComponentInChildren<TextMeshProUGUI>().text = a + " " + b;
+                    if (c == LogType.Exception)
+                    {
+                        Application.logMessageReceived -= Callback;
+                        var go = Object.Instantiate(Resources.Load<GameObject>("Prefab/UI/Error/Error Canvas"));
+                        go.GetComponentInChildren<TextMeshProUGUI>()
+                                .text = a + " " + b;
+                        Object.DontDestroyOnLoad(go);
+                    }
                 }
-            };
-            Application.logMessageReceived += cb;
+
+                Application.logMessageReceived += Callback;
+            }
         }
     }
 }

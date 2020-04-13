@@ -731,8 +731,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b8c4a61274f60b4ea5fb4299cfdbf14, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ShowLayerWeightsInspector: 1
-  ShowParameterInspector: 1
+  ShowLayerWeightsInspector: 0
+  ShowParameterInspector: 0
   m_SynchronizeParameters:
   - Type: 4
     SynchronizeType: 2
@@ -753,11 +753,11 @@ MonoBehaviour:
     SynchronizeType: 0
     Name: revive
   m_SynchronizeLayers:
-  - SynchronizeType: 2
+  - SynchronizeType: 0
     LayerIndex: 0
-  - SynchronizeType: 2
+  - SynchronizeType: 0
     LayerIndex: 1
-  - SynchronizeType: 2
+  - SynchronizeType: 0
     LayerIndex: 2
 --- !u!114 &1859304636
 MonoBehaviour:
@@ -774,10 +774,10 @@ MonoBehaviour:
   ObservedComponentsFoldoutOpen: 1
   Group: 0
   prefixField: -1
-  Synchronization: 0
+  Synchronization: 3
   OwnershipTransfer: 0
   ObservedComponents:
-  - {fileID: 0}
+  - {fileID: 1859304635}
   viewIdField: 1
   InstantiationId: 0
   isRuntimeInstantiated: 0

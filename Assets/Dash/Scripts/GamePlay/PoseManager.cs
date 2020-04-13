@@ -9,7 +9,7 @@ using UnityEngine;
 
 namespace Dash.Scripts.GamePlay
 {
-    public class PlayerPoseManager : MonoBehaviour
+    public class PoseManager : MonoBehaviour
     {
         [Header("Display")] public Animator animator;
         public SkeletonMecanim skeletonMecanim;
@@ -60,7 +60,7 @@ namespace Dash.Scripts.GamePlay
             return controller;
         }
 
-        public void UpdatePose(WeaponInfoAsset weaponInfoAsset)
+        public void SetPose(WeaponInfoAsset weaponInfoAsset)
         {
             animator.runtimeAnimatorController = GetController(weaponInfoAsset.weaponType.matchName);
             var list = SpineUtils.GenerateSpineReplaceInfo(weaponInfoAsset, skeletonMecanim.Skeleton);

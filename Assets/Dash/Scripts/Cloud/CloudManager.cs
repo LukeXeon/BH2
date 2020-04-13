@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Dash.Scripts.Config;
+using Dash.Scripts.Core;
 using LeanCloud;
 using Newtonsoft.Json;
 using UnityEngine;
@@ -11,7 +12,7 @@ using UnityEngine.Networking;
 using Random = UnityEngine.Random;
 using Url = Flurl.Url;
 
-namespace Dash.Scripts.Network.Cloud
+namespace Dash.Scripts.Cloud
 {
     public static class CloudManager
     {
@@ -23,7 +24,7 @@ namespace Dash.Scripts.Network.Cloud
 
         public static string GetLogInUrl()
         {
-            var info = GameSDKManager.instance.info;
+            var info = GameBootstrap.info;
             var login = new Url("https://github.com/login/oauth/authorize");
             login.SetQueryParam("client_id", info.githubClientId);
             login.SetQueryParam("redirect_uri", GetCallbackUrl());
@@ -444,7 +445,7 @@ namespace Dash.Scripts.Network.Cloud
 
         public static HttpListener GetGithubUrlAndWaitToken(Action<string, string> callback)
         {
-            var info = GameSDKManager.instance.info;
+            var info = GameBootstrap.info;
             var http = new HttpListener {AuthenticationSchemes = AuthenticationSchemes.Anonymous};
             http.Prefixes.Add(GetCallbackUrl());
             http.Start();

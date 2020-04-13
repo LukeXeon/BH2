@@ -1,9 +1,9 @@
 using LeanCloud;
 
-namespace Dash.Scripts.Network.Cloud
+namespace Dash.Scripts.Cloud
 {
-    [AVClassName("InUseShengHen")]
-    public class EInUseShengHen: AVObject
+    [AVClassName("InUseWeapon")]
+    public class EInUseWeapon : AVObject
     {
         [AVFieldName(nameof(player))]
         public EPlayer player
@@ -20,11 +20,11 @@ namespace Dash.Scripts.Network.Cloud
         }
 
 
-        [AVFieldName(nameof(shengHen))]
-        public EShengHen shengHen
+        [AVFieldName(nameof(weapon))]
+        public EWeapon weapon
         {
-            get { return GetProperty<EShengHen>(nameof(shengHen)); }
-            set { SetProperty(value, nameof(shengHen)); }
+            get { return GetProperty<EWeapon>(nameof(weapon)); }
+            set { SetProperty(value, nameof(weapon)); }
         }
         
         [AVFieldName(nameof(user))]

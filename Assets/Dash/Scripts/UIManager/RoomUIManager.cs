@@ -1,8 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using agora_gaming_rtc;
 using Dash.Scripts.Config;
-using Dash.Scripts.Network.Cloud;
+using Dash.Scripts.Cloud;
 using Dash.Scripts.UIManager.ItemUIManager;
 using Michsky.UI.ModernUIPack;
 using Photon.Pun;
@@ -32,15 +33,14 @@ namespace Dash.Scripts.UIManager
         [Header("Asset")] public Color readyColor;
         public Color unReadyColor;
 
+        private readonly HashSet<int> loadedPlayers = new HashSet<int>();
+
         private readonly Dictionary<int, PlayerInRoomItemUIManager> noLocalPlayerItems =
             new Dictionary<int, PlayerInRoomItemUIManager>(3);
 
         private void Awake()
         {
-            back.onClick.AddListener(() =>
-            {
-                PhotonNetwork.LeaveRoom();
-            });
+            back.onClick.AddListener(() => { PhotonNetwork.LeaveRoom(); });
             ready.onClick.AddListener(() =>
             {
                 if (!PhotonNetwork.IsMasterClient)
@@ -69,19 +69,21 @@ namespace Dash.Scripts.UIManager
                 {
                     PhotonNetwork.CurrentRoom.IsOpen = false;
                     PhotonNetwork.CurrentRoom.IsVisible = false;
-                    StartCoroutine(LoadScene());
-                    photonView.RPC("OnClientLoadScene", RpcTarget.Others);
+                    photonView.RPC("BeginLoadScene", RpcTarget.All);
                 }
             });
             var rtcEngine = IRtcEngine.QueryEngine();
             rtcEngine.OnJoinChannelSuccess += OnJoinChannelSuccess;
             rtcEngine.OnError += OnError;
+            rtcEngine.DisableAudio();
+            rtcEngine.MuteLocalAudioStream(true);
             openYuYing.OnEvents.AddListener(() => { IRtcEngine.QueryEngine().EnableAudio(); });
             openYuYing.OffEvents.AddListener(() => { IRtcEngine.QueryEngine().DisableAudio(); });
             openMaiKeFeng.OnEvents.AddListener(() => { IRtcEngine.QueryEngine().MuteLocalAudioStream(true); });
             openMaiKeFeng.OffEvents.AddListener(() => { IRtcEngine.QueryEngine().MuteLocalAudioStream(false); });
             openYuYing.isOn = false;
             openMaiKeFeng.isOn = false;
+
         }
 
         private void OnError(int error, string msg)
@@ -260,13 +262,20 @@ namespace Dash.Scripts.UIManager
         }
 
         [PunRPC]
-        public void OnClientLoadScene()
+        public void SceneLoaded(int id)
+        {
+            loadedPlayers.Add(id);
+        }
+
+        [PunRPC]
+        public void BeginLoadScene()
         {
             StartCoroutine(LoadScene());
         }
 
         private IEnumerator LoadScene()
         {
+            loadedPlayers.Clear();
             PhotonNetwork.CurrentRoom.CustomProperties.TryGetValue("typeId", out var typeId);
             if (!(typeId is int))
             {
@@ -285,9 +294,12 @@ namespace Dash.Scripts.UIManager
             }
 
             progress.fillAmount = 1;
-            yield return null;
+            photonView.RPC("SceneLoaded", RpcTarget.All, PhotonNetwork.LocalPlayer.ActorNumber);
+            yield return new WaitUntil(() =>
+            {
+                return PhotonNetwork.PlayerList.All(i => loadedPlayers.Contains(i.ActorNumber));
+            });
             op.allowSceneActivation = true;
         }
-
     }
 }

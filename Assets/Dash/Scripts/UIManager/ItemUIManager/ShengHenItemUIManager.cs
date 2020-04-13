@@ -1,6 +1,6 @@
 using System;
 using Dash.Scripts.Config;
-using Dash.Scripts.Network.Cloud;
+using Dash.Scripts.Cloud;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;

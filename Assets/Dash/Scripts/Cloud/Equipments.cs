@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Dash.Scripts.Network.Cloud
+namespace Dash.Scripts.Cloud
 {
     public class Equipments
     {

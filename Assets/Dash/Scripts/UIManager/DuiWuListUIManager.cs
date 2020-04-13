@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using Dash.Scripts.Config;
-using Dash.Scripts.Network.Cloud;
+using Dash.Scripts.Cloud;
 using Dash.Scripts.UI;
 using Dash.Scripts.UIManager.ItemUIManager;
 using Michsky.UI.ModernUIPack;
@@ -33,6 +33,7 @@ namespace Dash.Scripts.UIManager
         [Header("Assets")] public GameObject roomItem;
         public GameObject typeItem;
         private Dictionary<string, RoomInfo> cachedRoomList;
+        private bool uiIsOpen;
 
         private void Awake()
         {
@@ -54,6 +55,7 @@ namespace Dash.Scripts.UIManager
                     PhotonNetwork.LeaveLobby();
                 }
 
+                uiIsOpen = false;
                 animator.Play("Fade-out");
             });
             randomJoin.onClick.AddListener(() =>
@@ -80,6 +82,7 @@ namespace Dash.Scripts.UIManager
         
         public void Open()
         {
+            uiIsOpen = true;
             animator.Play("Fade-in");
             if (!PhotonNetwork.InLobby)
             {
@@ -140,8 +143,14 @@ namespace Dash.Scripts.UIManager
             ClearRooms();
         }
 
-        
-        
+        public override void OnLeftRoom()
+        {
+            if (uiIsOpen && !PhotonNetwork.InLobby)
+            {
+                PhotonNetwork.JoinLobby();
+            }
+        }
+
         private void UpdateCachedRoomList(List<RoomInfo> roomList)
         {
             foreach (RoomInfo info in roomList)

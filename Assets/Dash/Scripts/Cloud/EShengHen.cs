@@ -1,6 +1,6 @@
 using LeanCloud;
 
-namespace Dash.Scripts.Network.Cloud
+namespace Dash.Scripts.Cloud
 {
     [AVClassName("ShengHen")]
     public class EShengHen : AVObject

@@ -1,4 +1,4 @@
-namespace Dash.Scripts.Network.Cloud
+namespace Dash.Scripts.Cloud
 {
     public class LuckDrawResult
     {

@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   typeId: 0
   displayName: "\u5929\u547D \u57232333\u7814\u7A76\u6240\uFF08BETA\uFF09"
-  sceneName: Gameplay1
+  sceneName: Level1
   music: {fileID: 8300000, guid: f7ff8b381782a554abe6421d39810ca6, type: 3}
   miaoShu: {fileID: 4900000, guid: 7fbcc35b4f9d0854592d8d46df6e484d, type: 3}
   image: {fileID: 21300000, guid: 5972eb0cdc4c6eb498fdf0e56014ca3a, type: 3}
