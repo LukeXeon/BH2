@@ -73,20 +73,27 @@ namespace Dash.Scripts.UIManager
             {
                 ShowWindowOnLoad();
                 audioSource.Play();
+                Destroy(videoPlayer.gameObject);
+                videoPlayer = null;
             }
             else
             {
                 PlayerPrefs.SetInt("first startup", 1);
+                var op = Resources.LoadAsync<VideoClip>("Video/BootVideo");
                 PlayerPrefs.Save();
                 videoPlayer.gameObject.SetActive(true);
-                videoPlayer.Prepare();
-                videoPlayer.prepareCompleted += p => { p.Play(); };
-                videoPlayer.loopPointReached += p =>
+                op.completed += delegate
                 {
-                    Destroy(videoPlayer.gameObject);
-                    videoPlayer = null;
-                    StartCoroutine(ShowWindow1());
-                    audioSource.Play();
+                    videoPlayer.clip = (VideoClip) op.asset;
+                    videoPlayer.Prepare();
+                    videoPlayer.prepareCompleted += p => p.Play();
+                    videoPlayer.loopPointReached += p =>
+                    {
+                        Destroy(videoPlayer.gameObject);
+                        videoPlayer = null;
+                        StartCoroutine(ShowWindow1());
+                        audioSource.Play();
+                    };
                 };
             }
 
@@ -131,9 +138,7 @@ namespace Dash.Scripts.UIManager
                         notifySucceed.Show("登录成功", "您已成功登录");
                         windowManager.CloseWindow();
                         yiJingDengLuRoot.SetActive(true);
-                        ClearPrefs();
-                        PlayerPrefs.SetString("password", p);
-                        PlayerPrefs.SetString("username", u);
+                        PlayerPrefs.SetString("token", AVUser.CurrentUser.SessionToken);
                         PlayerPrefs.Save();
         
                     }
@@ -156,7 +161,8 @@ namespace Dash.Scripts.UIManager
                     }
                     else
                     {
-                        ClearPrefs();
+                        PlayerPrefs.DeleteKey("token");
+                        PlayerPrefs.Save();
                         yiJingDengLuRoot.SetActive(false);
                         PhotonNetwork.Disconnect();
                         StartCoroutine(ShowWindow1());
@@ -194,8 +200,7 @@ namespace Dash.Scripts.UIManager
                                         notifySucceed.Show("登录成功", "您已成功登录");
                                         windowManager.CloseWindow();
                                         yiJingDengLuRoot.SetActive(true);
-                                        ClearPrefs();
-                                        PlayerPrefs.SetString("token", t);
+                                        PlayerPrefs.SetString("token", AVUser.CurrentUser.SessionToken);
                                         PlayerPrefs.Save();
                                     }
                                 });
@@ -211,61 +216,32 @@ namespace Dash.Scripts.UIManager
         }
 
 
-        public static void ClearPrefs()
-        {
-            PlayerPrefs.DeleteKey("password");
-            PlayerPrefs.DeleteKey("username");
-            PlayerPrefs.DeleteKey("token");
-            PlayerPrefs.Save();
-        }
-
 
         public void ShowWindowOnLoad()
         {
-            var u = PlayerPrefs.GetString("username");
-            var p = PlayerPrefs.GetString("password");
             var t = PlayerPrefs.GetString("token");
             windowManager.gameObject.SetActive(false);
-            if ((string.IsNullOrEmpty(u) || string.IsNullOrEmpty(p)) && string.IsNullOrEmpty(t))
+            if (string.IsNullOrEmpty(t))
             {
                 StartCoroutine(ShowWindow1());
             }
             else
             {
-                if (!string.IsNullOrEmpty(t))
+                CloudManager.LogInWithToken(t, e =>
                 {
-                    CloudManager.LogInWithGithub(t,
-                        e =>
-                        {
-                            if (e != null)
-                            {
-                                StartCoroutine(ShowWindow1());
-                            }
-                            else
-                            {
-                                yiJingDengLuRoot.SetActive(true);
-                            }
-                        });
-                }
-                else
-                {
-                    CloudManager.LogIn(u, p, e =>
+                    if (e != null)
                     {
-                        if (e != null)
-                        {
-                            StartCoroutine(ShowWindow1());
-                        }
-                        else
-                        {
-                            yiJingDengLuRoot.SetActive(true);
-                        }
-                    });
-                }
+                        StartCoroutine(ShowWindow1());
+                    }
+                    else
+                    {
+                        yiJingDengLuRoot.SetActive(true);
+                    }
+                });
             }
         }
 
 
-        
         private IEnumerator ShowWindow1()
         {
             windowManager.gameObject.SetActive(true);
@@ -298,6 +274,7 @@ namespace Dash.Scripts.UIManager
                 UserId = AVUser.CurrentUser.ObjectId
             };
             PhotonNetwork.ConnectUsingSettings();
+            
             progressBarRoot.SetActive(true);
             loadSceneAsync = SceneManager.LoadSceneAsync("Desktop");
             Debug.Log("Load Desktop");

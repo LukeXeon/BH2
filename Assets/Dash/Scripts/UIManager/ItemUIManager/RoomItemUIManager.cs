@@ -16,10 +16,10 @@ namespace Dash.Scripts.UIManager.ItemUIManager
         public void Apply(string name, int typeId, int[] iconTypeIds, Action callback)
         {
             roomByUser.name = name;
-            guanQiaMing.text = GameInfoManager.guanQiaInfoTable[typeId]?.name ?? "";
+            guanQiaMing.text = GameGlobalInfoManager.guanQiaInfoTable[typeId]?.name ?? "";
             for (var i = 0; i < iconTypeIds.Length; i++)
             {
-                playerItems[i].sprite = GameInfoManager.playerTable[iconTypeIds[i]].icon;
+                playerItems[i].sprite = GameGlobalInfoManager.playerTable[iconTypeIds[i]].icon;
             }
 
             jiaRu.onClick.AddListener(() => callback());

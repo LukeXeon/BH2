@@ -4,6 +4,7 @@ using System.Linq;
 using agora_gaming_rtc;
 using Dash.Scripts.Config;
 using Dash.Scripts.Cloud;
+using Dash.Scripts.UI;
 using Dash.Scripts.UIManager.ItemUIManager;
 using Michsky.UI.ModernUIPack;
 using Photon.Pun;
@@ -27,20 +28,35 @@ namespace Dash.Scripts.UIManager
         public SwitchManager openYuYing;
         public SwitchManager openMaiKeFeng;
         public Animator animator;
+        public Button idBtn;
+        public NotificationManager onError;
+        public NotificationManager onSuccess;
+        public Animator loadingMask;
         [Header("LoadingUI")] public Image loadingRoot;
         public Image progress;
 
         [Header("Asset")] public Color readyColor;
         public Color unReadyColor;
 
+
         private readonly HashSet<int> loadedPlayers = new HashSet<int>();
 
         private readonly Dictionary<int, PlayerInRoomItemUIManager> noLocalPlayerItems =
             new Dictionary<int, PlayerInRoomItemUIManager>(3);
 
+        private bool isOpen;
+
         private void Awake()
         {
-            back.onClick.AddListener(() => { PhotonNetwork.LeaveRoom(); });
+            idBtn.onClick.AddListener(() =>
+            {
+                GUIUtility.systemCopyBuffer = idText.text;
+                onSuccess.Show("已复制房间ID", "邀请好友加入游戏吧");
+            });
+            back.onClick.AddListener(() =>
+            {
+                PhotonNetwork.LeaveRoom();
+            });
             ready.onClick.AddListener(() =>
             {
                 if (!PhotonNetwork.IsMasterClient)
@@ -69,7 +85,7 @@ namespace Dash.Scripts.UIManager
                 {
                     PhotonNetwork.CurrentRoom.IsOpen = false;
                     PhotonNetwork.CurrentRoom.IsVisible = false;
-                    photonView.RPC("BeginLoadScene", RpcTarget.All);
+                    photonView.RPC(nameof(BeginLoadScene), RpcTarget.All);
                 }
             });
             var rtcEngine = IRtcEngine.QueryEngine();
@@ -79,11 +95,10 @@ namespace Dash.Scripts.UIManager
             rtcEngine.MuteLocalAudioStream(true);
             openYuYing.OnEvents.AddListener(() => { IRtcEngine.QueryEngine().EnableAudio(); });
             openYuYing.OffEvents.AddListener(() => { IRtcEngine.QueryEngine().DisableAudio(); });
-            openMaiKeFeng.OnEvents.AddListener(() => { IRtcEngine.QueryEngine().MuteLocalAudioStream(true); });
-            openMaiKeFeng.OffEvents.AddListener(() => { IRtcEngine.QueryEngine().MuteLocalAudioStream(false); });
+            openMaiKeFeng.OnEvents.AddListener(() => { IRtcEngine.QueryEngine().MuteLocalAudioStream(false); });
+            openMaiKeFeng.OffEvents.AddListener(() => { IRtcEngine.QueryEngine().MuteLocalAudioStream(true); });
             openYuYing.isOn = false;
             openMaiKeFeng.isOn = false;
-
         }
 
         private void OnError(int error, string msg)
@@ -108,6 +123,8 @@ namespace Dash.Scripts.UIManager
 
         public override void OnJoinedRoom()
         {
+            var player = FindObjectOfType<BackgroundMusicPlayer>();
+            player.PlayRoom();
             animator.Play("Fade-in");
             var room = PhotonNetwork.CurrentRoom;
             idText.text = room.Name;
@@ -130,8 +147,9 @@ namespace Dash.Scripts.UIManager
             var rtcEngine = IRtcEngine.QueryEngine();
             rtcEngine?.LeaveChannel();
             ClearRoomPlayers();
+            FindObjectOfType<BackgroundMusicPlayer>()?.Back();
         }
-
+        
         public override void OnPlayerPropertiesUpdate(Player targetPlayer, Hashtable changedProps)
         {
             CheckCanStartIfMaster();
@@ -282,7 +300,7 @@ namespace Dash.Scripts.UIManager
                 yield break;
             }
 
-            var scene = GameInfoManager.guanQiaInfoTable[(int) typeId];
+            var scene = GameGlobalInfoManager.guanQiaInfoTable[(int) typeId];
             loadingRoot.gameObject.SetActive(true);
             loadingRoot.sprite = scene.image;
             var op = SceneManager.LoadSceneAsync(scene.sceneName);
@@ -294,7 +312,7 @@ namespace Dash.Scripts.UIManager
             }
 
             progress.fillAmount = 1;
-            photonView.RPC("SceneLoaded", RpcTarget.All, PhotonNetwork.LocalPlayer.ActorNumber);
+            photonView.RPC(nameof(SceneLoaded), RpcTarget.All, PhotonNetwork.LocalPlayer.ActorNumber);
             yield return new WaitUntil(() =>
             {
                 return PhotonNetwork.PlayerList.All(i => loadedPlayers.Contains(i.ActorNumber));

@@ -1,0 +1,153 @@
+
+DLC_NPC_50.png
+size: 1024,1024
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+NPC_50_0
+  rotate: true
+  xy: 381, 661
+  size: 110, 384
+  orig: 110, 384
+  offset: 0, 0
+  index: -1
+NPC_50_1
+  rotate: false
+  xy: 481, 68
+  size: 117, 222
+  orig: 117, 222
+  offset: 0, 0
+  index: -1
+NPC_50_10
+  rotate: false
+  xy: 2, 662
+  size: 377, 359
+  orig: 377, 359
+  offset: 0, 0
+  index: -1
+NPC_50_11
+  rotate: true
+  xy: 778, 28
+  size: 99, 143
+  orig: 99, 143
+  offset: 0, 0
+  index: -1
+NPC_50_12
+  rotate: true
+  xy: 600, 87
+  size: 203, 176
+  orig: 203, 176
+  offset: 0, 0
+  index: -1
+NPC_50_13
+  rotate: true
+  xy: 2, 11
+  size: 277, 294
+  orig: 277, 294
+  offset: 0, 0
+  index: -1
+NPC_50_14
+  rotate: false
+  xy: 381, 773
+  size: 413, 248
+  orig: 413, 248
+  offset: 0, 0
+  index: -1
+NPC_50_15a
+  rotate: false
+  xy: 2, 290
+  size: 292, 370
+  orig: 292, 370
+  offset: 0, 0
+  index: -1
+NPC_50_16
+  rotate: false
+  xy: 773, 565
+  size: 154, 191
+  orig: 154, 191
+  offset: 0, 0
+  index: -1
+NPC_50_17
+  rotate: true
+  xy: 890, 450
+  size: 94, 110
+  orig: 94, 110
+  offset: 0, 0
+  index: -1
+NPC_50_18
+  rotate: false
+  xy: 298, 59
+  size: 181, 231
+  orig: 181, 231
+  offset: 0, 0
+  index: -1
+NPC_50_19
+  rotate: true
+  xy: 929, 654
+  size: 102, 92
+  orig: 102, 92
+  offset: 0, 0
+  index: -1
+NPC_50_2
+  rotate: false
+  xy: 929, 546
+  size: 75, 106
+  orig: 75, 106
+  offset: 0, 0
+  index: -1
+NPC_50_20
+  rotate: false
+  xy: 669, 437
+  size: 102, 222
+  orig: 102, 222
+  offset: 0, 0
+  index: -1
+NPC_50_3
+  rotate: false
+  xy: 796, 758
+  size: 213, 263
+  orig: 213, 263
+  offset: 0, 0
+  index: -1
+NPC_50_4
+  rotate: true
+  xy: 296, 292
+  size: 146, 285
+  orig: 146, 285
+  offset: 0, 0
+  index: -1
+NPC_50_5
+  rotate: false
+  xy: 773, 437
+  size: 115, 126
+  orig: 115, 126
+  offset: 0, 0
+  index: -1
+NPC_50_6
+  rotate: false
+  xy: 800, 283
+  size: 179, 152
+  orig: 179, 152
+  offset: 0, 0
+  index: -1
+NPC_50_7
+  rotate: false
+  xy: 778, 129
+  size: 179, 152
+  orig: 179, 152
+  offset: 0, 0
+  index: -1
+NPC_50_8
+  rotate: true
+  xy: 583, 292
+  size: 143, 215
+  orig: 143, 215
+  offset: 0, 0
+  index: -1
+NPC_50_9
+  rotate: false
+  xy: 296, 440
+  size: 371, 219
+  orig: 371, 219
+  offset: 0, 0
+  index: -1

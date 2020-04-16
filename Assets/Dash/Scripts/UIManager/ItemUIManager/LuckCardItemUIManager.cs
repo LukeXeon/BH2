@@ -18,7 +18,7 @@ namespace Dash.Scripts.UIManager.ItemUIManager
             {
                 case LuckDrawResult.Type.UnLockPlayer:
                 {
-                    var info = GameInfoManager.playerTable[result.typeId];
+                    var info = GameGlobalInfoManager.playerTable[result.typeId];
                     image.sprite = info.icon;
                     title.text = info.displayName;
                     content.text = "角色已解锁";
@@ -26,15 +26,15 @@ namespace Dash.Scripts.UIManager.ItemUIManager
                     break;
                 case LuckDrawResult.Type.AddPlayerExp:
                 {
-                    var info = GameInfoManager.playerTable[result.typeId];
+                    var info = GameGlobalInfoManager.playerTable[result.typeId];
                     image.sprite = info.icon;
                     title.text = info.displayName;
-                    content.text = "已转换为经验值（+" + GameInfoManager.levelInfo.playerLuckDrawExpAddOnce + "）";
+                    content.text = "已转换为经验值（+" + GameGlobalInfoManager.levelInfo.playerLuckDrawExpAddOnce + "）";
                 }
                     break;
                 case LuckDrawResult.Type.Weapon:
                 {
-                    var info = GameInfoManager.weaponTable[result.typeId];
+                    var info = GameGlobalInfoManager.weaponTable[result.typeId];
                     image.sprite = info.sprite;
                     title.text = info.displayName;
                     content.text = "武器已获得";
@@ -42,7 +42,7 @@ namespace Dash.Scripts.UIManager.ItemUIManager
                     break;
                 case LuckDrawResult.Type.ShengHen:
                 {
-                    var info = GameInfoManager.shengHenTable[result.typeId];
+                    var info = GameGlobalInfoManager.shengHenTable[result.typeId];
                     image.sprite = info.image;
                     title.text = info.displayName;
                     content.text = "圣痕已获得";

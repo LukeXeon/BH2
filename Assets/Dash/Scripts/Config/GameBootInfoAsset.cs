@@ -14,7 +14,7 @@ namespace Dash.Scripts.Config
         [Header("Agora")]
         public string agoraAppId;
 
-        [Header("github")]
+        [Header("Github")]
         public string githubClientId;
         
         public string githubClientSecret;

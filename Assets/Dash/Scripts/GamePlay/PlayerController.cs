@@ -1,4 +1,6 @@
+using System;
 using Dash.Scripts.Config;
+using Dash.Scripts.GamePlay.View;
 using Photon.Pun;
 using Spine.Unity;
 using UnityEngine;
@@ -19,7 +21,13 @@ namespace Dash.Scripts.GamePlay
 
         private void Awake()
         {
+            FindObjectOfType<GameplayManager>().players.Add(this.gameObject);
             poseManager.SetPose(weapon);
+        }
+
+        private void OnDestroy()
+        {
+            FindObjectOfType<GameplayManager>()?.players?.Remove(this.gameObject);
         }
 
         private void FixedUpdate()

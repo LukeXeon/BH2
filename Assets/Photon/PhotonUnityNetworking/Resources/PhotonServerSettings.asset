@@ -41,6 +41,10 @@ MonoBehaviour:
   - NotifyClientLoadScene
   - BeginLoadScene
   - SceneLoaded
+  - CreateLocalPlayer
+  - CreatePlayer
+  - CreatePlayerOnStart
+  - OnCreatePlayer
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

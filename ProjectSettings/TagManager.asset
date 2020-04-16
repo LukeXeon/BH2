@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Entity
   - Enemies
+  - PlayerChuShengDian
   layers:
   - Default
   - TransparentFX

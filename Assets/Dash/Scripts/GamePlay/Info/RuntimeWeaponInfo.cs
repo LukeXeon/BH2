@@ -1,5 +1,5 @@
-using Dash.Scripts.Config;
 using Dash.Scripts.Cloud;
+using Dash.Scripts.Config;
 
 namespace Dash.Scripts.GamePlay.Info
 {
@@ -10,10 +10,10 @@ namespace Dash.Scripts.GamePlay.Info
 
         public static RuntimeWeaponInfo Build(EWeapon weapon)
         {
-            var info = GameInfoManager.weaponTable[weapon.typeId];
+            var info = GameGlobalInfoManager.weaponTable[weapon.typeId];
             int gongJiLi = info.gongJiLi;
             int sheSu = info.sheSu;
-            var level = GameInfoManager.GetWeaponLevel(weapon.exp);
+            var level = GameGlobalInfoManager.GetWeaponLevel(weapon.exp);
             gongJiLi += info.gongJiLi2 * level.count;
             sheSu += info.sheSu2 * level.count;
             return new RuntimeWeaponInfo

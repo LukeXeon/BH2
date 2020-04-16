@@ -18,9 +18,9 @@ namespace Dash.Scripts.UIManager
 
         public void Apply(EShengHen shengHen, Action<EShengHen> callack)
         {
-            var info = GameInfoManager.shengHenTable[shengHen.typeId];
+            var info = GameGlobalInfoManager.shengHenTable[shengHen.typeId];
             image.sprite = info.image;
-            level.text = "LV " + GameInfoManager.GetShengHenLevel(shengHen.exp).count;
+            level.text = "LV " + GameGlobalInfoManager.GetShengHenLevel(shengHen.exp).count;
             displayName.text = info.displayName;
             markInUse.SetActive(shengHen.player != null);
             button.onClick.AddListener(() => callack(shengHen));

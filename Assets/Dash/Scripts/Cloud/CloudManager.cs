@@ -24,7 +24,7 @@ namespace Dash.Scripts.Cloud
 
         public static string GetLogInUrl()
         {
-            var info = GameBootstrap.info;
+            var info = GameBootInitializer.info;
             var login = new Url("https://github.com/login/oauth/authorize");
             login.SetQueryParam("client_id", info.githubClientId);
             login.SetQueryParam("redirect_uri", GetCallbackUrl());
@@ -101,7 +101,7 @@ namespace Dash.Scripts.Cloud
             {
                 case 0:
                 {
-                    var playerTypeId = Random.Range(0, GameInfoManager.maxWeaponId + 1);
+                    var playerTypeId = Random.Range(0, GameGlobalInfoManager.maxWeaponId + 1);
                     new AVQuery<EPlayer>()
                         .WhereEqualTo("user", AVUser.CurrentUser)
                         .WhereEqualTo("typeId", playerTypeId)
@@ -139,7 +139,7 @@ namespace Dash.Scripts.Cloud
                                 else
                                 {
                                     var p = player.First();
-                                    p.exp += GameInfoManager.levelInfo.playerLuckDrawExpAddOnce;
+                                    p.exp += GameGlobalInfoManager.levelInfo.playerLuckDrawExpAddOnce;
                                     AVObject.SaveAllAsync(new AVObject[] {p}).RunOnUiThread(t2 =>
                                     {
                                         if (t.IsCanceled || t.IsFaulted)
@@ -163,7 +163,7 @@ namespace Dash.Scripts.Cloud
 
                 case 1:
                 {
-                    var weaponTypeId = Random.Range(0, GameInfoManager.maxWeaponId + 1);
+                    var weaponTypeId = Random.Range(0, GameGlobalInfoManager.maxWeaponId + 1);
                     NewWeapon(weaponTypeId)
                         .SaveAsync()
                         .RunOnUiThread(t =>
@@ -185,7 +185,7 @@ namespace Dash.Scripts.Cloud
                     break;
                 default:
                 {
-                    var shengHenTypeId = Random.Range(0, GameInfoManager.maxShengHeId + 1);
+                    var shengHenTypeId = Random.Range(0, GameGlobalInfoManager.maxShengHeId + 1);
                     NewShengHen(null, shengHenTypeId)
                         .SaveAsync()
                         .RunOnUiThread(t =>
@@ -370,7 +370,6 @@ namespace Dash.Scripts.Cloud
                 );
         }
 
-
         private static void HandleLogin(Task<AVUser> t, Action<string> callback)
         {
             if (t.IsCanceled || t.IsFaulted)
@@ -431,6 +430,11 @@ namespace Dash.Scripts.Cloud
             );
         }
 
+        public static void LogInWithToken(string token, Action<string> cb)
+        {
+            AVUser.BecomeAsync(token).RunOnUiThread(t => { HandleLogin(t, cb); });
+        }
+
         public static void LogIn(string username, string password, Action<string> callback)
         {
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
@@ -439,13 +443,13 @@ namespace Dash.Scripts.Cloud
                 return;
             }
 
-            AVUser.LogInAsync(username, password).RunOnUiThread(
-                t => HandleLogin(t, callback));
+            AVUser.LogInAsync(username, password)
+                .RunOnUiThread(t => HandleLogin(t, callback));
         }
 
         public static HttpListener GetGithubUrlAndWaitToken(Action<string, string> callback)
         {
-            var info = GameBootstrap.info;
+            var info = GameBootInitializer.info;
             var http = new HttpListener {AuthenticationSchemes = AuthenticationSchemes.Anonymous};
             http.Prefixes.Add(GetCallbackUrl());
             http.Start();
@@ -583,6 +587,41 @@ namespace Dash.Scripts.Cloud
             });
         }
 
+        public static void GetCompletePlayer(Action<CompletePlayer, string> callback)
+        {
+            var player = localUserMate.player;
+            var task1 = new AVQuery<EInUseWeapon>().WhereEqualTo("player", player)
+                .Include("weapon")
+                .FindAsync();
+            var task2 = new AVQuery<EInUseShengHen>().WhereEqualTo("player", player)
+                .Include("shengHen")
+                .FindAsync();
+            Task.WhenAll(task1, task2).ContinueWith(t =>
+                {
+                    var w = task1.Result.ToList();
+                    var s = task2.Result.ToList();
+                    w.Sort((a, b) => a.index.CompareTo(b.index));
+                    s.Sort((a, b) => a.index.CompareTo(b.index));
+                    return new CompletePlayer
+                    {
+                        player = player,
+                        weapons = w.Where(i => i.weapon != null).Select(i => i.weapon).ToList(),
+                        shengHens = s.Where(i => i.shengHen != null).Select(i => i.shengHen).ToList(),
+                    };
+                })
+                .RunOnUiThread(t =>
+                {
+                    if (t.IsCanceled || t.IsFaulted)
+                    {
+                        Debug.Log(t.Exception);
+                        callback(null, errorMessage);
+                        return;
+                    }
+
+                    callback(t.Result, null);
+                });
+        }
+
         public static void UpdateCurrentPlayer(EPlayer player, Action<string> callback)
         {
             localUserMate.player = player;
@@ -620,7 +659,6 @@ namespace Dash.Scripts.Cloud
             var await = task.GetAwaiter();
             await.OnCompleted(() => { callback(task); });
         }
-
 
         private static void RunOnUiThread(this Task task, Action<Task> callback)
         {

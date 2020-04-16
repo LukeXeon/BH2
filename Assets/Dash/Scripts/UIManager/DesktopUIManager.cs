@@ -22,9 +22,7 @@ namespace Dash.Scripts.UIManager
         public LiveCharacter live2DCharacter;
 
         public AudioSource live2DAudioSource;
-
-        public AudioSource backgroundMusic;
-
+        
         public AudioClip[] live2DAudioClips;
 
         public GameObject desktop;
@@ -72,6 +70,7 @@ namespace Dash.Scripts.UIManager
 
         private void Awake()
         {
+            Resources.UnloadUnusedAssets();
             //Desktop
             live2DPanel.onClick.AddListener(SetRandomLiveMotion);
             openCharacters.onClick.AddListener(() =>
@@ -96,7 +95,6 @@ namespace Dash.Scripts.UIManager
             {
                 GuanQia.Open();
                 live2DAudioSource.Stop();
-                backgroundMusic.Stop();
                 desktopRoot.SetActive(false);
             });
             openBuJi.onClick.AddListener(() =>
@@ -115,8 +113,7 @@ namespace Dash.Scripts.UIManager
                 GuanQia.Close();
                 desktopRoot.SetActive(true);
                 SetRandomLiveMotion();
-                backgroundMusic.time = 0;
-                backgroundMusic.Play();
+                
             });
             //BuJi
             buJiBack.onClick.AddListener(() =>

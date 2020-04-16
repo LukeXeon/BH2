@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Dash.Scripts.Config;
 using Dash.Scripts.Cloud;
+using Dash.Scripts.GamePlay.Info;
 using Dash.Scripts.UI;
 using Dash.Scripts.UIManager.ItemUIManager;
 using Michsky.UI.ModernUIPack;
@@ -32,16 +34,15 @@ namespace Dash.Scripts.UIManager
 
         [Header("Assets")] public GameObject roomItem;
         public GameObject typeItem;
-        private Dictionary<string, RoomInfo> cachedRoomList;
-        private bool uiIsOpen;
+        private int currentRoomTypeId = -1;
+        private bool isOpen;
 
         private void Awake()
         {
-            cachedRoomList = new Dictionary<string, RoomInfo>();
             var newItem = Instantiate(typeItem, typesRoot);
             var roomType = newItem.GetComponent<RoomTypeItemUIManager>();
             roomType.Apply("全部队伍", () => { });
-            foreach (var guanQiaInfoAsset in GameInfoManager.guanQiaInfoTable)
+            foreach (var guanQiaInfoAsset in GameGlobalInfoManager.guanQiaInfoTable)
             {
                 newItem = Instantiate(typeItem, typesRoot);
                 roomType = newItem.GetComponent<RoomTypeItemUIManager>();
@@ -50,39 +51,63 @@ namespace Dash.Scripts.UIManager
 
             back.onClick.AddListener(() =>
             {
+                isOpen = false;
                 if (PhotonNetwork.InLobby)
                 {
                     PhotonNetwork.LeaveLobby();
                 }
 
-                uiIsOpen = false;
                 animator.Play("Fade-out");
             });
             randomJoin.onClick.AddListener(() =>
             {
                 BeginWaitNetwork();
-                PhotonNetwork.JoinRandomRoom();
+                CloudManager.GetCompletePlayer((player, s) =>
+                {
+                    if (s != null)
+                    {
+                        EndWaitNetWork();
+                        notifyError.Show("匹配失败", "拉取玩家信息失败");
+                    }
+                    else
+                    {
+                        PhotonNetwork.JoinRandomRoom();
+                        GameplayInfoManager.Prepare(player);
+                    }
+                });
             });
             createRoom.onClick.AddListener(() =>
             {
                 BeginWaitNetwork();
-                var table = new Hashtable
+                CloudManager.GetCompletePlayer((player, s) =>
                 {
-                    ["displayName"] = CloudManager.GetNameInGame() + "的房间",
-                    ["playerIconIds"] = new[] {CloudManager.GetCurrentPlayer().typeId},
-                    ["typeId"] = 0,
-                };
-                PhotonNetwork.CreateRoom(null, new RoomOptions
-                {
-                    MaxPlayers = 3,
-                    CustomRoomProperties = table,
+                    if (s != null)
+                    {
+                        EndWaitNetWork();
+                        notifyError.Show("创建房间失败", "拉取玩家信息失败");
+                    }
+                    else
+                    {
+                        var table = new Hashtable
+                        {
+                            ["displayName"] = CloudManager.GetNameInGame() + "的房间",
+                            ["playerIconIds"] = new[] {CloudManager.GetCurrentPlayer().typeId},
+                            ["typeId"] = 0
+                        };
+                        PhotonNetwork.CreateRoom(null, new RoomOptions
+                        {
+                            MaxPlayers = 3,
+                            CustomRoomProperties = table,
+                        });
+                        GameplayInfoManager.Prepare(player);
+                    }
                 });
             });
         }
-        
+
         public void Open()
         {
-            uiIsOpen = true;
+            isOpen = true;
             animator.Play("Fade-in");
             if (!PhotonNetwork.InLobby)
             {
@@ -93,14 +118,14 @@ namespace Dash.Scripts.UIManager
         public override void OnRoomListUpdate(List<RoomInfo> roomList)
         {
             ClearRooms();
-            var rooms = roomList.GetRange(0, Mathf.Min(MAX_DISPLAY_COUNT, roomList.Count));
-            UpdateCachedRoomList(rooms);
-            BuildRooms();
+            var rooms = roomList.GetRange(0, Mathf.Min(MAX_DISPLAY_COUNT, roomList.Count))
+                .Where(info => info.IsOpen && info.IsVisible && !info.RemovedFromList).ToList();
+            BuildRooms(rooms);
         }
 
-        private void BuildRooms()
+        private void BuildRooms(List<RoomInfo> rooms)
         {
-            foreach (var info in cachedRoomList.Values)
+            foreach (var info in rooms)
             {
                 var go = Instantiate(roomItem, roomsRoot);
                 var room = go.GetComponent<RoomItemUIManager>();
@@ -111,7 +136,19 @@ namespace Dash.Scripts.UIManager
                 room.Apply(displayName as string ?? "", typeId as int? ?? 0, playerIconIds as int[] ?? new int[0], () =>
                 {
                     BeginWaitNetwork();
-                    PhotonNetwork.JoinRoom(id);
+                    CloudManager.GetCompletePlayer((player, s) =>
+                    {
+                        if (s != null)
+                        {
+                            EndWaitNetWork();
+                            notifyError.Show("加入房间失败", "拉取玩家数据异常");
+                        }
+                        else
+                        {
+                            PhotonNetwork.JoinRoom(id);
+                            GameplayInfoManager.Prepare(player);
+                        }
+                    });
                 });
             }
         }
@@ -119,6 +156,7 @@ namespace Dash.Scripts.UIManager
         public override void OnJoinedRoom()
         {
             EndWaitNetWork();
+            animator.Play("Fade-out");
             notifySucceed.Show("成功", "已进入房间");
         }
 
@@ -136,47 +174,10 @@ namespace Dash.Scripts.UIManager
                 Destroy(room.gameObject);
             }
         }
-        
+
         public override void OnLeftLobby()
         {
-            cachedRoomList.Clear();
             ClearRooms();
-        }
-
-        public override void OnLeftRoom()
-        {
-            if (uiIsOpen && !PhotonNetwork.InLobby)
-            {
-                PhotonNetwork.JoinLobby();
-            }
-        }
-
-        private void UpdateCachedRoomList(List<RoomInfo> roomList)
-        {
-            foreach (RoomInfo info in roomList)
-            {
-                // Remove room from cached room list if it got closed, became invisible or was marked as removed
-                if (!info.IsOpen || !info.IsVisible || info.RemovedFromList)
-                {
-                    if (cachedRoomList.ContainsKey(info.Name))
-                    {
-                        cachedRoomList.Remove(info.Name);
-                    }
-
-                    continue;
-                }
-
-                // Update cached room info
-                if (cachedRoomList.ContainsKey(info.Name))
-                {
-                    cachedRoomList[info.Name] = info;
-                }
-                // Add new room info to cache
-                else
-                {
-                    cachedRoomList.Add(info.Name, info);
-                }
-            }
         }
 
         public override void OnJoinRandomFailed(short returnCode, string message)
@@ -184,7 +185,7 @@ namespace Dash.Scripts.UIManager
             EndWaitNetWork();
             notifyError.Show("匹配失败", "暂时没有可用的队伍");
         }
-        
+
         private void BeginWaitNetwork()
         {
             loadingMask.gameObject.SetActive(true);

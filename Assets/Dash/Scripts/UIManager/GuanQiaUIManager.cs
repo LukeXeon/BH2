@@ -1,5 +1,8 @@
-﻿using System;
+﻿using Dash.Scripts.Cloud;
 using Dash.Scripts.Config;
+using Dash.Scripts.GamePlay.Info;
+using Dash.Scripts.UI;
+using Michsky.UI.ModernUIPack;
 using Photon.Pun;
 using TMPro;
 using UnityEngine;
@@ -14,24 +17,35 @@ namespace Dash.Scripts.UIManager
         public TextMeshProUGUI title;
         public Button left;
         public Button right;
-        public AudioSource audioSource;
         public Animator animator;
         public Image image;
         public TextMeshProUGUI textContent;
         public DuiWuListUIManager duiWuList;
         public Animator loadingMask;
+        public NotificationManager onError;
 
         private void Awake()
         {
             piPei.onClick.AddListener(() =>
             {
                 BeginWaitNetwork();
-                PhotonNetwork.JoinRandomRoom();
+                CloudManager.GetCompletePlayer((player, s) =>
+                {
+                    if (s != null)
+                    {
+                        EndWaitNetWork();
+                        onError.Show("匹配失败", "拉取玩家信息失败");
+                    }
+                    else
+                    {
+                        PhotonNetwork.JoinRandomRoom();
+                        GameplayInfoManager.Prepare(player);
+                    }
+                });
             });
             duiWu.onClick.AddListener(() => { duiWuList.Open(); });
         }
 
-        
         private int currentId;
 
         public void Open()
@@ -42,18 +56,17 @@ namespace Dash.Scripts.UIManager
 
         public void Close()
         {
+            FindObjectOfType<BackgroundMusicPlayer>().PlayDesktop();
             animator.Play("Fade-out");
-            audioSource.Stop();
         }
 
         private void Load(int id)
         {
             currentId = id;
-            var info = GameInfoManager.guanQiaInfoTable[id];
-            audioSource.clip = info.music;
+            var info = GameGlobalInfoManager.guanQiaInfoTable[id];
+            var player = FindObjectOfType<BackgroundMusicPlayer>();
+            player.Play(info.music);
             image.sprite = info.image;
-            audioSource.time = 0;
-            audioSource.Play();
             animator.Play("Load-in");
             title.text = info.displayName;
             if (info.miaoShu)

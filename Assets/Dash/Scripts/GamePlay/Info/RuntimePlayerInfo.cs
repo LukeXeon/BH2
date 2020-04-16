@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Dash.Scripts.Config;
 using Dash.Scripts.Cloud;
+using Dash.Scripts.Config;
 
 namespace Dash.Scripts.GamePlay.Info
 {
@@ -14,14 +14,14 @@ namespace Dash.Scripts.GamePlay.Info
         public int shengMingZhi;
         public int nengLiangZhi;
 
-        public static RuntimePlayerInfo Build(EPlayer player, List<EInUseShengHen> shengHens)
+        public static RuntimePlayerInfo Build(EPlayer player, List<EShengHen> shengHens)
         {
             int gongJiLi = 0;
             int fangYuLi = 0;
             int shengMingZhi = 0;
             int nengLiangZhi = 0;
-            var pinfo = GameInfoManager.playerTable[player.typeId];
-            var pLevel = GameInfoManager.GetPlayerLevel(player.exp);
+            var pinfo = GameGlobalInfoManager.playerTable[player.typeId];
+            var pLevel = GameGlobalInfoManager.GetPlayerLevel(player.exp);
             gongJiLi += pinfo.gongJiLi;
             gongJiLi += pinfo.gongJiLi2 * pLevel.count;
             fangYuLi += pinfo.fangYuLi;
@@ -31,10 +31,10 @@ namespace Dash.Scripts.GamePlay.Info
             nengLiangZhi += pinfo.nengLiangZhi;
             nengLiangZhi += pinfo.nengLiangZhi2 * pLevel.count;
 
-            foreach (var s in shengHens.Where(s => s.shengHen != null))
+            foreach (var s in shengHens)
             {
-                var sInfo = GameInfoManager.shengHenTable[s.shengHen.typeId];
-                var sLevel = GameInfoManager.GetShengHenLevel(s.shengHen.exp);
+                var sInfo = GameGlobalInfoManager.shengHenTable[s.typeId];
+                var sLevel = GameGlobalInfoManager.GetShengHenLevel(s.exp);
                 fangYuLi += sInfo.fangYuLi;
                 fangYuLi += sInfo.fangYuLi2 * sLevel.count;
                 shengMingZhi += sInfo.shengMingZhi;
