@@ -17,7 +17,7 @@ namespace Dash.Scripts.GamePlay.Info
 
         public static CompletePlayer current;
 
-        public static void InitInRoom()
+        public static void OnJoinRoom()
         {
             var completePlayer = current;
             weaponInfos.Clear();
@@ -38,5 +38,6 @@ namespace Dash.Scripts.GamePlay.Info
                 shengHenInfos.Add(Tuple.Create(info, runtimeInfo));
             }
         }
+        
     }
 }

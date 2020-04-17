@@ -75,6 +75,7 @@ namespace Dash.Scripts.UIManager
                     {
                         ["displayName"] = CloudManager.GetNameInGame() + "的房间",
                         ["typeId"] = 0,
+                        ["0playerTypeId"] = CloudManager.GetCurrentPlayer().typeId
                     };
                     PhotonNetwork.CreateRoom(null, new RoomOptions
                     {

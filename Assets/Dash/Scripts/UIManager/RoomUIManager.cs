@@ -131,6 +131,7 @@ namespace Dash.Scripts.UIManager
 
         public override void OnJoinedRoom()
         {
+            GameplayInfoManager.OnJoinRoom();
             ClearRoomPlayers();
             InstallUIMasterOrClient();
             var musicPlayer = FindObjectOfType<BackgroundMusicPlayer>();
@@ -209,6 +210,23 @@ namespace Dash.Scripts.UIManager
             var item = noLocalPlayerItems[otherPlayer.ActorNumber];
             noLocalPlayerItems.Remove(otherPlayer.ActorNumber);
             item.Clear();
+            if (PhotonNetwork.PlayerList.Length == 2)
+            {
+                var table = new Hashtable
+                {
+                    ["2playerTypeId"] = -1
+                };
+                PhotonNetwork.CurrentRoom.SetCustomProperties(table);
+            }
+            else if (PhotonNetwork.PlayerList.Length == 1)
+            {
+                var table = new Hashtable
+                {
+                    ["1playerTypeId"] = -1,
+                    ["2playerTypeId"] = -1
+                };
+                PhotonNetwork.CurrentRoom.SetCustomProperties(table);
+            }
         }
 
         public override void OnMasterClientSwitched(Player newMasterClient)

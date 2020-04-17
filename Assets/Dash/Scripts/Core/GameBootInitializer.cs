@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-using System.Linq;
-using System.Threading;
+﻿using System.Linq;
 using agora_gaming_rtc;
 using Dash.Scripts.Cloud;
 using Dash.Scripts.Config;
@@ -20,7 +18,7 @@ namespace Dash.Scripts.Core
         public static GameBootInfoAsset info;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-        private static void LoadBoot()
+        private static void Initialize()
         {
             Debug.Log("Boot Loaded");
             Application.targetFrameRate = 60;

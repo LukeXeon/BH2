@@ -19,17 +19,17 @@ namespace Dash.Scripts.UIManager.ItemUIManager
             roomInfo.CustomProperties.TryGetValue("displayName", out var displayName);
             if (displayName != null)
             {
-                roomByUser.name = (string) displayName;
+                roomByUser.text = (string) displayName;
             }
             else
             {
-                roomByUser.name = "...";
+                roomByUser.text = "...";
             }
 
-            roomInfo.CustomProperties.TryGetValue("typdId", out var typeId);
+            roomInfo.CustomProperties.TryGetValue("typeId", out var typeId);
             if (typeId != null)
             {
-                guanQiaMing.text = GameGlobalInfoManager.guanQiaInfoTable[(int) typeId]?.name ?? "...";
+                guanQiaMing.text = GameGlobalInfoManager.guanQiaInfoTable[(int) typeId]?.displayName ?? "...";
             }
 
             for (int i = 0; i < 3; i++)
