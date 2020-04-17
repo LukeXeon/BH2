@@ -67,38 +67,12 @@ namespace Dash.Scripts.UIManager
 
         private AsyncOperation loadSceneAsync;
 
+        public static Sprite bootBackground;
+
         private void Awake()
         {
-            if (Application.isEditor || PlayerPrefs.GetInt("first startup") == 1)
-            {
-                ShowWindowOnLoad();
-                audioSource.Play();
-                Destroy(videoPlayer.gameObject);
-                videoPlayer = null;
-            }
-            else
-            {
-                PlayerPrefs.SetInt("first startup", 1);
-                var op = Resources.LoadAsync<VideoClip>("Video/BootVideo");
-                PlayerPrefs.Save();
-                videoPlayer.gameObject.SetActive(true);
-                op.completed += delegate
-                {
-                    videoPlayer.clip = (VideoClip) op.asset;
-                    videoPlayer.Prepare();
-                    videoPlayer.prepareCompleted += p => p.Play();
-                    videoPlayer.loopPointReached += p =>
-                    {
-                        Destroy(videoPlayer.gameObject);
-                        videoPlayer = null;
-                        StartCoroutine(ShowWindow1());
-                        audioSource.Play();
-                    };
-                };
-            }
-
-            background.sprite = sprites[Random.Range(0, sprites.Length - 1)];
-
+            bootBackground = sprites[Random.Range(0, sprites.Length - 1)];
+            background.sprite = bootBackground;
             signUp.onClick.AddListener(() =>
             {
                 var u = usernameInSignUp.text;
@@ -215,7 +189,34 @@ namespace Dash.Scripts.UIManager
             });
         }
 
-
+        private IEnumerator Start()
+        {
+            if (Application.isEditor || PlayerPrefs.GetInt("first startup") == 1)
+            {
+                ShowWindowOnLoad();
+                audioSource.Play();
+                Destroy(videoPlayer.gameObject);
+                videoPlayer = null;
+            }
+            else
+            {
+                PlayerPrefs.SetInt("first startup", 1);
+                PlayerPrefs.Save();
+                videoPlayer.gameObject.SetActive(true);
+                var op = Resources.LoadAsync<VideoClip>("Video/BootVideo");
+                yield return op;
+                videoPlayer.clip = (VideoClip) op.asset;
+                videoPlayer.Prepare();
+                videoPlayer.prepareCompleted += p => p.Play();
+                videoPlayer.loopPointReached += p =>
+                {
+                    Destroy(videoPlayer.gameObject);
+                    videoPlayer = null;
+                    StartCoroutine(ShowWindow1());
+                    audioSource.Play();
+                };
+            }
+        }
 
         public void ShowWindowOnLoad()
         {

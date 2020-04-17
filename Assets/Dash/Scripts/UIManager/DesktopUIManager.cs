@@ -14,6 +14,7 @@ namespace Dash.Scripts.UIManager
         [Header("Top")] public NotificationManager notifySucceed;
         public NotificationManager notifyError;
         public Animator loadingMask;
+        public CanvasGroup fullMask;
 
         [Header("Desktop")] public GameObject desktopRoot;
 
@@ -22,7 +23,7 @@ namespace Dash.Scripts.UIManager
         public LiveCharacter live2DCharacter;
 
         public AudioSource live2DAudioSource;
-        
+
         public AudioClip[] live2DAudioClips;
 
         public GameObject desktop;
@@ -34,6 +35,10 @@ namespace Dash.Scripts.UIManager
         public Button openZhuangBei;
 
         public Button openCharacters;
+
+        public Animator animator;
+
+        public GameObject topBar;
 
         [Header("GuanQia")] public GuanQiaUIManager GuanQia;
 
@@ -50,13 +55,12 @@ namespace Dash.Scripts.UIManager
 
         public NvWuShengUIManger playersUiManger;
 
-        [Header("ZhuangBei")]
-        public Animator zhuangBei;
+        [Header("ZhuangBei")] public Animator zhuangBei;
         public ZhuangBeiUIManager zhuangBeiManager;
         public Button zhuangBeiBack;
 
         private Coroutine waitAnimCoroutine;
-        
+
         private void SetRandomLiveMotion()
         {
             var index = Random.Range(1, 18);
@@ -70,7 +74,9 @@ namespace Dash.Scripts.UIManager
 
         private void Awake()
         {
-            Resources.UnloadUnusedAssets();
+            var music = FindObjectOfType<BackgroundMusicPlayer>();
+            var info = music.animator.GetCurrentAnimatorStateInfo(0);
+            music.animator.Play(info.shortNameHash, 0, 1f);
             //Desktop
             live2DPanel.onClick.AddListener(SetRandomLiveMotion);
             openCharacters.onClick.AddListener(() =>
@@ -113,7 +119,6 @@ namespace Dash.Scripts.UIManager
                 GuanQia.Close();
                 desktopRoot.SetActive(true);
                 SetRandomLiveMotion();
-                
             });
             //BuJi
             buJiBack.onClick.AddListener(() =>
@@ -135,7 +140,28 @@ namespace Dash.Scripts.UIManager
                 zhuangBeiManager.Close();
             });
         }
-        
+
+        private IEnumerator Start()
+        {
+            topBar.SetActive(false);
+            fullMask.gameObject.SetActive(true);
+            fullMask.alpha = 1;
+            var image = fullMask.GetComponent<Image>();
+            image.sprite = BootstrapUIManager.bootBackground;
+            yield return Resources.UnloadUnusedAssets();
+            yield return new WaitForEndOfFrame();
+            while (fullMask.alpha / 5 > 0)
+            {
+                fullMask.alpha -= Time.deltaTime;
+                yield return null;
+            }
+
+            Destroy(fullMask.gameObject);
+            fullMask = null;
+            topBar.SetActive(true);
+            animator.Play("Fade-in");
+        }
+
         private void CancelWaitFinish()
         {
             if (waitAnimCoroutine != null)
@@ -143,6 +169,7 @@ namespace Dash.Scripts.UIManager
                 StopCoroutine(waitAnimCoroutine);
                 waitAnimCoroutine = null;
             }
+
             desktopRoot.SetActive(true);
             SetRandomLiveMotion();
         }

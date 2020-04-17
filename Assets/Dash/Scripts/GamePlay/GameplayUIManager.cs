@@ -13,17 +13,14 @@ namespace Dash.Scripts.GamePlay
         public Button rightWeapon;
         public Image weapon;
         public Image mask;
-        public OnWeaponChangedEvent weaponChanged = new OnWeaponChangedEvent();
+
         
         private void Awake()
         {
             mask.gameObject.SetActive(true);
             var typeId = (int) PhotonNetwork.CurrentRoom.CustomProperties["typeId"];
             mask.sprite = GameGlobalInfoManager.guanQiaInfoTable[typeId].image;
-            if (weaponChanged == null)
-            {
-                weaponChanged = new OnWeaponChangedEvent();
-            }
+
         }
 
         public void Prepared()
@@ -31,9 +28,5 @@ namespace Dash.Scripts.GamePlay
             mask.gameObject.SetActive(false);
         }
 
-        [Serializable]
-        public class OnWeaponChangedEvent : UnityEvent<WeaponInfoAsset>
-        {
-        }
     }
 }
