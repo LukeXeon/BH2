@@ -1,5 +1,4 @@
-﻿using System;
-using Spine;
+﻿using Spine;
 using Spine.Unity;
 using UnityEngine;
 
@@ -7,7 +6,7 @@ namespace Dash.Scripts.UIManager
 {
     public class PlayerEquipsUIManager : MonoBehaviour
     {
-        private SkeletonAnimation skeletonAnimation;
+        public SkeletonAnimation skeletonAnimation;
 
         [SpineSkin] public string templateSkinName;
         
@@ -17,9 +16,12 @@ namespace Dash.Scripts.UIManager
 
         private void Awake()
         {
-            skeletonAnimation = GetComponent<SkeletonAnimation>();
+            if (skeletonAnimation == null)
+            {
+                skeletonAnimation = GetComponent<SkeletonAnimation>();
+            }
         }
-        
+
 
         public void Equip(int slotIndex, string attachmentName, Attachment attachment)
         {

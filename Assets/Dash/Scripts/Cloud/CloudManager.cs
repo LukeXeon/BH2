@@ -268,72 +268,67 @@ namespace Dash.Scripts.Cloud
                 .Include("shengHen")
                 .WhereEqualTo("user", AVUser.CurrentUser)
                 .FindAsync();
-            Task.WhenAll(t0, t1, t2, t3)
-                .ContinueWith(t =>
+            Task.WhenAll(t0, t1, t2, t3).RunOnUiThread(t =>
+            {
+                if (t.IsCanceled || t.IsFaulted)
                 {
-                    var e = new Equipments();
-                    foreach (var item in t2.Result)
-                    {
-                        PlayerWithUsing inUse;
-                        e.players.TryGetValue(item.player.ObjectId, out inUse);
-                        if (inUse == null)
-                        {
-                            inUse = new PlayerWithUsing
-                            {
-                                player = item.player
-                            };
-                            e.players.Add(item.player.ObjectId, inUse);
-                        }
+                    Debug.Log(t.Exception);
+                    callback(null, errorMessage);
+                    return;
+                }
 
-                        inUse.weapons.Add(item);
-                    }
-
-
-                    foreach (var item in t3.Result)
-                    {
-                        PlayerWithUsing inUse;
-                        e.players.TryGetValue(item.player.ObjectId, out inUse);
-                        if (inUse == null)
-                        {
-                            inUse = new PlayerWithUsing
-                            {
-                                player = item.player
-                            };
-                            e.players.Add(item.player.ObjectId, inUse);
-                        }
-
-                        inUse.shengHens.Add(item);
-                    }
-
-                    foreach (var item in t0.Result)
-                    {
-                        e.weapons.Add(item.ObjectId, item);
-                    }
-
-                    foreach (var item in t1.Result)
-                    {
-                        e.shengHens.Add(item.ObjectId, item);
-                    }
-
-                    foreach (var inUse in e.players.Values)
-                    {
-                        inUse.shengHens.Sort((o1, o2) => o1.index.CompareTo(o2.index));
-                        inUse.weapons.Sort((o1, o2) => o1.index.CompareTo(o2.index));
-                    }
-
-                    return e;
-                }).RunOnUiThread(t =>
+                var e = new Equipments();
+                foreach (var item in t2.Result)
                 {
-                    if (t.IsCanceled || t.IsFaulted)
+                    PlayerWithUsing inUse;
+                    e.players.TryGetValue(item.player.ObjectId, out inUse);
+                    if (inUse == null)
                     {
-                        Debug.Log(t.Exception);
-                        callback(null, errorMessage);
-                        return;
+                        inUse = new PlayerWithUsing
+                        {
+                            player = item.player
+                        };
+                        e.players.Add(item.player.ObjectId, inUse);
                     }
 
-                    var e = t.Result;
-                    callback(e, null);
-                });
+                    inUse.weapons.Add(item);
+                }
+
+
+                foreach (var item in t3.Result)
+                {
+                    PlayerWithUsing inUse;
+                    e.players.TryGetValue(item.player.ObjectId, out inUse);
+                    if (inUse == null)
+                    {
+                        inUse = new PlayerWithUsing
+                        {
+                            player = item.player
+                        };
+                        e.players.Add(item.player.ObjectId, inUse);
+                    }
+
+                    inUse.shengHens.Add(item);
+                }
+
+                foreach (var item in t0.Result)
+                {
+                    e.weapons.Add(item.ObjectId, item);
+                }
+
+                foreach (var item in t1.Result)
+                {
+                    e.shengHens.Add(item.ObjectId, item);
+                }
+
+                foreach (var inUse in e.players.Values)
+                {
+                    inUse.shengHens.Sort((o1, o2) => o1.index.CompareTo(o2.index));
+                    inUse.weapons.Sort((o1, o2) => o1.index.CompareTo(o2.index));
+                }
+
+                callback(e, null);
+            });
         }
 
         public static void SignUp(string username, string password, string password2, Action<string> callback)
@@ -596,19 +591,7 @@ namespace Dash.Scripts.Cloud
             var task2 = new AVQuery<EInUseShengHen>().WhereEqualTo("player", player)
                 .Include("shengHen")
                 .FindAsync();
-            Task.WhenAll(task1, task2).ContinueWith(t =>
-                {
-                    var w = task1.Result.ToList();
-                    var s = task2.Result.ToList();
-                    w.Sort((a, b) => a.index.CompareTo(b.index));
-                    s.Sort((a, b) => a.index.CompareTo(b.index));
-                    return new CompletePlayer
-                    {
-                        player = player,
-                        weapons = w.Where(i => i.weapon != null).Select(i => i.weapon).ToList(),
-                        shengHens = s.Where(i => i.shengHen != null).Select(i => i.shengHen).ToList(),
-                    };
-                })
+            Task.WhenAll(task1, task2)
                 .RunOnUiThread(t =>
                 {
                     if (t.IsCanceled || t.IsFaulted)
@@ -618,7 +601,16 @@ namespace Dash.Scripts.Cloud
                         return;
                     }
 
-                    callback(t.Result, null);
+                    var w = task1.Result.ToList();
+                    var s = task2.Result.ToList();
+                    w.Sort((a, b) => a.index.CompareTo(b.index));
+                    s.Sort((a, b) => a.index.CompareTo(b.index));
+                    callback(new CompletePlayer
+                    {
+                        player = player,
+                        weapons = w.Where(i => i.weapon != null).Select(i => i.weapon).ToList(),
+                        shengHens = s.Where(i => i.shengHen != null).Select(i => i.shengHen).ToList(),
+                    }, null);
                 });
         }
 

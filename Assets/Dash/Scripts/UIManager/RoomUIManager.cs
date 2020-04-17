@@ -1,9 +1,11 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using agora_gaming_rtc;
-using Dash.Scripts.Config;
 using Dash.Scripts.Cloud;
+using Dash.Scripts.Config;
+using Dash.Scripts.GamePlay.Info;
 using Dash.Scripts.UI;
 using Dash.Scripts.UIManager.ItemUIManager;
 using Michsky.UI.ModernUIPack;
@@ -38,7 +40,6 @@ namespace Dash.Scripts.UIManager
         [Header("Asset")] public Color readyColor;
         public Color unReadyColor;
 
-
         private readonly HashSet<int> loadedPlayers = new HashSet<int>();
 
         private readonly Dictionary<int, PlayerInRoomItemUIManager> noLocalPlayerItems =
@@ -55,6 +56,13 @@ namespace Dash.Scripts.UIManager
             });
             back.onClick.AddListener(() =>
             {
+                var index = Array.FindIndex(PhotonNetwork.PlayerList,
+                    p => p.ActorNumber == PhotonNetwork.LocalPlayer.ActorNumber);
+                var table2 = new Hashtable
+                {
+                    [index + "playerTypeId"] = CloudManager.GetCurrentPlayer().typeId,
+                };
+                PhotonNetwork.CurrentRoom.SetCustomProperties(table2);
                 PhotonNetwork.LeaveRoom();
             });
             ready.onClick.AddListener(() =>
@@ -123,22 +131,32 @@ namespace Dash.Scripts.UIManager
 
         public override void OnJoinedRoom()
         {
-            var player = FindObjectOfType<BackgroundMusicPlayer>();
-            player.PlayRoom();
+            ClearRoomPlayers();
+            InstallUIMasterOrClient();
+            var musicPlayer = FindObjectOfType<BackgroundMusicPlayer>();
+            musicPlayer.PlayRoom();
             animator.Play("Fade-in");
             var room = PhotonNetwork.CurrentRoom;
             idText.text = room.Name;
             var rtcEngine = IRtcEngine.QueryEngine();
             rtcEngine.JoinChannel(room.Name, "", 0u);
+            var player = GameplayInfoManager.current;
             var table = new Hashtable
             {
                 ["displayName"] = CloudManager.GetNameInGame(),
+                ["playerTypeId"] = player.player.typeId,
+                ["weaponTypeId"] = player.weapons.First().typeId,
                 ["isReady"] = PhotonNetwork.IsMasterClient
             };
             PhotonNetwork.LocalPlayer.SetCustomProperties(table);
-            InstallUIMasterOrClient();
-            ClearRoomPlayers();
-            InitRoomPlayers();
+            var index = Array.FindIndex(PhotonNetwork.PlayerList,
+                p => p.ActorNumber == PhotonNetwork.LocalPlayer.ActorNumber);
+            Debug.Log(index + "playerTypeId");
+            table = new Hashtable
+            {
+                [index + "playerTypeId"] = player.player.typeId
+            };
+            PhotonNetwork.CurrentRoom.SetCustomProperties(table);
         }
 
         public override void OnLeftRoom()
@@ -149,20 +167,23 @@ namespace Dash.Scripts.UIManager
             ClearRoomPlayers();
             FindObjectOfType<BackgroundMusicPlayer>()?.Back();
         }
-        
+
         public override void OnPlayerPropertiesUpdate(Player targetPlayer, Hashtable changedProps)
         {
             CheckCanStartIfMaster();
-            if (targetPlayer.IsLocal)
+            if (noLocalPlayerItems.Count != PhotonNetwork.PlayerList.Length - 1)
             {
-                var local = playerItems[1];
-                local.Apply(targetPlayer);
+                foreach (var player in PhotonNetwork.PlayerList)
+                {
+                    ApplyRoomPlayer(player);
+                }
             }
             else
             {
-                noLocalPlayerItems[targetPlayer.ActorNumber].Apply(targetPlayer);
+                ApplyRoomPlayer(targetPlayer);
             }
         }
+
 
         public override void OnPlayerEnteredRoom(Player newPlayer)
         {
@@ -183,6 +204,7 @@ namespace Dash.Scripts.UIManager
 
         public override void OnPlayerLeftRoom(Player otherPlayer)
         {
+            GameplayInfoManager.current = null;
             CheckCanStartIfMaster();
             var item = noLocalPlayerItems[otherPlayer.ActorNumber];
             noLocalPlayerItems.Remove(otherPlayer.ActorNumber);
@@ -255,27 +277,33 @@ namespace Dash.Scripts.UIManager
             noLocalPlayerItems.Clear();
         }
 
-        private void InitRoomPlayers()
+        private void ApplyRoomPlayer(Player player)
         {
-            var local = playerItems[1];
-            local.Apply(PhotonNetwork.LocalPlayer);
+            if (player.IsLocal)
+            {
+                var local = playerItems[1];
+                local.Apply(player);
+                return;
+            }
+
+            noLocalPlayerItems.TryGetValue(player.ActorNumber, out var already);
+            if (already != null)
+            {
+                already.Apply(player);
+                return;
+            }
+
             var left = playerItems[0];
             var right = playerItems[2];
-            foreach (var player in PhotonNetwork.PlayerList)
+            if (!noLocalPlayerItems.ContainsValue(left))
             {
-                if (!player.IsLocal)
-                {
-                    if (!noLocalPlayerItems.ContainsValue(left))
-                    {
-                        noLocalPlayerItems.Add(player.ActorNumber, left);
-                        left.Apply(player);
-                    }
-                    else
-                    {
-                        noLocalPlayerItems.Add(player.ActorNumber, right);
-                        right.Apply(player);
-                    }
-                }
+                noLocalPlayerItems.Add(player.ActorNumber, left);
+                left.Apply(player);
+            }
+            else
+            {
+                noLocalPlayerItems.Add(player.ActorNumber, right);
+                right.Apply(player);
             }
         }
 
@@ -288,6 +316,7 @@ namespace Dash.Scripts.UIManager
         [PunRPC]
         public void BeginLoadScene()
         {
+            ClearRoomPlayers();
             StartCoroutine(LoadScene());
         }
 

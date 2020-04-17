@@ -7,7 +7,7 @@ namespace Dash.Scripts.GamePlay.Info
 {
     public static class GameplayInfoManager
     {
-        public static RuntimePlayerInfo playerInfo;
+        public static Tuple<PlayerInfoAsset, RuntimePlayerInfo> playerInfo;
 
         public static List<Tuple<WeaponInfoAsset, RuntimeWeaponInfo>> weaponInfos =
             new List<Tuple<WeaponInfoAsset, RuntimeWeaponInfo>>();
@@ -15,11 +15,15 @@ namespace Dash.Scripts.GamePlay.Info
         public static List<Tuple<ShengHenInfoAsset, RuntimeShengHenInfo>> shengHenInfos =
             new List<Tuple<ShengHenInfoAsset, RuntimeShengHenInfo>>();
 
-        public static void Prepare(CompletePlayer completePlayer)
+        public static CompletePlayer current;
+
+        public static void InitInRoom()
         {
+            var completePlayer = current;
             weaponInfos.Clear();
             shengHenInfos.Clear();
-            playerInfo = RuntimePlayerInfo.Build(completePlayer.player, completePlayer.shengHens);
+            playerInfo = Tuple.Create(GameGlobalInfoManager.playerTable[completePlayer.player.typeId],
+                RuntimePlayerInfo.Build(completePlayer.player, completePlayer.shengHens));
             foreach (var eInUseWeapon in completePlayer.weapons)
             {
                 var info = GameGlobalInfoManager.weaponTable[eInUseWeapon.typeId];

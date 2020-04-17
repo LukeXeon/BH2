@@ -1,7 +1,4 @@
-﻿using Dash.Scripts.Cloud;
-using Dash.Scripts.Config;
-using Dash.Scripts.GamePlay.Info;
-using Dash.Scripts.UI;
+﻿using Dash.Scripts.Config;
 using Michsky.UI.ModernUIPack;
 using Photon.Pun;
 using TMPro;
@@ -24,24 +21,14 @@ namespace Dash.Scripts.UIManager
         public Animator loadingMask;
         public NotificationManager onError;
 
+        private BeforeJoinRoomAction beforeJoinRoomAction;
+
         private void Awake()
         {
+            beforeJoinRoomAction = new BeforeJoinRoomAction(loadingMask, onError);
             piPei.onClick.AddListener(() =>
             {
-                BeginWaitNetwork();
-                CloudManager.GetCompletePlayer((player, s) =>
-                {
-                    if (s != null)
-                    {
-                        EndWaitNetWork();
-                        onError.Show("匹配失败", "拉取玩家信息失败");
-                    }
-                    else
-                    {
-                        PhotonNetwork.JoinRandomRoom();
-                        GameplayInfoManager.Prepare(player);
-                    }
-                });
+                beforeJoinRoomAction.DoAction(() => { PhotonNetwork.JoinRandomRoom(); });
             });
             duiWu.onClick.AddListener(() => { duiWuList.Open(); });
         }

@@ -2,7 +2,6 @@
 using System.Linq;
 using Dash.Scripts.Config;
 using Dash.Scripts.Cloud;
-using Dash.Scripts.GamePlay.Info;
 using Dash.Scripts.UI;
 using Dash.Scripts.UIManager.ItemUIManager;
 using Michsky.UI.ModernUIPack;
@@ -34,11 +33,14 @@ namespace Dash.Scripts.UIManager
 
         [Header("Assets")] public GameObject roomItem;
         public GameObject typeItem;
+        private BeforeJoinRoomAction beforeJoinRoomAction;
         private int currentRoomTypeId = -1;
         private bool isOpen;
+        private Dictionary<string, RoomItemUIManager> cacheRooms;
 
         private void Awake()
         {
+            cacheRooms = new Dictionary<string, RoomItemUIManager>();
             var newItem = Instantiate(typeItem, typesRoot);
             var roomType = newItem.GetComponent<RoomTypeItemUIManager>();
             roomType.Apply("全部队伍", () => { });
@@ -48,6 +50,8 @@ namespace Dash.Scripts.UIManager
                 roomType = newItem.GetComponent<RoomTypeItemUIManager>();
                 roomType.Apply(guanQiaInfoAsset.Value.displayName, () => { });
             }
+
+            beforeJoinRoomAction = new BeforeJoinRoomAction(loadingMask, notifyError);
 
             back.onClick.AddListener(() =>
             {
@@ -61,46 +65,30 @@ namespace Dash.Scripts.UIManager
             });
             randomJoin.onClick.AddListener(() =>
             {
-                BeginWaitNetwork();
-                CloudManager.GetCompletePlayer((player, s) =>
-                {
-                    if (s != null)
-                    {
-                        EndWaitNetWork();
-                        notifyError.Show("匹配失败", "拉取玩家信息失败");
-                    }
-                    else
-                    {
-                        PhotonNetwork.JoinRandomRoom();
-                        GameplayInfoManager.Prepare(player);
-                    }
-                });
+                beforeJoinRoomAction.DoAction(() => { PhotonNetwork.JoinRandomRoom(); });
             });
             createRoom.onClick.AddListener(() =>
             {
-                BeginWaitNetwork();
-                CloudManager.GetCompletePlayer((player, s) =>
+                beforeJoinRoomAction.DoAction(() =>
                 {
-                    if (s != null)
+                    var table = new Hashtable
                     {
-                        EndWaitNetWork();
-                        notifyError.Show("创建房间失败", "拉取玩家信息失败");
-                    }
-                    else
+                        ["displayName"] = CloudManager.GetNameInGame() + "的房间",
+                        ["typeId"] = 0,
+                    };
+                    PhotonNetwork.CreateRoom(null, new RoomOptions
                     {
-                        var table = new Hashtable
+                        MaxPlayers = 3,
+                        CustomRoomProperties = table,
+                        CustomRoomPropertiesForLobby = new[]
                         {
-                            ["displayName"] = CloudManager.GetNameInGame() + "的房间",
-                            ["playerIconIds"] = new[] {CloudManager.GetCurrentPlayer().typeId},
-                            ["typeId"] = 0
-                        };
-                        PhotonNetwork.CreateRoom(null, new RoomOptions
-                        {
-                            MaxPlayers = 3,
-                            CustomRoomProperties = table,
-                        });
-                        GameplayInfoManager.Prepare(player);
-                    }
+                            "displayName",
+                            "typeId",
+                            "0playerTypeId",
+                            "1playerTypeId",
+                            "2playerTypeId"
+                        }
+                    });
                 });
             });
         }
@@ -117,7 +105,6 @@ namespace Dash.Scripts.UIManager
 
         public override void OnRoomListUpdate(List<RoomInfo> roomList)
         {
-            ClearRooms();
             var rooms = roomList.GetRange(0, Mathf.Min(MAX_DISPLAY_COUNT, roomList.Count))
                 .Where(info => info.IsOpen && info.IsVisible && !info.RemovedFromList).ToList();
             BuildRooms(rooms);
@@ -125,32 +112,37 @@ namespace Dash.Scripts.UIManager
 
         private void BuildRooms(List<RoomInfo> rooms)
         {
+            var newCache = new Dictionary<string, RoomItemUIManager>();
+            var oldCache = cacheRooms;
             foreach (var info in rooms)
             {
-                var go = Instantiate(roomItem, roomsRoot);
-                var room = go.GetComponent<RoomItemUIManager>();
-                info.CustomProperties.TryGetValue("typeId", out var typeId);
-                info.CustomProperties.TryGetValue("playerIconIds", out var playerIconIds);
-                info.CustomProperties.TryGetValue("displayName", out var displayName);
                 var id = info.Name;
-                room.Apply(displayName as string ?? "", typeId as int? ?? 0, playerIconIds as int[] ?? new int[0], () =>
+                oldCache.TryGetValue(id, out var manager);
+                if (manager != null)
                 {
-                    BeginWaitNetwork();
-                    CloudManager.GetCompletePlayer((player, s) =>
-                    {
-                        if (s != null)
-                        {
-                            EndWaitNetWork();
-                            notifyError.Show("加入房间失败", "拉取玩家数据异常");
-                        }
-                        else
-                        {
-                            PhotonNetwork.JoinRoom(id);
-                            GameplayInfoManager.Prepare(player);
-                        }
-                    });
-                });
+                    newCache.Add(id, manager);
+                }
+                else
+                {
+                    var go = Instantiate(roomItem, roomsRoot);
+                    manager = go.GetComponent<RoomItemUIManager>();
+                    manager.Apply(info,
+                        () => { beforeJoinRoomAction.DoAction(() => { PhotonNetwork.JoinRoom(id); }); });
+                    newCache.Add(id, manager);
+                }
             }
+
+            foreach (var newCacheKey in newCache.Keys)
+            {
+                oldCache.Remove(newCacheKey);
+            }
+
+            foreach (var roomItemUiManager in oldCache.Values)
+            {
+                Destroy(roomItemUiManager.gameObject);
+            }
+
+            cacheRooms = newCache;
         }
 
         public override void OnJoinedRoom()
