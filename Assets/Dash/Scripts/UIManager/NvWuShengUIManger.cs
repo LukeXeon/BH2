@@ -200,10 +200,8 @@ namespace Dash.Scripts.UIManager
                 var winfo = GameGlobalInfoManager.weaponTable[weapon.typeId];
                 var list = SpineUtils.GenerateSpineReplaceInfo(winfo,
                     skeletonAnimation.Skeleton);
-                foreach (var item in list)
-                {
-                    equipsUiManager.Equip(item.slotIndex, item.name, item.attachment);
-                }
+                
+                equipsUiManager.Equip(list);
 
                 if (withAnim)
                 {

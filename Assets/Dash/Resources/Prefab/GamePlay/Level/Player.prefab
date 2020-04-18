@@ -105,8 +105,7 @@ MonoBehaviour:
   poseManager: {fileID: 8238277081177272655}
   mecanim: {fileID: 8238277081177272654}
   animator: {fileID: 8238277081177272641}
-  weapon: {fileID: 11400000, guid: 2fbbdebe8bb068c42bc1eed2d2bd8236, type: 2}
-  inTest: 0
+  photonView: {fileID: 0}
 --- !u!114 &-4584323755285702024
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -139,6 +138,7 @@ GameObject:
   - component: {fileID: 8238277081177272655}
   - component: {fileID: 8238277081177272652}
   - component: {fileID: 8238277081177272653}
+  - component: {fileID: 3994388515112451514}
   m_Layer: 12
   m_Name: Skeleton
   m_TagString: Untagged
@@ -340,3 +340,14 @@ MonoBehaviour:
     LayerIndex: 1
   - SynchronizeType: 0
     LayerIndex: 2
+--- !u!210 &3994388515112451514
+SortingGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8238277081177272650}
+  m_Enabled: 1
+  m_SortingLayerID: 1895017843
+  m_SortingLayer: 8
+  m_SortingOrder: 10

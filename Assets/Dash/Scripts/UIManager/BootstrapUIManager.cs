@@ -203,8 +203,14 @@ namespace Dash.Scripts.UIManager
                 PlayerPrefs.SetInt("first startup", 1);
                 PlayerPrefs.Save();
                 videoPlayer.gameObject.SetActive(true);
+                var time = Time.realtimeSinceStartup;
                 var op = Resources.LoadAsync<VideoClip>("Video/BootVideo");
                 yield return op;
+                time = Time.realtimeSinceStartup - time;
+                if (time < 0.5f)
+                {
+                    yield return new WaitForSecondsRealtime(0.5f - time);
+                }
                 videoPlayer.clip = (VideoClip) op.asset;
                 videoPlayer.Prepare();
                 videoPlayer.prepareCompleted += p => p.Play();

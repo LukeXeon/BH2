@@ -150,7 +150,7 @@ namespace Dash.Scripts.UIManager
             image.sprite = BootstrapUIManager.bootBackground;
             yield return Resources.UnloadUnusedAssets();
             yield return new WaitForEndOfFrame();
-            while (fullMask.alpha / 5 > 0)
+            while (fullMask.alpha / 10f > 0f)
             {
                 fullMask.alpha -= Time.deltaTime;
                 yield return null;

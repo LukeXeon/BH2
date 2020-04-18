@@ -65,6 +65,6 @@ TagManager:
   - name: UI
     uniqueID: 1768579969
     locked: 0
-  - name: NPC
+  - name: Entity
     uniqueID: 1895017843
     locked: 0

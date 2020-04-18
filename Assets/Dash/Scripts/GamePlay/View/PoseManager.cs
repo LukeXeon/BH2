@@ -22,6 +22,8 @@ namespace Dash.Scripts.GamePlay.View
         private readonly List<KeyValuePair<AnimationClip, AnimationClip>> temp =
             new List<KeyValuePair<AnimationClip, AnimationClip>>(10);
 
+        private readonly Dictionary<WeaponInfoAsset, Skin> skinCache = new Dictionary<WeaponInfoAsset, Skin>();
+
         private static Dictionary<string, AnimationClip> GetClips(RuntimeAnimatorController controller)
         {
             return clipsCache.GetValue(controller,
@@ -30,8 +32,8 @@ namespace Dash.Scripts.GamePlay.View
 
         private AnimatorOverrideController GetController(string weaponType)
         {
-            var sourceClips = GetClips(source);
             var controller = new AnimatorOverrideController(framework);
+            var sourceClips = GetClips(source);
             var idleClip = sourceClips[weaponType + "_idle"];
             var runClip = sourceClips[weaponType + "_run"];
             var kaiQiangClip = sourceClips[weaponType + "_kaiqiang"];
@@ -62,26 +64,35 @@ namespace Dash.Scripts.GamePlay.View
         public void SetPose(WeaponInfoAsset weaponInfoAsset)
         {
             animator.runtimeAnimatorController = GetController(weaponInfoAsset.weaponType.matchName);
-            var list = SpineUtils.GenerateSpineReplaceInfo(weaponInfoAsset, skeletonMecanim.Skeleton);
-            foreach (var item in list)
+            skinCache.TryGetValue(weaponInfoAsset, out var skin);
+            if (skin != null)
             {
-                Equip(item.slotIndex, item.name, item.attachment);
+                skeletonMecanim.Skeleton.SetSkin(skin);
+                skeletonMecanim.Skeleton.SetSlotsToSetupPose();
+                skeletonMecanim.Translator.Apply(skeletonMecanim.Skeleton);
             }
-        }
-
-        private void Equip(int slotIndex, string attachmentName, Attachment attachment)
-        {
-            Skin equipsSkin = new Skin("Equips");
-            var templateSkin = skeletonMecanim.Skeleton.Data.DefaultSkin;
-            if (templateSkin != null)
+            else
             {
-                equipsSkin.AddSkin(templateSkin);
-            }
+                var list = SpineUtils.GenerateSpineReplaceInfo(weaponInfoAsset, skeletonMecanim.Skeleton);
+                Skin equipsSkin = new Skin("Equips");
+                var templateSkin = skeletonMecanim.Skeleton.Data.DefaultSkin;
+                if (templateSkin != null)
+                {
+                    equipsSkin.AddSkin(templateSkin);
+                }
 
-            equipsSkin.SetAttachment(slotIndex, attachmentName, attachment);
-            skeletonMecanim.Skeleton.SetSkin(equipsSkin);
-            skeletonMecanim.Skeleton.SetSlotsToSetupPose();
-            skeletonMecanim.Translator.Apply(skeletonMecanim.Skeleton);
+                foreach (var spineReplaceInfo in list)
+                {
+                    equipsSkin.SetAttachment(spineReplaceInfo.slotIndex, spineReplaceInfo.name,
+                        spineReplaceInfo.attachment);
+                }
+
+                skeletonMecanim.Skeleton.SetSkin(equipsSkin);
+
+                skeletonMecanim.Skeleton.SetSlotsToSetupPose();
+                skeletonMecanim.Translator.Apply(skeletonMecanim.Skeleton);
+                skinCache[weaponInfoAsset] = equipsSkin;
+            }
         }
     }
 }

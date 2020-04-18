@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using Cinemachine;
-using Dash.Scripts.Config;
+using Dash.Scripts.GamePlay.View;
 using Photon.Pun;
 using UnityEngine;
 using UnityEngine.Assertions;
-using UnityEngine.Events;
 
 namespace Dash.Scripts.GamePlay
 {
@@ -16,17 +14,11 @@ namespace Dash.Scripts.GamePlay
 
         public GameObject playerPrefab;
         public GameObject[] prefabRefs;
-        public OnWeaponChangedEvent weaponChanged;
-
-        [Serializable]
-        public class OnWeaponChangedEvent : UnityEvent<WeaponInfoAsset>
-        {
-        }
-
+        
         private Transform[] playerChuShengDian;
         private CinemachineVirtualCamera virtualCamera;
         private GameplayUIManager uiManager;
-        internal List<GameObject> players = new List<GameObject>();
+        private int playerCompleteCount;
 
         private void Awake()
         {
@@ -36,15 +28,15 @@ namespace Dash.Scripts.GamePlay
             Assert.IsNotNull(cam, "cam != null");
             virtualCamera = cam.GetComponent<CinemachineVirtualCamera>();
             uiManager = FindObjectOfType<GameplayUIManager>();
-            if (weaponChanged == null)
-            {
-                weaponChanged = new OnWeaponChangedEvent();
-            }
         }
 
+        public void PlayerComplete()
+        {
+            ++playerCompleteCount;
+        }
+        
         private IEnumerator Start()
         {
-            yield return Resources.UnloadUnusedAssets();
             var go = PhotonNetwork.Instantiate(
                 playerPrefab.name,
                 playerChuShengDian[
@@ -53,12 +45,18 @@ namespace Dash.Scripts.GamePlay
                 ].position,
                 Quaternion.identity
             );
+            var controller = go.GetComponent<PlayerView>();
+            uiManager.weaponChanged.AddListener(info =>
+            {
+                controller.OnLocalWeaponChanged(info.typeId);
+            });
             virtualCamera.Follow = go.transform;
             yield return new WaitUntil(() =>
-                players.Count >= PhotonNetwork.PlayerList.Length);
+                playerCompleteCount >= PhotonNetwork.PlayerList.Length);
+            yield return Resources.UnloadUnusedAssets();
             yield return new WaitForEndOfFrame();
             yield return new WaitForFixedUpdate();
-            uiManager.Prepared();
+            uiManager.OnPrepared();
         }
     }
 }

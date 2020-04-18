@@ -1,38 +1,51 @@
-using System;
+using System.Linq;
 using Dash.Scripts.Config;
-using Dash.Scripts.GamePlay.View;
+using Dash.Scripts.GamePlay.Info;
 using Photon.Pun;
 using Spine.Unity;
 using UnityEngine;
 
-namespace Dash.Scripts.GamePlay
+namespace Dash.Scripts.GamePlay.View
 {
-    public class PlayerController : MonoBehaviourPunCallbacks, IPunObservable
+    public class PlayerView : MonoBehaviour, IPunObservable
     {
         public float speed;
         public PoseManager poseManager;
         public SkeletonMecanim mecanim;
         public Animator animator;
         private static readonly int IS_RUN = Animator.StringToHash("is_run");
-        [Header("Test")] public WeaponInfoAsset weapon;
-        public bool inTest;
+        public PhotonView photonView;
 
         private int flipX = 1;
 
         private void Awake()
         {
-            FindObjectOfType<GameplayManager>().players.Add(this.gameObject);
-            poseManager.SetPose(weapon);
+            photonView = GetComponent<PhotonView>();
         }
 
-        private void OnDestroy()
+        private void Start()
         {
-            FindObjectOfType<GameplayManager>()?.players?.Remove(this.gameObject);
+            photonView.RPC(
+                nameof(PreparePlayer),
+                RpcTarget.All,
+                GameplayInfoManager.playerInfo.Item1.typeId,
+                GameplayInfoManager.weaponInfos.First().Item1.typeId
+            );
+        }
+        
+        [PunRPC]
+        public void PreparePlayer(int playerTypeId, int weaponTypeId)
+        {
+            var info = GameGlobalInfoManager.playerTable[playerTypeId];
+            mecanim.skeletonDataAsset = info.skel;
+            mecanim.Initialize(true);
+            poseManager.SetPose(GameGlobalInfoManager.weaponTable[weaponTypeId]);
+            FindObjectOfType<GameplayManager>().PlayerComplete();
         }
 
         private void FixedUpdate()
         {
-            if (photonView.IsMine || Application.isEditor && inTest)
+            if (photonView.IsMine)
             {
                 var h = ETCInput.GetAxis("Horizontal");
                 var v = ETCInput.GetAxis("Vertical");
@@ -62,6 +75,19 @@ namespace Dash.Scripts.GamePlay
 
 
             mecanim.Skeleton.ScaleX = flipX;
+        }
+
+        public void OnLocalWeaponChanged(int typeId)
+        {
+            photonView.RPC(nameof(WeaponChanged), RpcTarget.All, typeId);
+        }
+
+        [PunRPC]
+        public void WeaponChanged(int typeId)
+        {
+            var info = GameGlobalInfoManager.weaponTable[typeId];
+            poseManager.SetPose(info);
+            animator.SetTrigger("taoqiang");
         }
 
         public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)

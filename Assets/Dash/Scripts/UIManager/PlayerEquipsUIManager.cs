@@ -1,4 +1,6 @@
-﻿using Spine;
+﻿using System.Collections.Generic;
+using Dash.Scripts.GamePlay.View;
+using Spine;
 using Spine.Unity;
 using UnityEngine;
 
@@ -23,7 +25,7 @@ namespace Dash.Scripts.UIManager
         }
 
 
-        public void Equip(int slotIndex, string attachmentName, Attachment attachment)
+        public void Equip(List<SpineReplaceInfo> info)
         {
             Skin equipsSkin = new Skin("Equips");
             var templateSkin = skeletonAnimation.Skeleton.Data.DefaultSkin;
@@ -31,15 +33,13 @@ namespace Dash.Scripts.UIManager
             {
                 equipsSkin.AddSkin(templateSkin);
             }
-            equipsSkin.SetAttachment(slotIndex, attachmentName, attachment);
+            foreach (var spineReplaceInfo in info)
+            {
+                equipsSkin.SetAttachment(spineReplaceInfo.slotIndex, spineReplaceInfo.name, spineReplaceInfo.attachment);
+            }
             skeletonAnimation.Skeleton.SetSkin(equipsSkin);
-            RefreshSkeletonAttachments();
-        }
-
-        void RefreshSkeletonAttachments()
-        {
             skeletonAnimation.Skeleton.SetSlotsToSetupPose();
-            skeletonAnimation.AnimationState.Apply(skeletonAnimation.Skeleton); //skeletonAnimation.Update(0);
+            skeletonAnimation.AnimationState.Apply(skeletonAnimation.Skeleton);
         }
     }
 }

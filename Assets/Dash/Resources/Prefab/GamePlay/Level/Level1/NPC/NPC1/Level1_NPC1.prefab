@@ -113,6 +113,7 @@ GameObject:
   - component: {fileID: 2545382971944027308}
   - component: {fileID: 2545382971944027307}
   - component: {fileID: 2545382971944027306}
+  - component: {fileID: 11659337111539152}
   m_Layer: 13
   m_Name: Spine
   m_TagString: Untagged
@@ -279,6 +280,17 @@ MonoBehaviour:
   m_SynchronizeLayers:
   - SynchronizeType: 0
     LayerIndex: 0
+--- !u!210 &11659337111539152
+SortingGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2545382971944027309}
+  m_Enabled: 1
+  m_SortingLayerID: 1895017843
+  m_SortingLayer: 8
+  m_SortingOrder: 10
 --- !u!1 &2545382973083229444
 GameObject:
   m_ObjectHideFlags: 0

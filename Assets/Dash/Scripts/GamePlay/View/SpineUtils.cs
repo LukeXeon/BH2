@@ -11,8 +11,7 @@ namespace Dash.Scripts.GamePlay.View
     {
         private static Dictionary<WeaponInfoAsset, List<SpineReplaceInfo>> cachedAttachments =
             new Dictionary<WeaponInfoAsset, List<SpineReplaceInfo>>();
-
-
+        
         public static List<SpineReplaceInfo> GenerateSpineReplaceInfo(WeaponInfoAsset item, Skeleton asset)
         {
             List<SpineReplaceInfo> li = new List<SpineReplaceInfo>();

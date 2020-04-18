@@ -44,10 +44,7 @@ namespace Dash.Scripts.UIManager.ItemUIManager
                     currentWeaponTypeId = (int) weaponTypeId;
                     var weapon = GameGlobalInfoManager.weaponTable[(int) weaponTypeId];
                     var list = SpineUtils.GenerateSpineReplaceInfo(weapon, skeletonAnimation.Skeleton);
-                    foreach (var item in list)
-                    {
-                        playerEquipsUiManager.Equip(item.slotIndex, item.name, item.attachment);
-                    }
+                    playerEquipsUiManager.Equip(list);
 
                     skeletonAnimation.AnimationState.SetAnimation(0, weapon.weaponType.matchName + "_idle", true);
                 }
