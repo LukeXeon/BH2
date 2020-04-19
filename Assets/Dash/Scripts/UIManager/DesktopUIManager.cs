@@ -79,23 +79,25 @@ namespace Dash.Scripts.UIManager
             music.animator.Play(info.shortNameHash, 0, 1f);
             //Desktop
             live2DPanel.onClick.AddListener(SetRandomLiveMotion);
-            openCharacters.onClick.AddListener(() =>
+            openCharacters.onClick.AddListener(async () =>
             {
                 BeginWaitNetwork();
-                CloudManager.GetEquipments((eq, e) =>
+                try
+                {
+                    var e = await CloudManager.GetEquipments();
+                    nvWuShen.Play("Fade-in");
+                    playersUiManger.Open(e);
+                    WaitAnimFinish(nvWuShen);
+                }
+                catch (Exception exception)
+                {
+                    notifyError.Show("网络异常", exception.Message);
+                    throw;
+                }
+                finally
                 {
                     EndWaitNetWork();
-                    if (e != null)
-                    {
-                        notifyError.Show("网络异常", e);
-                    }
-                    else
-                    {
-                        nvWuShen.Play("Fade-in");
-                        playersUiManger.Open(eq);
-                        WaitAnimFinish(nvWuShen);
-                    }
-                });
+                }
             });
             openPlayWay.onClick.AddListener(() =>
             {
@@ -150,10 +152,10 @@ namespace Dash.Scripts.UIManager
             image.sprite = BootstrapUIManager.bootBackground;
             yield return Resources.UnloadUnusedAssets();
             yield return new WaitForEndOfFrame();
-            while (fullMask.alpha / 10f > 0f)
+            while (fullMask.alpha > 0f)
             {
-                fullMask.alpha -= Time.deltaTime;
-                yield return null;
+                fullMask.alpha -= Time.deltaTime * 4;
+                yield return new WaitForEndOfFrame();
             }
 
             Destroy(fullMask.gameObject);

@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Dash.Scripts.Cloud;
 using Dash.Scripts.GamePlay.Info;
 using Dash.Scripts.UI;
@@ -21,23 +22,22 @@ namespace Dash.Scripts.UIManager
             this.onError = onError;
         }
 
-        public void DoAction(Action action)
+        public async Task DoPrepare()
         {
             loadingMask.gameObject.SetActive(true);
             loadingMask.Play("Fade-in");
-            CloudManager.GetCompletePlayer((player, s) =>
+            try
             {
-                if (s != null)
-                {
-                    loadingMask.gameObject.SetActive(false);
-                    onError.Show("网络错误", "拉取玩家信息失败");
-                }
-                else
-                {
-                    GameplayInfoManager.current = player;
-                    action();
-                }
-            });
+                var player = await CloudManager.GetCompletePlayer();
+                GameplayInfoManager.current = player;
+            }
+            catch (Exception e)
+            {
+                Debug.Log(e);
+                loadingMask.gameObject.SetActive(false);
+                onError.Show("网络错误", "拉取玩家信息失败");
+                throw;
+            }
         }
     }
 }

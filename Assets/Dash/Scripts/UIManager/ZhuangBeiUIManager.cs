@@ -48,50 +48,50 @@ namespace Dash.Scripts.UIManager
         {
             buttons = new[] {openWeapon, openShengHen, openCaiLiao};
             panels = new[] {weaponPanel, shengHenPanel, caiLiaoPanel};
-            openWeapon.onClick.AddListener(() =>
+            openWeapon.onClick.AddListener(async () =>
             {
                 if (weapons == null)
                 {
                     BeginWaitNetwork();
-                    CloudManager.GetUserWeapons((w, e) =>
+                    try
+                    {
+                        SelectButton(openWeapon);
+                        this.weapons = await CloudManager.GetUserWeapons();
+                        LoadWeapons(weapons.Values, o => { weaponInfo.Open("强化", o, o1 => { }, null); });
+                    }
+                    catch (Exception e)
+                    {
+                        onError.Show("网络异常", e.Message);
+                    }
+                    finally
                     {
                         EndWaitNetWork();
-                        if (e != null)
-                        {
-                            onError.Show("网络异常", e);
-                        }
-                        else
-                        {
-                            SelectButton(openWeapon);
-                            this.weapons = w;
-                            LoadWeapons(weapons.Values, o => { weaponInfo.Open("强化", o, o1 => { }, null); });
-                        }
-                    });
+                    }
                 }
                 else
                 {
                     SelectButton(openWeapon);
                 }
             });
-            openShengHen.onClick.AddListener(() =>
+            openShengHen.onClick.AddListener(async () =>
             {
                 if (shengHens == null)
                 {
                     BeginWaitNetwork();
-                    CloudManager.GetUserShengHen((s, e) =>
+                    try
+                    {
+                        SelectButton(openShengHen);
+                        this.shengHens = await CloudManager.GetUserShengHen();
+                        LoadShengHens(shengHens.Values, o => { shengHenInfo.Open("强化", o, o1 => { }, null); });
+                    }
+                    catch (Exception e)
+                    {
+                        onError.Show("网络异常", e.Message);
+                    }
+                    finally
                     {
                         EndWaitNetWork();
-                        if (e != null)
-                        {
-                            onError.Show("网络异常", e);
-                        }
-                        else
-                        {
-                            SelectButton(openShengHen);
-                            this.shengHens = s;
-                            LoadShengHens(shengHens.Values, o => { shengHenInfo.Open("强化", o, o1 => { }, null); });
-                        }
-                    });
+                    }
                 }
                 else
                 {
@@ -174,6 +174,7 @@ namespace Dash.Scripts.UIManager
                 Instantiate(unLoadWeaponPrefab, weaponContent.transform).GetComponent<Button>().onClick
                     .AddListener(() => onUnload());
             }
+
             LoadWeapons(weapons, callback);
         }
 

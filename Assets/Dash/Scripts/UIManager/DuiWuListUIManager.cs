@@ -63,33 +63,32 @@ namespace Dash.Scripts.UIManager
 
                 animator.Play("Fade-out");
             });
-            randomJoin.onClick.AddListener(() =>
+            randomJoin.onClick.AddListener(async () =>
             {
-                beforeJoinRoomAction.DoAction(() => { PhotonNetwork.JoinRandomRoom(); });
+                await beforeJoinRoomAction.DoPrepare();
+                PhotonNetwork.JoinRandomRoom();
             });
-            createRoom.onClick.AddListener(() =>
+            createRoom.onClick.AddListener(async () =>
             {
-                beforeJoinRoomAction.DoAction(() =>
+                await beforeJoinRoomAction.DoPrepare();
+                var table = new Hashtable
                 {
-                    var table = new Hashtable
+                    ["displayName"] = CloudManager.GetNameInGame() + "的房间",
+                    ["typeId"] = 0,
+                    ["0playerTypeId"] = CloudManager.GetCurrentPlayer().typeId
+                };
+                PhotonNetwork.CreateRoom(null, new RoomOptions
+                {
+                    MaxPlayers = 3,
+                    CustomRoomProperties = table,
+                    CustomRoomPropertiesForLobby = new[]
                     {
-                        ["displayName"] = CloudManager.GetNameInGame() + "的房间",
-                        ["typeId"] = 0,
-                        ["0playerTypeId"] = CloudManager.GetCurrentPlayer().typeId
-                    };
-                    PhotonNetwork.CreateRoom(null, new RoomOptions
-                    {
-                        MaxPlayers = 3,
-                        CustomRoomProperties = table,
-                        CustomRoomPropertiesForLobby = new[]
-                        {
-                            "displayName",
-                            "typeId",
-                            "0playerTypeId",
-                            "1playerTypeId",
-                            "2playerTypeId"
-                        }
-                    });
+                        "displayName",
+                        "typeId",
+                        "0playerTypeId",
+                        "1playerTypeId",
+                        "2playerTypeId"
+                    }
                 });
             });
         }
@@ -128,7 +127,11 @@ namespace Dash.Scripts.UIManager
                     var go = Instantiate(roomItem, roomsRoot);
                     manager = go.GetComponent<RoomItemUIManager>();
                     manager.Apply(info,
-                        () => { beforeJoinRoomAction.DoAction(() => { PhotonNetwork.JoinRoom(id); }); });
+                        async () =>
+                        {
+                            await beforeJoinRoomAction.DoPrepare();
+                            PhotonNetwork.JoinRoom(id);
+                        });
                     newCache.Add(id, manager);
                 }
             }

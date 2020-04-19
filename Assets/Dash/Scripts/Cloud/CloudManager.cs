@@ -1,7 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
+using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
 using Dash.Scripts.Config;
 using Dash.Scripts.Core;
@@ -94,7 +97,7 @@ namespace Dash.Scripts.Cloud
             return list;
         }
 
-        public static void LuckDraw(Action<LuckDrawResult, string> callback)
+        public static async Task<LuckDrawResult> LuckDraw()
         {
             var type = Random.Range(0, 3);
             switch (type)
@@ -102,153 +105,76 @@ namespace Dash.Scripts.Cloud
                 case 0:
                 {
                     var playerTypeId = Random.Range(0, GameGlobalInfoManager.maxWeaponId + 1);
-                    new AVQuery<EPlayer>()
+                    var player = (await new AVQuery<EPlayer>()
                         .WhereEqualTo("user", AVUser.CurrentUser)
                         .WhereEqualTo("typeId", playerTypeId)
-                        .FindAsync()
-                        .RunOnUiThread(t =>
-                            {
-                                if (t.IsCanceled || t.IsFaulted)
-                                {
-                                    Debug.Log(t.Exception);
-                                    callback(null, errorMessage);
-                                    return;
-                                }
-
-                                var player = t.Result.ToList();
-                                if (player.Count == 0)
-                                {
-                                    var p = NewPlayer(playerTypeId);
-                                    AVObject.SaveAllAsync(p)
-                                        .RunOnUiThread(t2 =>
-                                        {
-                                            if (t.IsCanceled || t.IsFaulted)
-                                            {
-                                                Debug.Log(t.Exception);
-                                                callback(null, errorMessage);
-                                                return;
-                                            }
-
-                                            callback(new LuckDrawResult
-                                            {
-                                                typeId = playerTypeId,
-                                                resultType = LuckDrawResult.Type.UnLockPlayer
-                                            }, null);
-                                        });
-                                }
-                                else
-                                {
-                                    var p = player.First();
-                                    p.exp += GameGlobalInfoManager.levelInfo.playerLuckDrawExpAddOnce;
-                                    AVObject.SaveAllAsync(new AVObject[] {p}).RunOnUiThread(t2 =>
-                                    {
-                                        if (t.IsCanceled || t.IsFaulted)
-                                        {
-                                            Debug.Log(t.Exception);
-                                            callback(null, errorMessage);
-                                            return;
-                                        }
-
-                                        callback(new LuckDrawResult
-                                        {
-                                            typeId = playerTypeId,
-                                            resultType = LuckDrawResult.Type.AddPlayerExp
-                                        }, null);
-                                    });
-                                }
-                            }
-                        );
-                    break;
+                        .FindAsync()).ToArray();
+                    if (player.Length == 0)
+                    {
+                        var p = NewPlayer(playerTypeId);
+                        await AVObject.SaveAllAsync(p);
+                        return new LuckDrawResult
+                        {
+                            typeId = playerTypeId,
+                            resultType = LuckDrawResult.Type.UnLockPlayer
+                        };
+                    }
+                    else
+                    {
+                        var p = player.First();
+                        p.exp += GameGlobalInfoManager.levelInfo.playerLuckDrawExpAddOnce;
+                        await AVObject.SaveAllAsync(new AVObject[] {p});
+                        return new LuckDrawResult
+                        {
+                            typeId = playerTypeId,
+                            resultType = LuckDrawResult.Type.AddPlayerExp
+                        };
+                    }
                 }
 
                 case 1:
                 {
                     var weaponTypeId = Random.Range(0, GameGlobalInfoManager.maxWeaponId + 1);
-                    NewWeapon(weaponTypeId)
-                        .SaveAsync()
-                        .RunOnUiThread(t =>
-                        {
-                            if (t.IsCanceled || t.IsFaulted)
-                            {
-                                Debug.Log(t.Exception);
-                                callback(null, errorMessage);
-                                return;
-                            }
-
-                            callback(new LuckDrawResult
-                            {
-                                typeId = weaponTypeId,
-                                resultType = LuckDrawResult.Type.Weapon
-                            }, null);
-                        });
+                    await NewWeapon(weaponTypeId)
+                        .SaveAsync();
+                    return new LuckDrawResult
+                    {
+                        typeId = weaponTypeId,
+                        resultType = LuckDrawResult.Type.Weapon
+                    };
                 }
-                    break;
+
                 default:
                 {
                     var shengHenTypeId = Random.Range(0, GameGlobalInfoManager.maxShengHeId + 1);
-                    NewShengHen(null, shengHenTypeId)
-                        .SaveAsync()
-                        .RunOnUiThread(t =>
-                        {
-                            if (t.IsCanceled || t.IsFaulted)
-                            {
-                                Debug.Log(t.Exception);
-                                callback(null, errorMessage);
-                                return;
-                            }
-
-                            callback(new LuckDrawResult
-                            {
-                                typeId = shengHenTypeId,
-                                resultType = LuckDrawResult.Type.ShengHen
-                            }, null);
-                        });
+                    await NewShengHen(null, shengHenTypeId)
+                        .SaveAsync();
+                    return new LuckDrawResult
+                    {
+                        typeId = shengHenTypeId,
+                        resultType = LuckDrawResult.Type.ShengHen
+                    };
                 }
-                    break;
             }
         }
 
-        public static void GetUserShengHen(Action<Dictionary<string, EShengHen>, string> callback)
+        public static async Task<Dictionary<string, EShengHen>> GetUserShengHen()
         {
-            new AVQuery<EShengHen>()
+            return (await new AVQuery<EShengHen>()
                 .Include("player")
                 .WhereEqualTo("user", AVUser.CurrentUser)
-                .FindAsync()
-                .ContinueWith(t => t.Result.ToDictionary(o => o.ObjectId, o => o))
-                .RunOnUiThread(t =>
-                {
-                    if (t.IsCanceled || t.IsFaulted)
-                    {
-                        Debug.Log(t.Exception);
-                        callback(null, errorMessage);
-                        return;
-                    }
-
-                    callback(t.Result, null);
-                });
+                .FindAsync()).ToDictionary(o => o.ObjectId, o => o);
         }
 
-        public static void GetUserWeapons(Action<Dictionary<string, EWeapon>, string> callback)
+        public static async Task<Dictionary<string, EWeapon>> GetUserWeapons()
         {
-            new AVQuery<EWeapon>()
+            return (await new AVQuery<EWeapon>()
                 .Include("player")
                 .WhereEqualTo("user", AVUser.CurrentUser)
-                .FindAsync()
-                .ContinueWith(t => t.Result.ToDictionary(o => o.ObjectId, o => o))
-                .RunOnUiThread(t =>
-                {
-                    if (t.IsCanceled || t.IsFaulted)
-                    {
-                        Debug.Log(t.Exception);
-                        callback(null, errorMessage);
-                        return;
-                    }
-
-                    callback(t.Result, null);
-                });
+                .FindAsync()).ToDictionary(o => o.ObjectId, o => o);
         }
 
-        public static void GetEquipments(Action<Equipments, string> callback)
+        public static async Task<Equipments> GetEquipments()
         {
             var t0 = new AVQuery<EWeapon>()
                 .Include("player")
@@ -268,17 +194,10 @@ namespace Dash.Scripts.Cloud
                 .Include("shengHen")
                 .WhereEqualTo("user", AVUser.CurrentUser)
                 .FindAsync();
-            Task.WhenAll(t0, t1, t2, t3).RunOnUiThread(t =>
+            return await Task.Run(async () =>
             {
-                if (t.IsCanceled || t.IsFaulted)
-                {
-                    Debug.Log(t.Exception);
-                    callback(null, errorMessage);
-                    return;
-                }
-
                 var e = new Equipments();
-                foreach (var item in t2.Result)
+                foreach (var item in await t2)
                 {
                     PlayerWithUsing inUse;
                     e.players.TryGetValue(item.player.ObjectId, out inUse);
@@ -295,7 +214,7 @@ namespace Dash.Scripts.Cloud
                 }
 
 
-                foreach (var item in t3.Result)
+                foreach (var item in await t3)
                 {
                     PlayerWithUsing inUse;
                     e.players.TryGetValue(item.player.ObjectId, out inUse);
@@ -311,12 +230,12 @@ namespace Dash.Scripts.Cloud
                     inUse.shengHens.Add(item);
                 }
 
-                foreach (var item in t0.Result)
+                foreach (var item in await t0)
                 {
                     e.weapons.Add(item.ObjectId, item);
                 }
 
-                foreach (var item in t1.Result)
+                foreach (var item in await t1)
                 {
                     e.shengHens.Add(item.ObjectId, item);
                 }
@@ -327,53 +246,31 @@ namespace Dash.Scripts.Cloud
                     inUse.weapons.Sort((o1, o2) => o1.index.CompareTo(o2.index));
                 }
 
-                callback(e, null);
+                return e;
             });
         }
 
-        public static void SignUp(string username, string password, string password2, Action<string> callback)
+        public static async Task SignUp(string username, string password, string password2)
         {
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password) || string.IsNullOrEmpty(password2))
             {
-                callback("用户名和密码不能为空");
-                return;
+                throw new ArgumentException("用户名和密码不能为空");
             }
 
             if (password != password2)
             {
-                callback("两次输入的密码不一致");
-                return;
+                throw new ArgumentException("两次输入的密码不一致");
             }
 
             var myUser = new AVUser
             {
                 Password = password, Username = username
             };
-            myUser.SignUpAsync()
-                .RunOnUiThread(t =>
-                    {
-                        if (t.IsFaulted || t.IsCanceled)
-                        {
-                            Debug.Log(t.Exception);
-                            callback("账号重复或网络不通");
-                        }
-                        else
-                        {
-                            callback(null);
-                        }
-                    }
-                );
+            await myUser.SignUpAsync();
         }
 
-        private static void HandleLogin(Task<AVUser> t, Action<string> callback)
+        private static async Task HandleLogin()
         {
-            if (t.IsCanceled || t.IsFaulted)
-            {
-                Debug.Log(t.Exception);
-                callback(errorMessageInLogIn);
-                return;
-            }
-
             var t1 = new AVQuery<EUserMate>()
                 .Include("player")
                 .WhereEqualTo("user", AVUser.CurrentUser)
@@ -383,137 +280,121 @@ namespace Dash.Scripts.Cloud
                 .CountAsync();
             var tCount = new AVQuery<AVUser>()
                 .CountAsync();
-            Task.WhenAll(t1, t2, tCount).RunOnUiThread(all =>
-                {
-                    if (all.IsCanceled || all.IsFaulted)
-                    {
-                        Debug.Log(all.Exception);
-                        callback(errorMessageInLogIn);
-                        return;
-                    }
-
-                    var userMate = t1.Result.FirstOrDefault() ?? new EUserMate
-                    {
-                        user = AVUser.CurrentUser,
-                        nameInGame = "玩家" + tCount.Result
-                    };
-                    localUserMate = userMate;
-                    var count = t2.Result;
-                    if (count == 0)
-                    {
-                        var p = NewPlayer(0);
-                        userMate.player = (EPlayer) p[0];
-                        p.Add(userMate);
-                        AVObject.SaveAllAsync(p).RunOnUiThread(t3 =>
-                            {
-                                if (t3.IsCanceled || t3.IsFaulted)
-                                {
-                                    Debug.Log(t3.Exception);
-                                    callback(errorMessageInLogIn);
-                                    return;
-                                }
-
-                                callback(null);
-                            }
-                        );
-                    }
-                    else
-                    {
-                        callback(null);
-                    }
-                }
-            );
+            var userMate = (await t1).FirstOrDefault() ?? new EUserMate
+            {
+                user = AVUser.CurrentUser,
+                nameInGame = "玩家" + tCount.Result
+            };
+            localUserMate = userMate;
+            var count = await t2;
+            if (count == 0)
+            {
+                var p = NewPlayer(0);
+                userMate.player = (EPlayer) p[0];
+                p.Add(userMate);
+                await AVObject.SaveAllAsync(p);
+            }
         }
 
-        public static void LogInWithToken(string token, Action<string> cb)
+        public static async Task LogInWithToken(string token)
         {
-            AVUser.BecomeAsync(token).RunOnUiThread(t => { HandleLogin(t, cb); });
+            await AVUser.BecomeAsync(token);
+            await HandleLogin();
         }
 
-        public static void LogIn(string username, string password, Action<string> callback)
+        public static async Task LogIn(string username, string password)
         {
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
             {
-                callback("用户名和密码不能为空");
-                return;
+                throw new ArgumentException("用户名和密码不能为空");
             }
 
-            AVUser.LogInAsync(username, password)
-                .RunOnUiThread(t => HandleLogin(t, callback));
+            await AVUser.LogInAsync(username, password);
+            await HandleLogin();
         }
 
-        public static HttpListener GetGithubUrlAndWaitToken(Action<string, string> callback)
+        private struct UnityWebRequestAwaitable : INotifyCompletion
+        {
+            private readonly UnityWebRequestAsyncOperation operation;
+
+            public UnityWebRequestAwaitable(UnityWebRequestAsyncOperation operation)
+            {
+                this.operation = operation;
+            }
+
+            public void OnCompleted(Action continuation)
+            {
+                operation.completed += o => continuation();
+            }
+
+            public bool IsCompleted => operation.isDone;
+
+            public UnityWebRequest GetResult() => operation.webRequest;
+        }
+
+        private static UnityWebRequestAwaitable GetAwaiter(this UnityWebRequestAsyncOperation operation)
+        {
+            return new UnityWebRequestAwaitable(operation);
+        }
+
+        public static async Task LogInWithGithub(CancellationToken cancellationToken)
         {
             var info = GameBootInitializer.info;
             var http = new HttpListener {AuthenticationSchemes = AuthenticationSchemes.Anonymous};
             http.Prefixes.Add(GetCallbackUrl());
             http.Start();
-            Task.Run(function: async () =>
-            {
-                var ctx = await http.GetContextAsync();
-                var code = ctx.Request.QueryString["code"];
-                http.Abort();
-                Debug.Log(code);
-                var u = new Url("https://github.com/login/oauth/access_token");
-                u.SetQueryParam("client_id", info.githubClientId);
-                u.SetQueryParam("client_secret", info.githubClientSecret);
-                u.SetQueryParam("code", code);
-
-                return u.ToString();
-            }).RunOnUiThread(t =>
-            {
-                if (t.IsFaulted || t.IsCanceled)
+            var ctxTask = http.GetContextAsync();
+            var cancelTask = Task.Run(async () =>
                 {
-                    Debug.Log(t.Exception);
-                    callback(errorMessage, null);
+                    while (!cancellationToken.IsCancellationRequested && !ctxTask.IsCompleted)
+                    {
+                        await Task.Yield();
+                    }
                 }
-
-                var wr = UnityWebRequest.Post(t.Result, new Dictionary<string, string>());
-                wr.SetRequestHeader("Accept", "application/json");
-                wr.SendWebRequest().completed += w =>
-                {
-                    var token =
-                        JsonConvert.DeserializeObject<Dictionary<string, string>>(wr.downloadHandler.text)[
-                            "access_token"];
-                    callback(null, token);
-                    Debug.Log("Task Finish");
-                };
-            });
-            return http;
-        }
-
-        public static void LogInWithGithub(string token, Action<string> callback)
-        {
+                , cancellationToken);
+            await Task.WhenAny(cancelTask, ctxTask);
+            if (cancellationToken.IsCancellationRequested)
+            {
+                http.Abort();
+                throw new TimeoutException("");
+            }
+            var  code = (await ctxTask).Request.QueryString["code"];
+            http.Abort();
+            Debug.Log(code);
+            var u = new Url("https://github.com/login/oauth/access_token");
+            u.SetQueryParam("client_id", info.githubClientId);
+            u.SetQueryParam("client_secret", info.githubClientSecret);
+            u.SetQueryParam("code", code);
+            var wr = UnityWebRequest.Post(u, new Dictionary<string, string>());
+            wr.SetRequestHeader("Accept", "application/json");
+            await wr.SendWebRequest();
+            var token =
+                JsonConvert.DeserializeObject<Dictionary<string, string>>(wr.downloadHandler.text)["access_token"];
             UnityWebRequest request = UnityWebRequest.Get("https://api.github.com/user");
             request.SetRequestHeader("Authorization", "token " + token);
             request.SetRequestHeader("Accept", "application/json");
-            request.SendWebRequest().completed += w =>
+            await request.SendWebRequest();
+            if (request.responseCode == 200)
             {
-                if (request.responseCode == 200)
+                var userInfo = JsonConvert.DeserializeObject<Dictionary<string, string>>(request.downloadHandler.text);
+                await AVUser.LogInWithAuthDataAsync(new Dictionary<string, object>
                 {
-                    var userInfo =
-                        JsonConvert.DeserializeObject<Dictionary<string, string>>(request.downloadHandler.text);
-                    AVUser.LogInWithAuthDataAsync(new Dictionary<string, object>
-                        {
-                            {"access_token", token},
-                            {"expires_in", 7200},
-                            {"uid", userInfo["id"]}
-                        }, "github")
-                        .RunOnUiThread(t => HandleLogin(t, callback));
-                }
-                else
-                {
-                    Debug.Log(request.responseCode);
-                    callback(errorMessage);
-                }
-            };
+                    {"access_token", token},
+                    {"expires_in", 7200},
+                    {"uid", userInfo["id"]}
+                }, "github");
+                await HandleLogin();
+            }
+            else
+            {
+                throw new IOException("http错误码" + request.responseCode);
+            }
         }
 
         //callback（降下的，换上去的，错误信息）
-        public static void ReplaceShengHen(
+        public static async Task<EShengHen[]> ReplaceShengHen(
             EInUseShengHen index,
-            EShengHen shengHen,
-            Action<EShengHen, EShengHen, string> callback
+            EShengHen shengHen
         )
         {
             List<AVObject> toUpdate = new List<AVObject> {index};
@@ -532,24 +413,14 @@ namespace Dash.Scripts.Cloud
             }
 
             index.shengHen = shengHen;
-            AVObject.SaveAllAsync(toUpdate).RunOnUiThread(t =>
-            {
-                if (t.IsCanceled || t.IsFaulted)
-                {
-                    Debug.Log(t.Exception);
-                    callback(null, null, errorMessage);
-                    return;
-                }
-
-                callback(old, shengHen, null);
-            });
+            await AVObject.SaveAllAsync(toUpdate);
+            return new[] {old, shengHen};
         }
 
         //callback（降下的，换上去的，错误信息）
-        public static void ReplaceWeapon(
+        public static async Task<EWeapon[]> ReplaceWeapon(
             EInUseWeapon index,
-            EWeapon weapon,
-            Action<EWeapon, EWeapon, string> callback
+            EWeapon weapon
         )
         {
             List<AVObject> toUpdate = new List<AVObject> {index};
@@ -569,20 +440,11 @@ namespace Dash.Scripts.Cloud
 
             index.weapon = weapon;
 
-            AVObject.SaveAllAsync(toUpdate).RunOnUiThread(t =>
-            {
-                if (t.IsCanceled || t.IsFaulted)
-                {
-                    Debug.Log(t.Exception);
-                    callback(null, null, errorMessage);
-                    return;
-                }
-
-                callback(old, weapon, null);
-            });
+            await AVObject.SaveAllAsync(toUpdate);
+            return new[] {old, weapon};
         }
 
-        public static void GetCompletePlayer(Action<CompletePlayer, string> callback)
+        public static async Task<CompletePlayer> GetCompletePlayer()
         {
             var player = localUserMate.player;
             var task1 = new AVQuery<EInUseWeapon>().WhereEqualTo("player", player)
@@ -591,71 +453,28 @@ namespace Dash.Scripts.Cloud
             var task2 = new AVQuery<EInUseShengHen>().WhereEqualTo("player", player)
                 .Include("shengHen")
                 .FindAsync();
-            Task.WhenAll(task1, task2)
-                .RunOnUiThread(t =>
-                {
-                    if (t.IsCanceled || t.IsFaulted)
-                    {
-                        Debug.Log(t.Exception);
-                        callback(null, errorMessage);
-                        return;
-                    }
 
-                    var w = task1.Result.ToList();
-                    var s = task2.Result.ToList();
-                    w.Sort((a, b) => a.index.CompareTo(b.index));
-                    s.Sort((a, b) => a.index.CompareTo(b.index));
-                    callback(new CompletePlayer
-                    {
-                        player = player,
-                        weapons = w.Where(i => i.weapon != null).Select(i => i.weapon).ToList(),
-                        shengHens = s.Where(i => i.shengHen != null).Select(i => i.shengHen).ToList(),
-                    }, null);
-                });
+            var w = (await task1).ToList();
+            var s = (await task2).ToList();
+            w.Sort((a, b) => a.index.CompareTo(b.index));
+            s.Sort((a, b) => a.index.CompareTo(b.index));
+            return new CompletePlayer
+            {
+                player = player,
+                weapons = w.Where(i => i.weapon != null).Select(i => i.weapon).ToList(),
+                shengHens = s.Where(i => i.shengHen != null).Select(i => i.shengHen).ToList(),
+            };
         }
 
-        public static void UpdateCurrentPlayer(EPlayer player, Action<string> callback)
+        public static async Task UpdateCurrentPlayer(EPlayer player)
         {
             localUserMate.player = player;
-            localUserMate.SaveAsync().RunOnUiThread(t =>
-            {
-                if (t.IsCanceled || t.IsFaulted)
-                {
-                    Debug.Log(t.Exception);
-                    callback(errorMessageInLogIn);
-                    return;
-                }
-
-                callback(null);
-            });
+            await localUserMate.SaveAsync();
         }
 
-        public static void LogOut(Action<string> callback)
+        public static async Task LogOut()
         {
-            AVUser.LogOutAsync().RunOnUiThread(t =>
-            {
-                if (t.IsCanceled || t.IsFaulted)
-                {
-                    Debug.Log(t.Exception);
-                    callback(errorMessageInLogIn);
-                    return;
-                }
-
-                localUserMate = null;
-                callback(null);
-            });
-        }
-
-        private static void RunOnUiThread<T>(this Task<T> task, Action<Task<T>> callback)
-        {
-            var await = task.GetAwaiter();
-            await.OnCompleted(() => { callback(task); });
-        }
-
-        private static void RunOnUiThread(this Task task, Action<Task> callback)
-        {
-            var await = task.GetAwaiter();
-            await.OnCompleted(() => { callback(task); });
+            await AVUser.LogOutAsync();
         }
 
         public static EPlayer GetCurrentPlayer()
@@ -668,20 +487,10 @@ namespace Dash.Scripts.Cloud
             return localUserMate.nameInGame;
         }
 
-        public static void SetNameInGame(string name, Action<string> callback)
+        public static async Task SetNameInGame(string name)
         {
             localUserMate.nameInGame = name;
-            localUserMate.SaveAsync().RunOnUiThread(t =>
-            {
-                if (t.IsCanceled || t.IsFaulted)
-                {
-                    Debug.Log(t.Exception);
-                    callback(errorMessageInLogIn);
-                    return;
-                }
-
-                callback(null);
-            });
+            await localUserMate.SaveAsync();
         }
     }
 }

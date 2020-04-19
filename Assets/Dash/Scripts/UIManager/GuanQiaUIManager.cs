@@ -26,9 +26,10 @@ namespace Dash.Scripts.UIManager
         private void Awake()
         {
             beforeJoinRoomAction = new BeforeJoinRoomAction(loadingMask, onError);
-            piPei.onClick.AddListener(() =>
+            piPei.onClick.AddListener(async () =>
             {
-                beforeJoinRoomAction.DoAction(() => { PhotonNetwork.JoinRandomRoom(); });
+                await beforeJoinRoomAction.DoPrepare();
+                PhotonNetwork.JoinRandomRoom();
             });
             duiWu.onClick.AddListener(() => { duiWuList.Open(); });
         }

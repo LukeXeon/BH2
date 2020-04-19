@@ -55,6 +55,10 @@ namespace Dash.Scripts.UIManager
 
         private void Awake()
         {
+            foreach (var playerInfoAsset in GameGlobalInfoManager.playerTable.Values)
+            {
+                playerInfoAsset.skel.GetSkeletonData(true);
+            }
             var list = GameGlobalInfoManager.playerTable.Values.ToList();
             list.Sort((o1, o2) => o1.typeId.CompareTo(o2.typeId));
             playerItems = list.Select(o =>
@@ -140,27 +144,27 @@ namespace Dash.Scripts.UIManager
             {
                 xuanWeiChuZHanImage.color = normalColor;
                 xuanWeiChuZhanText.text = "选为出战";
-                xuanWeiChuZhan.onClick.AddListener(() =>
+                xuanWeiChuZhan.onClick.AddListener(async () =>
                 {
-                    var myPlayer = equipments.players.Values.FirstOrDefault(o => o.player.typeId == currentIndex)
-                        ?.player;
+                    var myPlayer = equipments.players.Values.FirstOrDefault(o => o.player.typeId == currentIndex)?.player;
                     if (myPlayer != null)
                     {
                         BeginWaitNetwork();
-                        CloudManager.UpdateCurrentPlayer(myPlayer, e =>
+                        try
+                        {
+                            await CloudManager.UpdateCurrentPlayer(myPlayer);
+                            xuanWeiChuZhan.onClick.RemoveAllListeners();
+                            xuanWeiChuZhanText.text = "已出战";
+                            xuanWeiChuZHanImage.color = selectColor;
+                        }
+                        catch (Exception e)
+                        {
+                            onError.Show("网络错误", e.Message);
+                        }
+                        finally
                         {
                             EndWaitNetWork();
-                            if (e != null)
-                            {
-                                onError.Show("网络错误", e);
-                            }
-                            else
-                            {
-                                xuanWeiChuZhan.onClick.RemoveAllListeners();
-                                xuanWeiChuZhanText.text = "已出战";
-                                xuanWeiChuZHanImage.color = selectColor;
-                            }
-                        });
+                        }
                     }
                 });
             }
@@ -200,7 +204,7 @@ namespace Dash.Scripts.UIManager
                 var winfo = GameGlobalInfoManager.weaponTable[weapon.typeId];
                 var list = SpineUtils.GenerateSpineReplaceInfo(winfo,
                     skeletonAnimation.Skeleton);
-                
+
                 equipsUiManager.Equip(list);
 
                 if (withAnim)
@@ -227,34 +231,36 @@ namespace Dash.Scripts.UIManager
                 Action onShow = null;
                 Action onChaKan = null;
                 Action onUnload = null;
-                Action<EWeapon> onSelect = o =>
+                Action<EWeapon> onSelect = async o =>
                 {
                     BeginWaitNetwork();
-                    CloudManager.ReplaceWeapon(inUseWeapon, o,
-                        (unload, upload, e) =>
+                    try
+                    {
+                        var result = await CloudManager.ReplaceWeapon(inUseWeapon, o);
+                        var unload = result[0];
+                        var upload = result[1];
+                        if (unload != null)
                         {
-                            EndWaitNetWork();
-                            if (e != null)
-                            {
-                                onError.Show("网络错误", e);
-                            }
-                            else
-                            {
-                                if (unload != null)
-                                {
-                                    equipments.weapons[unload.ObjectId] = unload;
-                                }
+                            equipments.weapons[unload.ObjectId] = unload;
+                        }
 
-                                if (upload != null)
-                                {
-                                    equipments.weapons[upload.ObjectId] = upload;
-                                }
+                        if (upload != null)
+                        {
+                            equipments.weapons[upload.ObjectId] = upload;
+                        }
 
-                                zhuangBeiUiManager.FastClose();
-                                zhuangBeiUiManager.weaponInfo.Close();
-                                ApplyPanel();
-                            }
-                        });
+                        zhuangBeiUiManager.FastClose();
+                        zhuangBeiUiManager.weaponInfo.Close();
+                        ApplyPanel();
+                    }
+                    catch (Exception e)
+                    {
+                        onError.Show("网络错误", e.Message);
+                    }
+                    finally
+                    {
+                        EndWaitNetWork();
+                    }
                 };
                 Action<EWeapon> onOpenPanel = o => { zhuangBeiUiManager.weaponInfo.Open("装备", o, onSelect, null); };
                 if (weapon != null)
@@ -299,34 +305,36 @@ namespace Dash.Scripts.UIManager
                 Action onShow = null;
                 Action onUnload = null;
                 Action<EShengHen> onOpenPanel;
-                Action<EShengHen> onSelect = o =>
+                Action<EShengHen> onSelect = async o =>
                 {
                     BeginWaitNetwork();
-                    CloudManager.ReplaceShengHen(inUseshengHen, o,
-                        (unload, upload, e) =>
+                    try
+                    {
+                        var result = await CloudManager.ReplaceShengHen(inUseshengHen, o);
+                        var unload = result[0];
+                        var upload = result[1];
+                        if (unload != null)
                         {
-                            EndWaitNetWork();
-                            if (e != null)
-                            {
-                                onError.Show("网络错误", e);
-                            }
-                            else
-                            {
-                                if (unload != null)
-                                {
-                                    equipments.shengHens[unload.ObjectId] = unload;
-                                }
+                            equipments.shengHens[unload.ObjectId] = unload;
+                        }
 
-                                if (upload != null)
-                                {
-                                    equipments.shengHens[upload.ObjectId] = upload;
-                                }
+                        if (upload != null)
+                        {
+                            equipments.shengHens[upload.ObjectId] = upload;
+                        }
 
-                                zhuangBeiUiManager.FastClose();
-                                zhuangBeiUiManager.shengHenInfo.Close();
-                                ApplyPanel();
-                            }
-                        });
+                        zhuangBeiUiManager.FastClose();
+                        zhuangBeiUiManager.shengHenInfo.Close();
+                        ApplyPanel();
+                    }
+                    catch (Exception exception)
+                    {
+                        onError.Show("网络错误", exception.Message);
+                    }
+                    finally
+                    {
+                        EndWaitNetWork();
+                    }
                 };
                 onOpenPanel = o => { zhuangBeiUiManager.shengHenInfo.Open("装备", o, onSelect, null); };
                 if (shengHen != null)
