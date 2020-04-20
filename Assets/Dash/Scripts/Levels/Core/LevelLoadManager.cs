@@ -9,6 +9,7 @@ using Dash.Scripts.Levels.View;
 using Photon.Pun;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -21,11 +22,20 @@ namespace Dash.Scripts.Levels.Core
         public TextMeshProUGUI text;
         public PhotonView photonView;
         public GameObject playerPrefab;
+        public OnLevelLoadedEvent onLevelLoadedEvent;
         private readonly HashSet<int> loadedPlayers = new HashSet<int>();
+
+        public class OnLevelLoadedEvent : UnityEvent
+        {
+        }
 
         private void Awake()
         {
             DontDestroyOnLoad(gameObject);
+            if (onLevelLoadedEvent == null)
+            {
+                onLevelLoadedEvent = new OnLevelLoadedEvent();
+            }
         }
 
         public void LoadRoomLevel()
@@ -104,7 +114,11 @@ namespace Dash.Scripts.Levels.Core
             yield return new WaitForFixedUpdate();
             yield return Resources.UnloadUnusedAssets();
             yield return waitAll;
-            PhotonNetwork.Destroy(this.gameObject);
+            onLevelLoadedEvent.Invoke();
+            if (PhotonNetwork.IsMasterClient)
+            {
+                PhotonNetwork.Destroy(this.gameObject);
+            }
         }
     }
 }

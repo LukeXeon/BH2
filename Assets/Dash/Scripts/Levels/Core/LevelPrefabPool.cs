@@ -11,17 +11,17 @@ namespace Dash.Scripts.Levels.Core
 
         public GameObject Instantiate(string prefabId, Vector3 position, Quaternion rotation)
         {
-            GameObject res;
+            GameObject res = null;
             if (prefabId == "player")
             {
                 res = Object.FindObjectOfType<LevelLoadManager>().playerPrefab;
             }
-            else
+            if (res == null)
             {
                 manager.TryGetTarget(out var m);
                 var item = (m == null ? null : m)?.prefabs?.Find(i => i.Item1 == prefabId)
                            ?? throw new UnityException(
-                               "DefaultPool failed to load \"" + prefabId +
+                               "failed to load \"" + prefabId +
                                "\" . Make sure it's in a \"Resources\" folder.");
                 res = item.Item2;
             }

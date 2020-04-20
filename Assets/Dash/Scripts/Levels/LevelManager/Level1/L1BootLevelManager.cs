@@ -1,6 +1,7 @@
 using Dash.Scripts.Levels.Core;
 using Photon.Pun;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Dash.Scripts.Levels.LevelManager.Level1
 {
@@ -9,21 +10,25 @@ namespace Dash.Scripts.Levels.LevelManager.Level1
     {
         public GameObject[] NPCs;
         public Transform[] NpcChuShengDian;
-        private void Start()
+
+        private void Awake()
         {
-            if (PhotonNetwork.IsMasterClient)
+            FindObjectOfType<LevelLoadManager>().onLevelLoadedEvent.AddListener(() =>
             {
-                foreach (var t in NpcChuShengDian)
+                if (PhotonNetwork.IsMasterClient)
                 {
-                    var npc = NPCs[Random.Range(0, NPCs.Length)];
-                    var v3 = t.position;
-                    PhotonNetwork.InstantiateSceneObject(
-                        npc.GetKey(),
-                        v3,
-                        Quaternion.identity
-                    );
+                    foreach (var t in NpcChuShengDian)
+                    {
+                        var npc = NPCs[Random.Range(0, NPCs.Length)];
+                        var v3 = t.position;
+                        PhotonNetwork.InstantiateSceneObject(
+                            npc.GetKey(),
+                            v3,
+                            Quaternion.identity
+                        );
+                    }
                 }
-            }
+            });
         }
     }
 }

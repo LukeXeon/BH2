@@ -18,9 +18,8 @@ namespace Dash.Scripts.Levels.Core
             prefabs = new List<Tuple<string, GameObject>>();
             foreach (var o in npcPrefabs)
             {
-                prefabs.Add(Tuple.Create(Guid.NewGuid().ToString(), o));
+                prefabs.Add(Tuple.Create(o.name, o));
             }
-
             pool.manager.SetTarget(this);
         }
     }

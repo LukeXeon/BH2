@@ -33,13 +33,15 @@ namespace Dash.Scripts.Levels.Core
             {
                 weaponChanged = new OnWeaponChangedEvent();
             }
+
             leftWeapon.onClick.AddListener(() =>
             {
-                var last = currentWeaponIndex;
-                if (last - 1 < 0)
+                var last = currentWeaponIndex - 1;
+                if (last < 0)
                 {
                     last = InLevelConfigManager.weaponInfos.Count - 1;
                 }
+                Debug.Log(last);
                 if (last == currentWeaponIndex)
                 {
                     return;
