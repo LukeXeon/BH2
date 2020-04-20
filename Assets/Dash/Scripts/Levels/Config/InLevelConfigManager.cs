@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using Dash.Scripts.Cloud;
 using Dash.Scripts.Config;
 
-namespace Dash.Scripts.GamePlay.Info
+namespace Dash.Scripts.Levels.Config
 {
-    public static class GameplayInfoManager
+    public static class InLevelConfigManager
     {
         public static Tuple<PlayerInfoAsset, RuntimePlayerInfo> playerInfo;
 
@@ -15,29 +15,33 @@ namespace Dash.Scripts.GamePlay.Info
         public static List<Tuple<ShengHenInfoAsset, RuntimeShengHenInfo>> shengHenInfos =
             new List<Tuple<ShengHenInfoAsset, RuntimeShengHenInfo>>();
 
-        public static CompletePlayer current;
-
-        public static void OnJoinRoom()
+        public static void Prepare(CompletePlayer current)
         {
             var completePlayer = current;
             weaponInfos.Clear();
             shengHenInfos.Clear();
-            playerInfo = Tuple.Create(GameGlobalInfoManager.playerTable[completePlayer.player.typeId],
+            playerInfo = Tuple.Create(GameConfigManager.playerTable[completePlayer.player.typeId],
                 RuntimePlayerInfo.Build(completePlayer.player, completePlayer.shengHens));
             foreach (var eInUseWeapon in completePlayer.weapons)
             {
-                var info = GameGlobalInfoManager.weaponTable[eInUseWeapon.typeId];
+                var info = GameConfigManager.weaponTable[eInUseWeapon.typeId];
                 var runtimeInfo = RuntimeWeaponInfo.Build(eInUseWeapon);
                 weaponInfos.Add(Tuple.Create(info, runtimeInfo));
             }
 
             foreach (var eInUseShengHen in completePlayer.shengHens)
             {
-                var info = GameGlobalInfoManager.shengHenTable[eInUseShengHen.typeId];
+                var info = GameConfigManager.shengHenTable[eInUseShengHen.typeId];
                 var runtimeInfo = RuntimeShengHenInfo.Build(eInUseShengHen);
                 shengHenInfos.Add(Tuple.Create(info, runtimeInfo));
             }
         }
-        
+
+        public static void Clear()
+        {
+            playerInfo = null;
+            weaponInfos.Clear();
+            shengHenInfos.Clear();
+        }
     }
 }

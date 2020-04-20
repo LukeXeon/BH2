@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Dash.Scripts.Cloud;
-using Dash.Scripts.GamePlay.Info;
+using Dash.Scripts.Levels.Config;
 using Dash.Scripts.UI;
 using ExitGames.Client.Photon;
 using Michsky.UI.ModernUIPack;
@@ -29,7 +29,7 @@ namespace Dash.Scripts.UIManager
             try
             {
                 var player = await CloudManager.GetCompletePlayer();
-                GameplayInfoManager.current = player;
+                InLevelConfigManager.Prepare(player);
             }
             catch (Exception e)
             {

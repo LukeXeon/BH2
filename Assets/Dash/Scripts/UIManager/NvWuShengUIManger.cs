@@ -2,10 +2,10 @@
 using System.Collections;
 using System.Linq;
 using Dash.Scripts.Config;
-using Dash.Scripts.GamePlay;
+using Dash.Scripts.Levels;
 using Dash.Scripts.Cloud;
-using Dash.Scripts.GamePlay.Info;
-using Dash.Scripts.GamePlay.View;
+using Dash.Scripts.Levels.Config;
+using Dash.Scripts.Levels.View;
 using Dash.Scripts.UI;
 using Dash.Scripts.UIManager.ItemUIManager;
 using Michsky.UI.ModernUIPack;
@@ -55,11 +55,7 @@ namespace Dash.Scripts.UIManager
 
         private void Awake()
         {
-            foreach (var playerInfoAsset in GameGlobalInfoManager.playerTable.Values)
-            {
-                playerInfoAsset.skel.GetSkeletonData(true);
-            }
-            var list = GameGlobalInfoManager.playerTable.Values.ToList();
+            var list = GameConfigManager.playerTable.Values.ToList();
             list.Sort((o1, o2) => o1.typeId.CompareTo(o2.typeId));
             playerItems = list.Select(o =>
             {
@@ -181,12 +177,12 @@ namespace Dash.Scripts.UIManager
             var player = inUse.player;
             var playerInfo = RuntimePlayerInfo.Build(player,
                 inUse.shengHens.Where(s => s.shengHen != null).Select(s => s.shengHen).ToList());
-            dengji.text = GameGlobalInfoManager.GetPlayerLevel(player.exp).count.ToString();
+            dengji.text = GameConfigManager.GetPlayerLevel(player.exp).count.ToString();
             gongJiLi.text = playerInfo.gongJiLi.ToString();
             fangYuLi.text = playerInfo.fangYuLi.ToString();
             shengMingZhi.text = playerInfo.shengMingZhi.ToString();
             nengLiangZhi.text = playerInfo.nengLiangZhi.ToString();
-            var level = GameGlobalInfoManager.GetPlayerLevel(player.exp);
+            var level = GameConfigManager.GetPlayerLevel(player.exp);
             expBar.fillAmount = (float) level.currentExp / level.maxExp;
             dengji.text = "LV " + level.count;
             expText.text = level.currentExp + "/" + level.maxExp;
@@ -201,7 +197,7 @@ namespace Dash.Scripts.UIManager
         {
             if (weapon != null)
             {
-                var winfo = GameGlobalInfoManager.weaponTable[weapon.typeId];
+                var winfo = GameConfigManager.weaponTable[weapon.typeId];
                 var list = SpineUtils.GenerateSpineReplaceInfo(winfo,
                     skeletonAnimation.Skeleton);
 
@@ -355,7 +351,7 @@ namespace Dash.Scripts.UIManager
         private void ApplyNormalAnim()
         {
             var index = currentIndex;
-            var playerDisplayInfoAsset = GameGlobalInfoManager.playerTable[index];
+            var playerDisplayInfoAsset = GameConfigManager.playerTable[index];
             if (playerDisplayInfoAsset != null)
             {
                 skeletonAnimation.Skeleton.SetToSetupPose();

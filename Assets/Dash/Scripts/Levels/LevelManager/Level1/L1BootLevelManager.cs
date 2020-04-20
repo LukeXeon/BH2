@@ -1,15 +1,14 @@
+using Dash.Scripts.Levels.Core;
 using Photon.Pun;
 using UnityEngine;
 
-namespace Dash.Scripts.GamePlay.LevelManager.Level1
+namespace Dash.Scripts.Levels.LevelManager.Level1
 {
 
     public class L1BootLevelManager : MonoBehaviour
     {
-
         public GameObject[] NPCs;
         public Transform[] NpcChuShengDian;
-
         private void Start()
         {
             if (PhotonNetwork.IsMasterClient)
@@ -18,7 +17,11 @@ namespace Dash.Scripts.GamePlay.LevelManager.Level1
                 {
                     var npc = NPCs[Random.Range(0, NPCs.Length)];
                     var v3 = t.position;
-                    PhotonNetwork.InstantiateSceneObject(npc.name, v3, Quaternion.identity);
+                    PhotonNetwork.InstantiateSceneObject(
+                        npc.GetKey(),
+                        v3,
+                        Quaternion.identity
+                    );
                 }
             }
         }

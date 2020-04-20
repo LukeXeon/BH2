@@ -4,7 +4,7 @@ using Spine.Unity;
 using UnityEngine;
 using UnityEngine.AI;
 
-namespace Dash.Scripts.GamePlay.LevelManager.Level1
+namespace Dash.Scripts.Levels.LevelManager.Level1
 {
     public class L1NPC1Controller : MonoBehaviour, IPunObservable
     {

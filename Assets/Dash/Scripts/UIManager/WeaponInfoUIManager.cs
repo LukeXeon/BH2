@@ -1,9 +1,9 @@
 using System;
 using System.Globalization;
 using Dash.Scripts.Config;
-using Dash.Scripts.GamePlay;
+using Dash.Scripts.Levels;
 using Dash.Scripts.Cloud;
-using Dash.Scripts.GamePlay.Info;
+using Dash.Scripts.Levels.Config;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -47,7 +47,7 @@ namespace Dash.Scripts.UIManager
             }
 
             back.onClick.AddListener(Close);
-            var info = GameGlobalInfoManager.weaponTable[weapon.typeId];
+            var info = GameConfigManager.weaponTable[weapon.typeId];
             image.sprite = info.sprite;
             image.SetNativeSize();
             displayName.text = info.displayName;
@@ -63,7 +63,7 @@ namespace Dash.Scripts.UIManager
                 xiaoGuo.text = "全部木大";
             }
 
-            var l = GameGlobalInfoManager.GetWeaponLevel(weapon.exp);
+            var l = GameConfigManager.GetWeaponLevel(weapon.exp);
             expText.text = l.currentExp + "/" + l.maxExp;
             exp.fillAmount = (float) l.currentExp / l.maxExp;
             levelText.text = "Lv " + l.count;

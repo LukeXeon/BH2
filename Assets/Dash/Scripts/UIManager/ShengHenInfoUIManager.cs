@@ -1,8 +1,8 @@
 using System;
 using Dash.Scripts.Config;
-using Dash.Scripts.GamePlay;
+using Dash.Scripts.Levels;
 using Dash.Scripts.Cloud;
-using Dash.Scripts.GamePlay.Info;
+using Dash.Scripts.Levels.Config;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -47,7 +47,7 @@ namespace Dash.Scripts.UIManager
 
             back.onClick.AddListener(Close);
             root.SetActive(true);
-            var info = GameGlobalInfoManager.shengHenTable[shengHen.typeId];
+            var info = GameConfigManager.shengHenTable[shengHen.typeId];
             image.sprite = info.image;
             displayName.text = info.displayName;
             var runtime = RuntimeShengHenInfo.Build(shengHen);
@@ -63,7 +63,7 @@ namespace Dash.Scripts.UIManager
                 xiaoGuo.text = "全部木大";
             }
 
-            var l = GameGlobalInfoManager.GetShengHenLevel(shengHen.exp);
+            var l = GameConfigManager.GetShengHenLevel(shengHen.exp);
             expText.text = l.currentExp + "/" + l.maxExp;
             exp.fillAmount = (float) l.currentExp / l.maxExp;
             levelText.text = "Lv " + l.count;

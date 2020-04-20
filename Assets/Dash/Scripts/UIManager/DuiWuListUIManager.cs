@@ -44,7 +44,7 @@ namespace Dash.Scripts.UIManager
             var newItem = Instantiate(typeItem, typesRoot);
             var roomType = newItem.GetComponent<RoomTypeItemUIManager>();
             roomType.Apply("全部队伍", () => { });
-            foreach (var guanQiaInfoAsset in GameGlobalInfoManager.guanQiaInfoTable)
+            foreach (var guanQiaInfoAsset in GameConfigManager.guanQiaInfoTable)
             {
                 newItem = Instantiate(typeItem, typesRoot);
                 roomType = newItem.GetComponent<RoomTypeItemUIManager>();

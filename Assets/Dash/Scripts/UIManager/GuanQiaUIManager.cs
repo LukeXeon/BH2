@@ -51,7 +51,7 @@ namespace Dash.Scripts.UIManager
         private void Load(int id)
         {
             currentId = id;
-            var info = GameGlobalInfoManager.guanQiaInfoTable[id];
+            var info = GameConfigManager.guanQiaInfoTable[id];
             var player = FindObjectOfType<BackgroundMusicPlayer>();
             player.Play(info.music);
             image.sprite = info.image;

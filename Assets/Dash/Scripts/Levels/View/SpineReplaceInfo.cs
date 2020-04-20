@@ -2,7 +2,7 @@
 
 using Spine;
 
-namespace Dash.Scripts.GamePlay.View
+namespace Dash.Scripts.Levels.View
 {
     public class SpineReplaceInfo
     {

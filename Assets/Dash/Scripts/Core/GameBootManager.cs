@@ -2,7 +2,7 @@
 using agora_gaming_rtc;
 using Dash.Scripts.Cloud;
 using Dash.Scripts.Config;
-using Dash.Scripts.GamePlay;
+using Dash.Scripts.Levels.Core;
 using LeanCloud;
 using Photon.Pun;
 using TMPro;
@@ -13,7 +13,7 @@ using Object = UnityEngine.Object;
 
 namespace Dash.Scripts.Core
 {
-    public static class GameBootInitializer
+    public static class GameBootManager
     {
         public static GameBootInfoAsset info;
 
@@ -22,8 +22,8 @@ namespace Dash.Scripts.Core
         {
             Debug.Log("Boot Loaded");
             Application.targetFrameRate = 60;
+            PhotonNetwork.PrefabPool = new LevelPrefabPool();
             PhotonNetwork.LogLevel = Application.isEditor ? PunLogLevel.Full : PunLogLevel.ErrorsOnly;
-            PhotonNetwork.PrefabPool = new GameplayPrefabPool();
             info = Resources.LoadAll<GameBootInfoAsset>("Config/Game").Single();
             AVClient.Initialize(info.leanCloudId, info.leanCloudKey, info.leanCloudUrl);
             AVObject.RegisterSubclass<EInUseWeapon>();

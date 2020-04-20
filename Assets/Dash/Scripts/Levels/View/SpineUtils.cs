@@ -5,7 +5,7 @@ using Spine;
 using Spine.Unity.AttachmentTools;
 using UnityEngine;
 
-namespace Dash.Scripts.GamePlay.View
+namespace Dash.Scripts.Levels.View
 {
     public static class SpineUtils
     {
@@ -54,7 +54,7 @@ namespace Dash.Scripts.GamePlay.View
                     y = 0,
                     width = w,
                     height = h
-                }, GameGlobalInfoManager.weaponTypeTable[type]?.offset ?? new Vector2(0.5f, 0.5f),
+                }, GameConfigManager.weaponTypeTable[type]?.offset ?? new Vector2(0.5f, 0.5f),
                 100,
                 1,
                 SpriteMeshType.FullRect

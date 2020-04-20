@@ -25,13 +25,13 @@ namespace Dash.Scripts.UIManager.ItemUIManager
         {
             if (weapon != null)
             {
-                var info = GameGlobalInfoManager.weaponTable[weapon.typeId];
+                var info = GameConfigManager.weaponTable[weapon.typeId];
                 image.gameObject.SetActive(true);
                 image.sprite = info.sprite;
                 button.onClick.AddListener(call: () => onShow());
                 chaKan.onClick.AddListener(call: () => onChaKan());
                 displayName.text = info.displayName;
-                level.text = "LV " + GameGlobalInfoManager.GetWeaponLevel(weapon.exp).count;
+                level.text = "LV " + GameConfigManager.GetWeaponLevel(weapon.exp).count;
             }
             else
             {

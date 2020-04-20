@@ -105,7 +105,9 @@ MonoBehaviour:
   poseManager: {fileID: 8238277081177272655}
   mecanim: {fileID: 8238277081177272654}
   animator: {fileID: 8238277081177272641}
-  photonView: {fileID: 0}
+  onPlayerLoadedEvent:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &-4584323755285702024
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -138,7 +140,8 @@ GameObject:
   - component: {fileID: 8238277081177272655}
   - component: {fileID: 8238277081177272652}
   - component: {fileID: 8238277081177272653}
-  - component: {fileID: 3994388515112451514}
+  - component: {fileID: 4736703732428140848}
+  - component: {fileID: 7942182918698382356}
   m_Layer: 12
   m_Name: Skeleton
   m_TagString: Untagged
@@ -216,7 +219,7 @@ Animator:
   m_GameObject: {fileID: 8238277081177272650}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 22100000, guid: 3804f10e2f6d8e74598185a4e22a2d97, type: 2}
+  m_Controller: {fileID: 9100000, guid: 453ca6cd443cdc943a43ee7f21feb68f, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -316,11 +319,8 @@ MonoBehaviour:
   ShowParameterInspector: 1
   m_SynchronizeParameters:
   - Type: 4
-    SynchronizeType: 2
+    SynchronizeType: 1
     Name: is_run
-  - Type: 4
-    SynchronizeType: 2
-    Name: is_kaiqiang
   - Type: 9
     SynchronizeType: 0
     Name: taoqiang
@@ -333,6 +333,9 @@ MonoBehaviour:
   - Type: 9
     SynchronizeType: 0
     Name: revive
+  - Type: 9
+    SynchronizeType: 0
+    Name: kaiqiang
   m_SynchronizeLayers:
   - SynchronizeType: 0
     LayerIndex: 0
@@ -340,7 +343,7 @@ MonoBehaviour:
     LayerIndex: 1
   - SynchronizeType: 0
     LayerIndex: 2
---- !u!210 &3994388515112451514
+--- !u!210 &4736703732428140848
 SortingGroup:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -351,3 +354,33 @@ SortingGroup:
   m_SortingLayerID: 1895017843
   m_SortingLayer: 8
   m_SortingOrder: 10
+--- !u!114 &7942182918698382356
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8238277081177272650}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 02f8bea56394dab43ac9a0c223694c82, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  events:
+  - name: OnKaiQiang
+    id: -1045626201
+    action:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 8238277080845339809}
+          m_MethodName: OnKaiQiang
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  debug: 0

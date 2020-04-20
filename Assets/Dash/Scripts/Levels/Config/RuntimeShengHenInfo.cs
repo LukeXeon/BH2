@@ -1,7 +1,7 @@
 using Dash.Scripts.Cloud;
 using Dash.Scripts.Config;
 
-namespace Dash.Scripts.GamePlay.Info
+namespace Dash.Scripts.Levels.Config
 {
     
     public class RuntimeShengHenInfo
@@ -12,11 +12,11 @@ namespace Dash.Scripts.GamePlay.Info
 
         public static RuntimeShengHenInfo Build(EShengHen shengHen)
         {
-            var info = GameGlobalInfoManager.shengHenTable[shengHen.typeId];
+            var info = GameConfigManager.shengHenTable[shengHen.typeId];
             int fangYuLi = info.fangYuLi;
             int shengMingZhi = info.shengMingZhi;
             int nengLiangZhi = info.nengLiangZhi;
-            var level = GameGlobalInfoManager.GetShengHenLevel(shengHen.exp);
+            var level = GameConfigManager.GetShengHenLevel(shengHen.exp);
             fangYuLi += info.fangYuLi2 * level.count;
             shengMingZhi += info.shengMingZhi2 * level.count;
             nengLiangZhi += info.nengLiangZhi2 * level.count;

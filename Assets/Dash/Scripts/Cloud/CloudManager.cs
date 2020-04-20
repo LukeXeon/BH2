@@ -27,7 +27,7 @@ namespace Dash.Scripts.Cloud
 
         public static string GetLogInUrl()
         {
-            var info = GameBootInitializer.info;
+            var info = GameBootManager.info;
             var login = new Url("https://github.com/login/oauth/authorize");
             login.SetQueryParam("client_id", info.githubClientId);
             login.SetQueryParam("redirect_uri", GetCallbackUrl());
@@ -104,7 +104,7 @@ namespace Dash.Scripts.Cloud
             {
                 case 0:
                 {
-                    var playerTypeId = Random.Range(0, GameGlobalInfoManager.maxWeaponId + 1);
+                    var playerTypeId = Random.Range(0, GameConfigManager.maxWeaponId + 1);
                     var player = (await new AVQuery<EPlayer>()
                         .WhereEqualTo("user", AVUser.CurrentUser)
                         .WhereEqualTo("typeId", playerTypeId)
@@ -122,7 +122,7 @@ namespace Dash.Scripts.Cloud
                     else
                     {
                         var p = player.First();
-                        p.exp += GameGlobalInfoManager.levelInfo.playerLuckDrawExpAddOnce;
+                        p.exp += GameConfigManager.levelInfo.playerLuckDrawExpAddOnce;
                         await AVObject.SaveAllAsync(new AVObject[] {p});
                         return new LuckDrawResult
                         {
@@ -134,7 +134,7 @@ namespace Dash.Scripts.Cloud
 
                 case 1:
                 {
-                    var weaponTypeId = Random.Range(0, GameGlobalInfoManager.maxWeaponId + 1);
+                    var weaponTypeId = Random.Range(0, GameConfigManager.maxWeaponId + 1);
                     await NewWeapon(weaponTypeId)
                         .SaveAsync();
                     return new LuckDrawResult
@@ -146,7 +146,7 @@ namespace Dash.Scripts.Cloud
 
                 default:
                 {
-                    var shengHenTypeId = Random.Range(0, GameGlobalInfoManager.maxShengHeId + 1);
+                    var shengHenTypeId = Random.Range(0, GameConfigManager.maxShengHeId + 1);
                     await NewShengHen(null, shengHenTypeId)
                         .SaveAsync();
                     return new LuckDrawResult
@@ -176,78 +176,71 @@ namespace Dash.Scripts.Cloud
 
         public static async Task<Equipments> GetEquipments()
         {
+            var e = new Equipments();
             var t0 = new AVQuery<EWeapon>()
                 .Include("player")
                 .WhereEqualTo("user", AVUser.CurrentUser)
                 .FindAsync();
+            foreach (var item in await t0)
+            {
+                e.weapons.Add(item.ObjectId, item);
+            }
             var t1 = new AVQuery<EShengHen>()
                 .Include("player")
                 .WhereEqualTo("user", AVUser.CurrentUser)
                 .FindAsync();
+            foreach (var item in await t1)
+            {
+                e.shengHens.Add(item.ObjectId, item);
+            }
             var t2 = new AVQuery<EInUseWeapon>()
                 .Include("player")
                 .Include("weapon")
                 .WhereEqualTo("user", AVUser.CurrentUser)
                 .FindAsync();
+            foreach (var item in await t2)
+            {
+                PlayerWithUsing inUse;
+                e.players.TryGetValue(item.player.ObjectId, out inUse);
+                if (inUse == null)
+                {
+                    inUse = new PlayerWithUsing
+                    {
+                        player = item.player
+                    };
+                    e.players.Add(item.player.ObjectId, inUse);
+                }
+
+                inUse.weapons.Add(item);
+            }
             var t3 = new AVQuery<EInUseShengHen>()
                 .Include("player")
                 .Include("shengHen")
                 .WhereEqualTo("user", AVUser.CurrentUser)
                 .FindAsync();
-            return await Task.Run(async () =>
+            foreach (var item in await t3)
             {
-                var e = new Equipments();
-                foreach (var item in await t2)
+                PlayerWithUsing inUse;
+                e.players.TryGetValue(item.player.ObjectId, out inUse);
+                if (inUse == null)
                 {
-                    PlayerWithUsing inUse;
-                    e.players.TryGetValue(item.player.ObjectId, out inUse);
-                    if (inUse == null)
+                    inUse = new PlayerWithUsing
                     {
-                        inUse = new PlayerWithUsing
-                        {
-                            player = item.player
-                        };
-                        e.players.Add(item.player.ObjectId, inUse);
-                    }
-
-                    inUse.weapons.Add(item);
+                        player = item.player
+                    };
+                    e.players.Add(item.player.ObjectId, inUse);
                 }
 
+                inUse.shengHens.Add(item);
+            }
+            
+            foreach (var inUse in e.players.Values)
+            {
+                inUse.shengHens.Sort((o1, o2) => o1.index.CompareTo(o2.index));
+                inUse.weapons.Sort((o1, o2) => o1.index.CompareTo(o2.index));
+            }
 
-                foreach (var item in await t3)
-                {
-                    PlayerWithUsing inUse;
-                    e.players.TryGetValue(item.player.ObjectId, out inUse);
-                    if (inUse == null)
-                    {
-                        inUse = new PlayerWithUsing
-                        {
-                            player = item.player
-                        };
-                        e.players.Add(item.player.ObjectId, inUse);
-                    }
-
-                    inUse.shengHens.Add(item);
-                }
-
-                foreach (var item in await t0)
-                {
-                    e.weapons.Add(item.ObjectId, item);
-                }
-
-                foreach (var item in await t1)
-                {
-                    e.shengHens.Add(item.ObjectId, item);
-                }
-
-                foreach (var inUse in e.players.Values)
-                {
-                    inUse.shengHens.Sort((o1, o2) => o1.index.CompareTo(o2.index));
-                    inUse.weapons.Sort((o1, o2) => o1.index.CompareTo(o2.index));
-                }
-
-                return e;
-            });
+            return e;
         }
 
         public static async Task SignUp(string username, string password, string password2)
@@ -339,7 +332,7 @@ namespace Dash.Scripts.Cloud
 
         public static async Task LogInWithGithub(CancellationToken cancellationToken)
         {
-            var info = GameBootInitializer.info;
+            var info = GameBootManager.info;
             var http = new HttpListener {AuthenticationSchemes = AuthenticationSchemes.Anonymous};
             http.Prefixes.Add(GetCallbackUrl());
             http.Start();
@@ -358,7 +351,8 @@ namespace Dash.Scripts.Cloud
                 http.Abort();
                 throw new TimeoutException("");
             }
-            var  code = (await ctxTask).Request.QueryString["code"];
+
+            var code = (await ctxTask).Request.QueryString["code"];
             http.Abort();
             Debug.Log(code);
             var u = new Url("https://github.com/login/oauth/access_token");

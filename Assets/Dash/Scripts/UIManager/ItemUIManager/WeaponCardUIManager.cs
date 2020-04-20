@@ -17,9 +17,9 @@ namespace Dash.Scripts.UIManager
 
         public void Apply(EWeapon weapon, Action<EWeapon> callback)
         {
-            var info = GameGlobalInfoManager.weaponTable[weapon.typeId];
+            var info = GameConfigManager.weaponTable[weapon.typeId];
             image.sprite = info.sprite;
-            level.text = "LV " + GameGlobalInfoManager.GetWeaponLevel(weapon.exp).count;
+            level.text = "LV " + GameConfigManager.GetWeaponLevel(weapon.exp).count;
             displayName.text = info.displayName;
             markInUse.SetActive(weapon.player != null);
             button.onClick.AddListener(() => callback(weapon));

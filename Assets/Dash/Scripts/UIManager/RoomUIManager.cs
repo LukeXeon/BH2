@@ -5,7 +5,7 @@ using System.Linq;
 using agora_gaming_rtc;
 using Dash.Scripts.Cloud;
 using Dash.Scripts.Config;
-using Dash.Scripts.GamePlay.Info;
+using Dash.Scripts.Levels.Config;
 using Dash.Scripts.UI;
 using Dash.Scripts.UIManager.ItemUIManager;
 using Michsky.UI.ModernUIPack;
@@ -131,7 +131,6 @@ namespace Dash.Scripts.UIManager
 
         public override void OnJoinedRoom()
         {
-            GameplayInfoManager.OnJoinRoom();
             ClearRoomPlayers();
             InstallUIMasterOrClient();
             var musicPlayer = FindObjectOfType<BackgroundMusicPlayer>();
@@ -141,12 +140,11 @@ namespace Dash.Scripts.UIManager
             idText.text = room.Name;
             var rtcEngine = IRtcEngine.QueryEngine();
             rtcEngine.JoinChannel(room.Name, "", 0u);
-            var player = GameplayInfoManager.current;
             var table = new Hashtable
             {
                 ["displayName"] = CloudManager.GetNameInGame(),
-                ["playerTypeId"] = player.player.typeId,
-                ["weaponTypeId"] = player.weapons.First().typeId,
+                ["playerTypeId"] = InLevelConfigManager.playerInfo.Item1.typeId,
+                ["weaponTypeId"] = InLevelConfigManager.weaponInfos.First().Item1.typeId,
                 ["isReady"] = PhotonNetwork.IsMasterClient
             };
             PhotonNetwork.LocalPlayer.SetCustomProperties(table);
@@ -155,7 +153,7 @@ namespace Dash.Scripts.UIManager
             Debug.Log(index + "playerTypeId");
             table = new Hashtable
             {
-                [index + "playerTypeId"] = player.player.typeId
+                [index + "playerTypeId"] = InLevelConfigManager.playerInfo.Item1.typeId
             };
             PhotonNetwork.CurrentRoom.SetCustomProperties(table);
         }
@@ -205,7 +203,7 @@ namespace Dash.Scripts.UIManager
 
         public override void OnPlayerLeftRoom(Player otherPlayer)
         {
-            GameplayInfoManager.current = null;
+            InLevelConfigManager.Clear();
             CheckCanStartIfMaster();
             var item = noLocalPlayerItems[otherPlayer.ActorNumber];
             noLocalPlayerItems.Remove(otherPlayer.ActorNumber);
@@ -347,7 +345,7 @@ namespace Dash.Scripts.UIManager
                 yield break;
             }
 
-            var scene = GameGlobalInfoManager.guanQiaInfoTable[(int) typeId];
+            var scene = GameConfigManager.guanQiaInfoTable[(int) typeId];
             loadingRoot.gameObject.SetActive(true);
             loadingRoot.sprite = scene.image;
             var op = SceneManager.LoadSceneAsync(scene.sceneName);

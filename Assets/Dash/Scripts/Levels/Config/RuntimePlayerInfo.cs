@@ -1,10 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Dash.Scripts.Cloud;
 using Dash.Scripts.Config;
 
-namespace Dash.Scripts.GamePlay.Info
+namespace Dash.Scripts.Levels.Config
 {
     [Serializable]
     public class RuntimePlayerInfo
@@ -20,8 +19,8 @@ namespace Dash.Scripts.GamePlay.Info
             int fangYuLi = 0;
             int shengMingZhi = 0;
             int nengLiangZhi = 0;
-            var pinfo = GameGlobalInfoManager.playerTable[player.typeId];
-            var pLevel = GameGlobalInfoManager.GetPlayerLevel(player.exp);
+            var pinfo = GameConfigManager.playerTable[player.typeId];
+            var pLevel = GameConfigManager.GetPlayerLevel(player.exp);
             gongJiLi += pinfo.gongJiLi;
             gongJiLi += pinfo.gongJiLi2 * pLevel.count;
             fangYuLi += pinfo.fangYuLi;
@@ -33,8 +32,8 @@ namespace Dash.Scripts.GamePlay.Info
 
             foreach (var s in shengHens)
             {
-                var sInfo = GameGlobalInfoManager.shengHenTable[s.typeId];
-                var sLevel = GameGlobalInfoManager.GetShengHenLevel(s.exp);
+                var sInfo = GameConfigManager.shengHenTable[s.typeId];
+                var sLevel = GameConfigManager.GetShengHenLevel(s.exp);
                 fangYuLi += sInfo.fangYuLi;
                 fangYuLi += sInfo.fangYuLi2 * sLevel.count;
                 shengMingZhi += sInfo.shengMingZhi;

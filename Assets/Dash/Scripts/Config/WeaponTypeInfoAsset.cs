@@ -9,5 +9,6 @@ namespace Dash.Scripts.Config
     {
         public string matchName;
         public Vector2 offset = new Vector2(0.5f, 0.5f);
+        public bool canLianShe;
     }
 }

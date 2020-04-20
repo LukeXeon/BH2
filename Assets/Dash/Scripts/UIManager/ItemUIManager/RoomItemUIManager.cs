@@ -29,7 +29,7 @@ namespace Dash.Scripts.UIManager.ItemUIManager
             roomInfo.CustomProperties.TryGetValue("typeId", out var typeId);
             if (typeId != null)
             {
-                guanQiaMing.text = GameGlobalInfoManager.guanQiaInfoTable[(int) typeId]?.displayName ?? "...";
+                guanQiaMing.text = GameConfigManager.guanQiaInfoTable[(int) typeId]?.displayName ?? "...";
             }
 
             for (int i = 0; i < 3; i++)
@@ -40,7 +40,7 @@ namespace Dash.Scripts.UIManager.ItemUIManager
                 if (playerTypeId != null && (int) playerTypeId != -1)
                 {
                     playerItems[i].gameObject.SetActive(true);
-                    playerItems[i].sprite = GameGlobalInfoManager.playerTable[(int) playerTypeId].icon;
+                    playerItems[i].sprite = GameConfigManager.playerTable[(int) playerTypeId].icon;
                 }
                 else
                 {

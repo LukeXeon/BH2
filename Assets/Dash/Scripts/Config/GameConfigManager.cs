@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Dash.Scripts.Config
 {
-    public static class GameGlobalInfoManager
+    public static class GameConfigManager
     {
         public static readonly LevelInfoAsset levelInfo;
 
@@ -19,9 +19,13 @@ namespace Dash.Scripts.Config
         public static readonly SortedDictionary<int, ShengHenInfoAsset> shengHenTable;
         public static readonly SortedDictionary<int, GuanQiaInfoAsset> guanQiaInfoTable;
 
-        static GameGlobalInfoManager()
+        static GameConfigManager()
         {
             playerTable = Resources.LoadAll<PlayerInfoAsset>("Config/Player").ToSortedDictionary(i => i.typeId, i => i);
+            foreach (var playerInfoAsset in playerTable.Values)
+            {
+                playerInfoAsset.skel.GetSkeletonData(true);
+            }
             weaponTable = Resources.LoadAll<WeaponInfoAsset>("Config/Weapon").ToSortedDictionary(i => i.typeId, i => i);
             weaponTypeTable = Resources.LoadAll<WeaponTypeInfoAsset>("Config/WeaponType")
                 .ToSortedDictionary(i => i.matchName, i => i);
