@@ -6,6 +6,7 @@ using agora_gaming_rtc;
 using Dash.Scripts.Cloud;
 using Dash.Scripts.Config;
 using Dash.Scripts.Levels.Config;
+using Dash.Scripts.Levels.Core;
 using Dash.Scripts.UI;
 using Dash.Scripts.UIManager.ItemUIManager;
 using Michsky.UI.ModernUIPack;
@@ -39,6 +40,7 @@ namespace Dash.Scripts.UIManager
 
         [Header("Asset")] public Color readyColor;
         public Color unReadyColor;
+        public GameObject loadManagerPrefab;
 
         private readonly HashSet<int> loadedPlayers = new HashSet<int>();
 
@@ -93,7 +95,7 @@ namespace Dash.Scripts.UIManager
                 {
                     PhotonNetwork.CurrentRoom.IsOpen = false;
                     PhotonNetwork.CurrentRoom.IsVisible = false;
-                    photonView.RPC(nameof(BeginLoadScene), RpcTarget.All);
+                    BeginLoadScene();
                 }
             });
             var rtcEngine = IRtcEngine.QueryEngine();
@@ -333,36 +335,10 @@ namespace Dash.Scripts.UIManager
         public void BeginLoadScene()
         {
             ClearRoomPlayers();
-            StartCoroutine(LoadScene());
-        }
-
-        private IEnumerator LoadScene()
-        {
-            loadedPlayers.Clear();
-            PhotonNetwork.CurrentRoom.CustomProperties.TryGetValue("typeId", out var typeId);
-            if (!(typeId is int))
-            {
-                yield break;
-            }
-
-            var scene = GameConfigManager.guanQiaInfoTable[(int) typeId];
-            loadingRoot.gameObject.SetActive(true);
-            loadingRoot.sprite = scene.image;
-            var op = SceneManager.LoadSceneAsync(scene.sceneName);
-            op.allowSceneActivation = false;
-            while (op.progress < 0.9f)
-            {
-                progress.fillAmount = op.progress;
-                yield return null;
-            }
-
-            progress.fillAmount = 1;
-            photonView.RPC(nameof(SceneLoaded), RpcTarget.All, PhotonNetwork.LocalPlayer.ActorNumber);
-            yield return new WaitUntil(() =>
-            {
-                return PhotonNetwork.PlayerList.All(i => loadedPlayers.Contains(i.ActorNumber));
-            });
-            op.allowSceneActivation = true;
+            var go = PhotonNetwork.InstantiateSceneObject(loadManagerPrefab.GetKey(), Vector3.zero,
+                Quaternion.identity);
+            var loader = go.GetComponent<LevelLoadManager>();
+            loader.LoadRoomLevel();
         }
     }
 }

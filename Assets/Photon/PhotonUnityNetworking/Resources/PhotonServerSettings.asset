@@ -50,6 +50,10 @@ MonoBehaviour:
   - PreparePlayer
   - LoadPlayer
   - KaiQiang
+  - OnSceneLoaded
+  - NotifyLoadScene
+  - StartLoadLevel
+  - OnLoaded
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

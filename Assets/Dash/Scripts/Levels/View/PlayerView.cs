@@ -1,7 +1,6 @@
 using System;
-using System.Linq;
 using Dash.Scripts.Config;
-using Dash.Scripts.Levels.Config;
+using Dash.Scripts.Levels.Core;
 using Photon.Pun;
 using Spine.Unity;
 using UnityEngine;
@@ -23,39 +22,28 @@ namespace Dash.Scripts.Levels.View
         private PhotonView photonView;
         private new Rigidbody rigidbody;
         private WeaponInfoAsset weaponInfoAsset;
-
         private int flipX = 1;
-
-
-        private void Awake()
-        {
-            if (onPlayerLoadedEvent == null)
-            {
-                onPlayerLoadedEvent = new OnPlayerLoadedEvent();
-            }
-
-            rigidbody = GetComponent<Rigidbody>();
-            photonView = GetComponent<PhotonView>();
-        }
-
-        private void Start()
-        {
-            photonView.RPC(
-                nameof(LoadPlayer),
-                RpcTarget.All,
-                InLevelConfigManager.playerInfo.Item1.typeId,
-                InLevelConfigManager.weaponInfos.First().Item1.typeId
-            );
-        }
 
         [Serializable]
         public class OnPlayerLoadedEvent : UnityEvent
         {
         }
 
-        [PunRPC]
-        public void LoadPlayer(int playerTypeId, int weaponTypeId)
+        private void Awake()
         {
+            rigidbody = GetComponent<Rigidbody>();
+            photonView = GetComponent<PhotonView>();
+            if (onPlayerLoadedEvent == null)
+            {
+                onPlayerLoadedEvent = new OnPlayerLoadedEvent();
+            }
+        }
+
+
+        private void Start()
+        {
+            int playerTypeId = (int) photonView.InstantiationData[0];
+            int weaponTypeId = (int) photonView.InstantiationData[1];
             var info = GameConfigManager.playerTable[playerTypeId];
             mecanim.skeletonDataAsset = info.skel;
             mecanim.Initialize(true);
@@ -76,7 +64,6 @@ namespace Dash.Scripts.Levels.View
         public void KaiQiang()
         {
             animator.SetTrigger(KAIQIANG);
-            
         }
 
         private void Update()
@@ -133,7 +120,7 @@ namespace Dash.Scripts.Levels.View
                 {
                     animator.SetBool(IS_RUN, false);
                 }
-                
+
                 if (h > 0)
                 {
                     flipX = 1;

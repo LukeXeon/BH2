@@ -2,7 +2,6 @@
 using System.Linq;
 using Dash.Scripts.Config;
 using Dash.Scripts.Levels.Config;
-using Photon.Pun;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
@@ -19,10 +18,8 @@ namespace Dash.Scripts.Levels.Core
         public Button leftWeapon;
         public Button rightWeapon;
         public Image weapon;
-        public Image mask;
         public OnWeaponChangedEvent weaponChanged;
-        private int currentWeaponIndex = 0;
-        private LevelStartupManager levelStartupManager;
+        private int currentWeaponIndex;
 
         [Serializable]
         public class OnWeaponChangedEvent : UnityEvent<WeaponInfoAsset>
@@ -31,11 +28,7 @@ namespace Dash.Scripts.Levels.Core
 
         private void Awake()
         {
-            levelStartupManager = FindObjectOfType<LevelStartupManager>();
             weapon.sprite = InLevelConfigManager.weaponInfos.First().Item1.sprite;
-            mask.gameObject.SetActive(true);
-            var typeId = (int) PhotonNetwork.CurrentRoom.CustomProperties["typeId"];
-            mask.sprite = GameConfigManager.guanQiaInfoTable[typeId].image;
             if (weaponChanged == null)
             {
                 weaponChanged = new OnWeaponChangedEvent();
@@ -43,18 +36,17 @@ namespace Dash.Scripts.Levels.Core
             leftWeapon.onClick.AddListener(() =>
             {
                 var last = currentWeaponIndex;
-                if (currentWeaponIndex < 0)
+                if (last - 1 < 0)
                 {
-                    currentWeaponIndex = InLevelConfigManager.weaponInfos.Count - 1;
+                    last = InLevelConfigManager.weaponInfos.Count - 1;
                 }
-
-                --currentWeaponIndex;
                 if (last == currentWeaponIndex)
                 {
                     return;
                 }
 
-                var info = InLevelConfigManager.weaponInfos[currentWeaponIndex].Item1;
+                var info = InLevelConfigManager.weaponInfos[last].Item1;
+                currentWeaponIndex = last;
                 weaponChanged.Invoke(info);
             });
             rightWeapon.onClick.AddListener(() =>
@@ -70,16 +62,6 @@ namespace Dash.Scripts.Levels.Core
                 weaponChanged.Invoke(info);
             });
             weaponChanged.AddListener(info => { weapon.sprite = info.sprite; });
-        }
-
-        private void Start()
-        {
-            levelStartupManager.onLevelLoadedEvent.AddListener(OnLevelPrepared);
-        }
-
-        public void OnLevelPrepared()
-        {
-            mask.gameObject.SetActive(false);
         }
     }
 }
