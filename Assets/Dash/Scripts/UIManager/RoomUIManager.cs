@@ -7,6 +7,7 @@ using Dash.Scripts.Cloud;
 using Dash.Scripts.Config;
 using Dash.Scripts.Levels.Config;
 using Dash.Scripts.Levels.Core;
+using Dash.Scripts.Levels.Pools;
 using Dash.Scripts.UI;
 using Dash.Scripts.UIManager.ItemUIManager;
 using Michsky.UI.ModernUIPack;
@@ -335,7 +336,7 @@ namespace Dash.Scripts.UIManager
         public void BeginLoadScene()
         {
             ClearRoomPlayers();
-            var go = PhotonNetwork.InstantiateSceneObject(loadManagerPrefab.GetKey(), Vector3.zero,
+            var go = PhotonNetwork.InstantiateSceneObject(loadManagerPrefab.name, Vector3.zero,
                 Quaternion.identity);
             var loader = go.GetComponent<LevelLoadManager>();
             loader.LoadRoomLevel();

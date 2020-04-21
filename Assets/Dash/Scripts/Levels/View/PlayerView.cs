@@ -7,21 +7,24 @@ using UnityEngine.Events;
 
 namespace Dash.Scripts.Levels.View
 {
-    public class PlayerView : MonoBehaviour, IPunObservable
+    public class PlayerView : ActorView, IPunObservable
     {
         public float speed;
         public PoseManager poseManager;
         public SkeletonMecanim mecanim;
         public Animator animator;
-        public OnPlayerLoadedEvent onPlayerLoadedEvent;
+        public PhotonView photonView;
+        public Transform bulletLocator;
+        [Header("Event")] public OnPlayerLoadedEvent onPlayerLoadedEvent;
         private static readonly int IS_RUN = Animator.StringToHash("is_run");
         private static readonly int TAOQIANG = Animator.StringToHash("taoqiang");
-        private static readonly int KAIQIANG = Animator.StringToHash("kaiqiang");
-        private static readonly int RUN_KAIQIANG = Animator.StringToHash("run_kaiqiang");
-        private PhotonView photonView;
+        private static readonly int IS_KAIQIANG = Animator.StringToHash("is_kaiqiang");
+
         private new Rigidbody rigidbody;
         private WeaponInfoAsset weaponInfoAsset;
+        private WeaponView weaponView;
         private int flipX = 1;
+
 
         [Serializable]
         public class OnPlayerLoadedEvent : UnityEvent
@@ -38,7 +41,6 @@ namespace Dash.Scripts.Levels.View
             }
         }
 
-
         private void Start()
         {
             int playerTypeId = (int) photonView.InstantiationData[0];
@@ -46,25 +48,30 @@ namespace Dash.Scripts.Levels.View
             var info = GameConfigManager.playerTable[playerTypeId];
             mecanim.skeletonDataAsset = info.skel;
             mecanim.Initialize(true);
-            weaponInfoAsset = GameConfigManager.weaponTable[weaponTypeId];
-            poseManager.SetPose(weaponInfoAsset);
+            WeaponChanged(weaponTypeId);
             onPlayerLoadedEvent.Invoke();
         }
 
         [PunRPC]
         public void WeaponChanged(int typeId)
         {
+//            if (weaponView != null)
+//            {
+//                Destroy(weaponView.gameObject);
+//            }
+
             weaponInfoAsset = GameConfigManager.weaponTable[typeId];
             poseManager.SetPose(weaponInfoAsset);
             animator.SetTrigger(TAOQIANG);
+            
+//            weaponView = Instantiate(
+//                weaponInfoAsset.viewManager.gameObject,
+//                Vector3.zero,
+//                Quaternion.identity,
+//                transform
+//            ).GetComponent<WeaponView>();
         }
-
-        [PunRPC]
-        public void KaiQiang()
-        {
-            animator.SetTrigger(KAIQIANG);
-        }
-
+        
         private void Update()
         {
             if (photonView.IsMine)
@@ -73,22 +80,22 @@ namespace Dash.Scripts.Levels.View
                 {
                     if (ETCInput.GetButton("kaiqiang"))
                     {
-                        photonView.RPC(nameof(KaiQiang), RpcTarget.All);
+                        animator.SetBool(IS_KAIQIANG,true);
+                    }
+                    else
+                    {
+                        animator.SetBool(IS_KAIQIANG,false);
                     }
                 }
                 else
                 {
-                    var state = animator.GetCurrentAnimatorStateInfo(0);
-                    if (!state.IsName("kaiqiang"))
+                    if (ETCInput.GetButtonDown("kaiqiang"))
                     {
-                        state = animator.GetCurrentAnimatorStateInfo(1);
-                        if (!state.IsName("run_kaiqiang"))
-                        {
-                            if (ETCInput.GetButtonDown("kaiqiang"))
-                            {
-                                photonView.RPC(nameof(KaiQiang), RpcTarget.All);
-                            }
-                        }
+                        animator.SetBool(IS_KAIQIANG,true);
+                    }
+                    else
+                    {
+                        animator.SetBool(IS_KAIQIANG,false);
                     }
                 }
 
@@ -98,9 +105,9 @@ namespace Dash.Scripts.Levels.View
             }
         }
 
-        public void OnKaiQiang()
+        public void OnWeaponFireBullet()
         {
-            Debug.Log(nameof(OnKaiQiang));
+//            weaponView.FireBullet();
         }
 
         private void FixedUpdate()
@@ -135,12 +142,6 @@ namespace Dash.Scripts.Levels.View
 
             mecanim.Skeleton.ScaleX = flipX;
         }
-
-        public void OnLocalWeaponChanged(int typeId)
-        {
-            photonView.RPC(nameof(WeaponChanged), RpcTarget.All, typeId);
-        }
-
 
         public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
         {

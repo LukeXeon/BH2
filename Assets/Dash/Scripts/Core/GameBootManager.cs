@@ -3,6 +3,7 @@ using agora_gaming_rtc;
 using Dash.Scripts.Cloud;
 using Dash.Scripts.Config;
 using Dash.Scripts.Levels.Core;
+using Dash.Scripts.Levels.Pools;
 using LeanCloud;
 using Photon.Pun;
 using TMPro;
@@ -22,7 +23,7 @@ namespace Dash.Scripts.Core
         {
             Debug.Log("Boot Loaded");
             Application.targetFrameRate = 60;
-            PhotonNetwork.PrefabPool = new LevelPrefabPool();
+            PhotonNetwork.PrefabPool = new LevelSpecificObjPool.PunPool();
             PhotonNetwork.LogLevel = Application.isEditor ? PunLogLevel.Full : PunLogLevel.ErrorsOnly;
             info = Resources.LoadAll<GameBootInfoAsset>("Config/Game").Single();
             AVClient.Initialize(info.leanCloudId, info.leanCloudKey, info.leanCloudUrl);

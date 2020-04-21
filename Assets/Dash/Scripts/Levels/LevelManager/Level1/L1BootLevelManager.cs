@@ -1,4 +1,6 @@
+using System.Collections;
 using Dash.Scripts.Levels.Core;
+using Dash.Scripts.Levels.Pools;
 using Photon.Pun;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -13,22 +15,27 @@ namespace Dash.Scripts.Levels.LevelManager.Level1
 
         private void Awake()
         {
-            FindObjectOfType<LevelLoadManager>().onLevelLoadedEvent.AddListener(() =>
+            FindObjectOfType<LevelLoadManager>().onLevelLoadedEvent.AddListener(Call);
+        }
+
+        private void Call()
+        {
+            if (PhotonNetwork.IsMasterClient)
             {
-                if (PhotonNetwork.IsMasterClient)
+                foreach (var t in NpcChuShengDian)
                 {
-                    foreach (var t in NpcChuShengDian)
-                    {
-                        var npc = NPCs[Random.Range(0, NPCs.Length)];
-                        var v3 = t.position;
-                        PhotonNetwork.InstantiateSceneObject(
-                            npc.GetKey(),
-                            v3,
-                            Quaternion.identity
-                        );
-                    }
+                    var npc = NPCs[Random.Range(0, NPCs.Length)];
+                    var v3 = t.position;
+                    PhotonNetwork.InstantiateSceneObject(npc.name, v3, Quaternion.identity);
                 }
-            });
+
+                StartCoroutine(LevelLogic());
+            }
+        }
+
+        private IEnumerator LevelLogic()
+        {
+            yield break;
         }
     }
 }

@@ -54,6 +54,9 @@ MonoBehaviour:
   - NotifyLoadScene
   - StartLoadLevel
   - OnLoaded
+  - CreateFireEffect
+  - OnDamageCalculated
+  - OnDamage
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

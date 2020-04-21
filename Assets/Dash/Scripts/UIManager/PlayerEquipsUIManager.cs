@@ -9,13 +9,7 @@ namespace Dash.Scripts.UIManager
     public class PlayerEquipsUIManager : MonoBehaviour
     {
         public SkeletonAnimation skeletonAnimation;
-
-        [SpineSkin] public string templateSkinName;
         
-
-        public Material runtimeMaterial;
-        public Texture2D runtimeAtlas;
-
         private void Awake()
         {
             if (skeletonAnimation == null)

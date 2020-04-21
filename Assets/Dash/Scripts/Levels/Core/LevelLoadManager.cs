@@ -21,7 +21,6 @@ namespace Dash.Scripts.Levels.Core
         public Image progress;
         public TextMeshProUGUI text;
         public PhotonView photonView;
-        public GameObject playerPrefab;
         public OnLevelLoadedEvent onLevelLoadedEvent;
         private readonly HashSet<int> loadedPlayers = new HashSet<int>();
 
@@ -108,7 +107,10 @@ namespace Dash.Scripts.Levels.Core
                     PhotonNetwork.LocalPlayer.ActorNumber
                 );
             });
-            uiManager.weaponChanged.AddListener(info => { controller.OnLocalWeaponChanged(info.typeId); });
+            uiManager.weaponChanged.AddListener(info =>
+            {
+                controller.photonView.RPC(nameof(controller.WeaponChanged), RpcTarget.All, info.typeId);
+            });
             virtualCamera.Follow = go.transform;
             //Wait All Player
             yield return new WaitForFixedUpdate();

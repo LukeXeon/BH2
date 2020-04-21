@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using Dash.Scripts.Core;
+using Dash.Scripts.Levels.View;
 using Spine;
 using Spine.Unity;
 using UnityEditor;
@@ -31,7 +33,7 @@ namespace Dash.Scripts.Config
         [Header("成长值")] public int gongJiLi2;
         public int sheSu2;
 
-        public MonoBehaviour effect;
+        public WeaponView viewManager;
 
         [Serializable]
         public struct SlotItem
