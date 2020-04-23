@@ -323,7 +323,7 @@ namespace Dash.Scripts.UIManager
 
         public void OnEvent(EventData photonEvent)
         {
-            if (photonEvent.Code == LevelLoadManager.startLoad)
+            if (photonEvent.Code == LevelLoadManager.OnStartLoad)
             {
                 ClearRoomPlayers();
             }

@@ -18,16 +18,18 @@ using UnityEngine.UI;
 
 namespace Dash.Scripts.Levels.Core
 {
-    public class LevelLoadManager : MonoBehaviourPunCallbacks, IOnEventCallback
+    public class LevelLoadManager : MonoBehaviour, IOnEventCallback
     {
         public Image loadingRoot;
         public Image progress;
         public TextMeshProUGUI text;
         public GuidIndexer player;
         public OnLevelLoadedEvent onLevelLoadedEvent;
-        public const int startLoad = 1;
-        public const int onLoaded = 2;
-        private readonly HashSet<int> loadedPlayers = new HashSet<int>();
+        public const int OnStartLoad = 1;
+        public const int OnPlayerLoaded = 2;
+        public const int OnLoadComplete = 3;
+        private readonly HashSet<int> playerLoaded = new HashSet<int>();
+        private readonly HashSet<int> loadComplete = new HashSet<int>();
 
         public class OnLevelLoadedEvent : UnityEvent
         {
@@ -35,6 +37,7 @@ namespace Dash.Scripts.Levels.Core
 
         private void Awake()
         {
+            PhotonNetwork.AddCallbackTarget(this);
             DontDestroyOnLoad(gameObject);
             if (onLevelLoadedEvent == null)
             {
@@ -42,20 +45,25 @@ namespace Dash.Scripts.Levels.Core
             }
         }
 
+        private void OnDestroy()
+        {
+            PhotonNetwork.RemoveCallbackTarget(this);
+        }
+
         public void LoadRoomLevel()
         {
             PhotonNetwork.RaiseEvent(
-                startLoad,
+                OnStartLoad,
                 null,
                 new RaiseEventOptions {Receivers = ReceiverGroup.All},
                 new SendOptions {Reliability = true}
             );
         }
 
-        private void NotifyOnLoad()
+        private void NotifyOnLoad(byte type)
         {
             PhotonNetwork.RaiseEvent(
-                onLoaded,
+                type,
                 PhotonNetwork.LocalPlayer.ActorNumber,
                 new RaiseEventOptions {Receivers = ReceiverGroup.All},
                 new SendOptions {Reliability = true}
@@ -64,6 +72,7 @@ namespace Dash.Scripts.Levels.Core
 
         private IEnumerator DoLoadLevel()
         {
+
             text.text = "Loading";
             PhotonNetwork.CurrentRoom.CustomProperties.TryGetValue("typeId", out var typeId);
             var scene = GameConfigManager.guanQiaInfoTable[(int) typeId];
@@ -80,13 +89,11 @@ namespace Dash.Scripts.Levels.Core
             text.text = "等待其他玩家";
             yield return op;
             //Send And Wait All Player Scene Loaded
-            NotifyOnLoad();
-            var waitAll = new WaitUntil(() =>
+            NotifyOnLoad(OnPlayerLoaded);
+            yield return new WaitUntil(() =>
             {
-                return PhotonNetwork.PlayerList.All(i => loadedPlayers.Contains(i.ActorNumber));
+                return PhotonNetwork.PlayerList.All(i => playerLoaded.Contains(i.ActorNumber));
             });
-            yield return waitAll;
-            loadedPlayers.Clear();
             //Init Player
             var playerChuShengDian = GameObject.FindGameObjectsWithTag("PlayerChuShengDian")
                 .Select(g => g.transform).ToArray();
@@ -107,7 +114,7 @@ namespace Dash.Scripts.Levels.Core
                 }
             );
             var controller = go.GetComponent<PlayerView>();
-            controller.onPlayerLoadedEvent.AddListener(NotifyOnLoad);
+            controller.onPlayerLoadedEvent.AddListener(() => { NotifyOnLoad(OnLoadComplete); });
             uiManager.weaponChanged.AddListener(info =>
             {
                 controller.photonView.RPC(nameof(controller.OnWeaponChanged), RpcTarget.All, info.typeId);
@@ -117,22 +124,29 @@ namespace Dash.Scripts.Levels.Core
             yield return Resources.UnloadUnusedAssets();
             GC.Collect();
             yield return new WaitForFixedUpdate();
-            yield return waitAll;
+            yield return new WaitUntil(() =>
+            {
+                return PhotonNetwork.PlayerList.All(i => loadComplete.Contains(i.ActorNumber));
+            });
             onLevelLoadedEvent.Invoke();
             onLevelLoadedEvent.RemoveAllListeners();
-            loadedPlayers.Clear();
+
             Destroy(gameObject);
         }
 
         public void OnEvent(EventData photonEvent)
         {
-            if (photonEvent.Code == startLoad)
+            if (photonEvent.Code == OnStartLoad)
             {
                 StartCoroutine(DoLoadLevel());
             }
-            else if (photonEvent.Code == onLoaded)
+            else if (photonEvent.Code == OnPlayerLoaded)
             {
-                loadedPlayers.Add((int) photonEvent.CustomData);
+                playerLoaded.Add((int) photonEvent.CustomData);
+            }
+            else if (photonEvent.Code == OnLoadComplete)
+            {
+                loadComplete.Add((int) photonEvent.CustomData);
             }
         }
     }
