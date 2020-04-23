@@ -7,6 +7,7 @@ TagManager:
   - Entity
   - Enemies
   - PlayerChuShengDian
+  - FX
   layers:
   - Default
   - TransparentFX
@@ -22,7 +23,7 @@ TagManager:
   - Live2D
   - Player
   - NPC
-  - 
+  - Fx
   - 
   - 
   - 

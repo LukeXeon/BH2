@@ -24,14 +24,17 @@ namespace Dash.Scripts.Levels.View
 
         private readonly Dictionary<WeaponInfoAsset, Skin> skinCache = new Dictionary<WeaponInfoAsset, Skin>();
 
+        public float shootSpeed = 1;
+
         private static Dictionary<string, AnimationClip> GetClips(RuntimeAnimatorController controller)
         {
             return clipsCache.GetValue(controller,
                 key => { return key.animationClips.ToDictionary(i => i.name, i => i); });
         }
 
-        private AnimatorOverrideController GetController(string weaponType)
+        private AnimatorOverrideController GetController(WeaponInfoAsset weaponInfoAsset)
         {
+            var weaponType = weaponInfoAsset.weaponType.matchName;
             var controller = new AnimatorOverrideController(framework);
             var sourceClips = GetClips(source);
             var idleClip = sourceClips[weaponType + "_idle"];
@@ -52,18 +55,49 @@ namespace Dash.Scripts.Levels.View
             temp.Add(new KeyValuePair<AnimationClip, AnimationClip>(controller["temp_hurt"], hurtClip));
             temp.Add(new KeyValuePair<AnimationClip, AnimationClip>(controller["temp_run"], runClip));
             temp.Add(new KeyValuePair<AnimationClip, AnimationClip>(controller["temp_idle"], idleClip));
-            temp.Add(new KeyValuePair<AnimationClip, AnimationClip>(controller["temp_kaiqiang"], kaiQiangClip));
+            if (weaponInfoAsset.weaponType.canLianShe)
+            {
+                temp.Add(new KeyValuePair<AnimationClip, AnimationClip>(controller["temp_kaiqiang"],
+                    kaiQiangClip));
+            }
+            else
+            {
+                temp.Add(new KeyValuePair<AnimationClip, AnimationClip>(controller["temp_kaiqiang_single"],
+                    kaiQiangClip));
+            }
+
             temp.Add(new KeyValuePair<AnimationClip, AnimationClip>(controller["temp_taoqiang"], taoQiangClip));
-            temp.Add(new KeyValuePair<AnimationClip, AnimationClip>(controller["temp_run_kaiqiang"], runKaiQiangClip));
+            if (weaponInfoAsset.weaponType.canLianShe)
+            {
+                temp.Add(new KeyValuePair<AnimationClip, AnimationClip>(controller["temp_run_kaiqiang"],
+                    runKaiQiangClip));
+            }
+            else
+            {
+                temp.Add(new KeyValuePair<AnimationClip, AnimationClip>(controller["temp_run_kaiqiang_single"],
+                    runKaiQiangClip));
+            }
+
             temp.Add(new KeyValuePair<AnimationClip, AnimationClip>(controller["temp_run_taoqiang"], runTaoQiangClip));
             controller.ApplyOverrides(temp);
             temp.Clear();
+            if (weaponInfoAsset.weaponType.canLianShe)
+            {
+                shootSpeed = 1;
+            }
+            else
+            {
+                var time = 1f / weaponInfoAsset.sheShu;
+                shootSpeed = kaiQiangClip.length / time;
+            }
             return controller;
         }
 
         public void SetPose(WeaponInfoAsset weaponInfoAsset)
         {
-            animator.runtimeAnimatorController = GetController(weaponInfoAsset.weaponType.matchName);
+            animator.runtimeAnimatorController = GetController(
+                weaponInfoAsset
+            );
             skinCache.TryGetValue(weaponInfoAsset, out var skin);
             if (skin != null)
             {

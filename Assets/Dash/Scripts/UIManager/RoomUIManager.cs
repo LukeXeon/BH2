@@ -1,27 +1,24 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using agora_gaming_rtc;
 using Dash.Scripts.Cloud;
-using Dash.Scripts.Config;
 using Dash.Scripts.Levels.Config;
 using Dash.Scripts.Levels.Core;
-using Dash.Scripts.Levels.Pools;
 using Dash.Scripts.UI;
 using Dash.Scripts.UIManager.ItemUIManager;
+using ExitGames.Client.Photon;
 using Michsky.UI.ModernUIPack;
 using Photon.Pun;
 using Photon.Realtime;
 using TMPro;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 namespace Dash.Scripts.UIManager
 {
-    public class RoomUIManager : MonoBehaviourPunCallbacks
+    public class RoomUIManager : MonoBehaviourPunCallbacks, IOnEventCallback
     {
         [Header("MainUI")] public TextMeshProUGUI idText;
         public PlayerInRoomItemUIManager[] playerItems;
@@ -41,9 +38,7 @@ namespace Dash.Scripts.UIManager
 
         [Header("Asset")] public Color readyColor;
         public Color unReadyColor;
-        public GameObject loadManagerPrefab;
-
-        private readonly HashSet<int> loadedPlayers = new HashSet<int>();
+        public LevelLoadManager loadManager;
 
         private readonly Dictionary<int, PlayerInRoomItemUIManager> noLocalPlayerItems =
             new Dictionary<int, PlayerInRoomItemUIManager>(3);
@@ -96,7 +91,7 @@ namespace Dash.Scripts.UIManager
                 {
                     PhotonNetwork.CurrentRoom.IsOpen = false;
                     PhotonNetwork.CurrentRoom.IsVisible = false;
-                    BeginLoadScene();
+                    loadManager.LoadRoomLevel();
                 }
             });
             var rtcEngine = IRtcEngine.QueryEngine();
@@ -326,20 +321,12 @@ namespace Dash.Scripts.UIManager
             }
         }
 
-        [PunRPC]
-        public void SceneLoaded(int id)
+        public void OnEvent(EventData photonEvent)
         {
-            loadedPlayers.Add(id);
-        }
-
-        [PunRPC]
-        public void BeginLoadScene()
-        {
-            ClearRoomPlayers();
-            var go = PhotonNetwork.InstantiateSceneObject(loadManagerPrefab.name, Vector3.zero,
-                Quaternion.identity);
-            var loader = go.GetComponent<LevelLoadManager>();
-            loader.LoadRoomLevel();
+            if (photonEvent.Code == LevelLoadManager.startLoad)
+            {
+                ClearRoomPlayers();
+            }
         }
     }
 }

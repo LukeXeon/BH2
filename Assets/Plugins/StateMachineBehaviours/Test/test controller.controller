@@ -52,16 +52,6 @@ MonoBehaviour:
   wantedBool: 1
   wantedInt: 0
   wantedFloat: 0
-  normalizedTime: 0
-  atLeastOnce: 0
-  neverWhileExit: 0
-  curve:
-    serializedVersion: 2
-    m_Curve: []
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  repeat: 0
 --- !u!114 &114116155994235004
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -80,16 +70,6 @@ MonoBehaviour:
   wantedBool: 1
   wantedInt: 0
   wantedFloat: 0
-  normalizedTime: 0
-  atLeastOnce: 0
-  neverWhileExit: 0
-  curve:
-    serializedVersion: 2
-    m_Curve: []
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  repeat: 0
 --- !u!114 &114247748573977118
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -104,34 +84,34 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   onStateEnterTransitionStart:
   - normalizedTime: 0
+    callback: 15
     callbackId: -784871058
     repeat: 0
-    atLeastOnce: 0
-    neverWhileExit: 0
+    executeOnExitEnds: 0
   onStateEnterTransitionEnd:
   - normalizedTime: 0
+    callback: 16
     callbackId: 1212055764
     repeat: 0
-    atLeastOnce: 0
-    neverWhileExit: 0
+    executeOnExitEnds: 0
   onStateExitTransitionStart: []
   onStateExitTransitionEnd: []
   onNormalizedTimeReached:
   - normalizedTime: 0
+    callback: 17
     callbackId: 1060745282
     repeat: 0
-    atLeastOnce: 0
-    neverWhileExit: 0
+    executeOnExitEnds: 0
   - normalizedTime: 0.21
+    callback: 18
     callbackId: -1350128173
     repeat: 0
-    atLeastOnce: 0
-    neverWhileExit: 0
+    executeOnExitEnds: 0
   - normalizedTime: 1
+    callback: 19
     callbackId: -662594235
     repeat: 0
-    atLeastOnce: 1
-    neverWhileExit: 0
+    executeOnExitEnds: 1
   onStateUpdated: []
 --- !u!114 &114345647780524880
 MonoBehaviour:
@@ -147,28 +127,28 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   onStateEnterTransitionStart:
   - normalizedTime: 0
+    callback: 1
     callbackId: -2082672713
     repeat: 0
-    atLeastOnce: 0
-    neverWhileExit: 0
+    executeOnExitEnds: 0
   onStateEnterTransitionEnd:
   - normalizedTime: 0
+    callback: 2
     callbackId: 450215437
     repeat: 0
-    atLeastOnce: 0
-    neverWhileExit: 0
+    executeOnExitEnds: 0
   onStateExitTransitionStart:
   - normalizedTime: 0
+    callback: 3
     callbackId: 1842515611
     repeat: 0
-    atLeastOnce: 0
-    neverWhileExit: 0
+    executeOnExitEnds: 0
   onStateExitTransitionEnd:
   - normalizedTime: 0
+    callback: 4
     callbackId: -206169288
     repeat: 0
-    atLeastOnce: 0
-    neverWhileExit: 0
+    executeOnExitEnds: 0
   onNormalizedTimeReached: []
   onStateUpdated: []
 --- !u!114 &114385689325460966
@@ -187,16 +167,16 @@ MonoBehaviour:
   onStateEnterTransitionEnd: []
   onStateExitTransitionStart:
   - normalizedTime: 0
+    callback: 11
     callbackId: -698739337
     repeat: 0
-    atLeastOnce: 0
-    neverWhileExit: 0
+    executeOnExitEnds: 0
   onStateExitTransitionEnd:
   - normalizedTime: 0
+    callback: 13
     callbackId: 945058907
     repeat: 0
-    atLeastOnce: 0
-    neverWhileExit: 0
+    executeOnExitEnds: 0
   onNormalizedTimeReached: []
   onStateUpdated: []
 --- !u!114 &114602416981136046
@@ -213,16 +193,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   onStateEnterTransitionStart:
   - normalizedTime: 0
+    callback: 12
     callbackId: 1330857165
     repeat: 0
-    atLeastOnce: 0
-    neverWhileExit: 0
+    executeOnExitEnds: 0
   onStateEnterTransitionEnd:
   - normalizedTime: 0
+    callback: 14
     callbackId: -1506745864
     repeat: 0
-    atLeastOnce: 0
-    neverWhileExit: 0
+    executeOnExitEnds: 0
   onStateExitTransitionStart: []
   onStateExitTransitionEnd: []
   onNormalizedTimeReached: []
@@ -241,16 +221,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   onStateEnterTransitionStart:
   - normalizedTime: 0
+    callback: 8
     callbackId: -100641005
     repeat: 0
-    atLeastOnce: 0
-    neverWhileExit: 0
+    executeOnExitEnds: 0
   onStateEnterTransitionEnd:
   - normalizedTime: 0
+    callback: 10
     callbackId: -1587730975
     repeat: 0
-    atLeastOnce: 0
-    neverWhileExit: 0
+    executeOnExitEnds: 0
   onStateExitTransitionStart: []
   onStateExitTransitionEnd: []
   onNormalizedTimeReached: []
@@ -269,10 +249,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   onStateEnterTransitionStart:
   - normalizedTime: 0
+    callback: 20
     callbackId: -1972341214
     repeat: 0
-    atLeastOnce: 0
-    neverWhileExit: 0
+    executeOnExitEnds: 0
   onStateEnterTransitionEnd: []
   onStateExitTransitionStart: []
   onStateExitTransitionEnd: []
@@ -292,28 +272,28 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   onStateEnterTransitionStart:
   - normalizedTime: 0
+    callback: 5
     callbackId: -2068763730
     repeat: 0
-    atLeastOnce: 0
-    neverWhileExit: 0
+    executeOnExitEnds: 0
   onStateEnterTransitionEnd:
   - normalizedTime: 0
+    callback: 6
     callbackId: 498629140
     repeat: 0
-    atLeastOnce: 0
-    neverWhileExit: 0
+    executeOnExitEnds: 0
   onStateExitTransitionStart:
   - normalizedTime: 0
+    callback: 7
     callbackId: 1790921346
     repeat: 0
-    atLeastOnce: 0
-    neverWhileExit: 0
+    executeOnExitEnds: 0
   onStateExitTransitionEnd:
   - normalizedTime: 0
+    callback: 9
     callbackId: -1928894587
     repeat: 0
-    atLeastOnce: 0
-    neverWhileExit: 0
+    executeOnExitEnds: 0
   onNormalizedTimeReached: []
   onStateUpdated: []
 --- !u!1101 &1101110108455445230
@@ -660,7 +640,7 @@ AnimatorStateMachine:
   m_ChildStates:
   - serializedVersion: 1
     m_State: {fileID: 1102614988757323232}
-    m_Position: {x: 400, y: 0, z: 0}
+    m_Position: {x: 396, y: 0, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 1102671653880976134}
     m_Position: {x: 396, y: 72, z: 0}

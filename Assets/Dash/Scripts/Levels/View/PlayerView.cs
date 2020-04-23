@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Reflection;
 using Dash.Scripts.Config;
 using Photon.Pun;
 using Spine.Unity;
@@ -18,12 +20,23 @@ namespace Dash.Scripts.Levels.View
         [Header("Event")] public OnPlayerLoadedEvent onPlayerLoadedEvent;
         private static readonly int IS_RUN = Animator.StringToHash("is_run");
         private static readonly int TAOQIANG = Animator.StringToHash("taoqiang");
-        private static readonly int IS_KAIQIANG = Animator.StringToHash("is_kaiqiang");
+        private static readonly int KAIQIANG = Animator.StringToHash("kaiqiang");
+        private static readonly int LIANSHE = Animator.StringToHash("lianshe");
+
+        private static readonly Dictionary<(Type, string), MethodInfo> methodInfos =
+            new Dictionary<(Type, string), MethodInfo>();
 
         private new Rigidbody rigidbody;
-        private WeaponInfoAsset weaponInfoAsset;
-        private WeaponView weaponView;
+
+
         private int flipX = 1;
+
+        //Weapon
+        public WeaponInfoAsset weaponInfoAsset { get; private set; }
+        private WeaponView weaponView;
+        private float timeBetweenBullets;
+        private float lastShoot;
+        private static readonly int KAIQIANG_SPEED = Animator.StringToHash("kaiqiang_speed");
 
 
         [Serializable]
@@ -48,54 +61,90 @@ namespace Dash.Scripts.Levels.View
             var info = GameConfigManager.playerTable[playerTypeId];
             mecanim.skeletonDataAsset = info.skel;
             mecanim.Initialize(true);
-            WeaponChanged(weaponTypeId);
+            OnWeaponChanged(weaponTypeId);
             onPlayerLoadedEvent.Invoke();
         }
 
         [PunRPC]
-        public void WeaponChanged(int typeId)
+        public void OnWeaponChanged(int typeId)
         {
-//            if (weaponView != null)
-//            {
-//                Destroy(weaponView.gameObject);
-//            }
+            if (weaponView)
+            {
+                Destroy(weaponView.gameObject);
+            }
 
             weaponInfoAsset = GameConfigManager.weaponTable[typeId];
             poseManager.SetPose(weaponInfoAsset);
             animator.SetTrigger(TAOQIANG);
-            
-//            weaponView = Instantiate(
-//                weaponInfoAsset.viewManager.gameObject,
-//                Vector3.zero,
-//                Quaternion.identity,
-//                transform
-//            ).GetComponent<WeaponView>();
+            animator.SetBool(LIANSHE, false);
+            animator.ResetTrigger(KAIQIANG);
+            animator.SetFloat(KAIQIANG_SPEED, poseManager.shootSpeed);
+            var go = Instantiate(weaponInfoAsset.weaponView.gameObject, transform);
+            weaponView = go.GetComponent<WeaponView>();
+            weaponView.OnInitialize(this);
+            lastShoot = 0;
+            timeBetweenBullets = 1f / weaponInfoAsset.sheShu;
         }
-        
+
+        //首先这肯定是isMine==true的情况下调用的
+        [PunRPC]
+        public void OnFire()
+        {
+            weaponView.OnFire();
+        }
+
+        [PunRPC]
+        public void OnFire0()
+        {
+            animator.SetTrigger(KAIQIANG);
+        }
+
+        [PunRPC]
+        public void OnChildCall(string method, object[] args)
+        {
+            if (weaponView)
+            {
+                var type = weaponView.GetType();
+                methodInfos.TryGetValue((type, method), out var methodInfo);
+                if (methodInfo == null)
+                {
+                    methodInfo = type.GetMethod(method);
+                    methodInfos[(type, method)] = methodInfo;
+                }
+
+                if (methodInfo != null)
+                {
+                    methodInfo.Invoke(weaponView, args);
+                }
+            }
+        }
+
         private void Update()
         {
             if (photonView.IsMine)
             {
+                var isKaiQiangPressed = ETCInput.GetButton("kaiqiang");
+                //先更新动画，如果能够连射确保动画状态同步
                 if (weaponInfoAsset.weaponType.canLianShe)
                 {
-                    if (ETCInput.GetButton("kaiqiang"))
-                    {
-                        animator.SetBool(IS_KAIQIANG,true);
-                    }
-                    else
-                    {
-                        animator.SetBool(IS_KAIQIANG,false);
-                    }
+                    animator.SetBool(LIANSHE, isKaiQiangPressed);
                 }
-                else
+
+                var time = Time.time;
+                //如果上次射击时间间隔已过
+                if (time - lastShoot >= timeBetweenBullets)
                 {
-                    if (ETCInput.GetButtonDown("kaiqiang"))
+                    //如果是连射的且按键按下，则发射一颗子弹
+                    if (weaponInfoAsset.weaponType.canLianShe && isKaiQiangPressed)
                     {
-                        animator.SetBool(IS_KAIQIANG,true);
+                        photonView.RPC(nameof(OnFire), RpcTarget.All);
+                        lastShoot = time;
                     }
-                    else
+                    //否则，该帧如果按下键才会发射单射武器
+                    else if (ETCInput.GetButtonDown("kaiqiang"))
                     {
-                        animator.SetBool(IS_KAIQIANG,false);
+                        photonView.RPC(nameof(OnFire0), RpcTarget.All);
+                        lastShoot = time;
                     }
                 }
 
@@ -103,11 +152,11 @@ namespace Dash.Scripts.Levels.View
                 {
                 }
             }
-        }
 
-        public void OnWeaponFireBullet()
-        {
-//            weaponView.FireBullet();
+            var transform1 = weaponView.transform;
+            var local = transform1.localScale;
+            local.x = flipX;
+            transform1.localScale = local;
         }
 
         private void FixedUpdate()

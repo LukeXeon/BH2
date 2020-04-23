@@ -151,6 +151,7 @@ namespace Dash.Scripts.UIManager
             var image = fullMask.GetComponent<Image>();
             image.sprite = BootstrapUIManager.bootBackground;
             yield return Resources.UnloadUnusedAssets();
+            GC.Collect();
             yield return new WaitForEndOfFrame();
             while (fullMask.alpha > 0f)
             {

@@ -306,13 +306,14 @@ GameObject:
   - component: {fileID: 2545382973083229443}
   - component: {fileID: 1140673426}
   - component: {fileID: 1140673427}
+  - component: {fileID: -8116182863712303340}
   m_Layer: 13
   m_Name: Level1_NPC1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2545382973083229447
 Transform:
   m_ObjectHideFlags: 0
@@ -438,3 +439,16 @@ NavMeshAgent:
   m_BaseOffset: -0.21
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!114 &-8116182863712303340
+MonoBehaviour:
+  m_ObjectHideFlags: 8
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2545382973083229444}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6da75efc22d249c0a4844a1e176b8a59, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  guid: 

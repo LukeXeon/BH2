@@ -57,6 +57,14 @@ MonoBehaviour:
   - CreateFireEffect
   - OnDamageCalculated
   - OnDamage
+  - ExecuteDirectShootEffect
+  - ExecuteBallisticShootEffect
+  - SyncDirectHitEffect
+  - OnWeaponEffectSync
+  - OnChildCall
+  - OnWeaponChanged
+  - OnFire0
+  - OnFire
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

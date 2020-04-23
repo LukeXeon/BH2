@@ -10,21 +10,20 @@ namespace Dash.Scripts.Tests
 {
     public class TestReplaceManager : MonoBehaviour
     {
-        public SkeletonAnimation animation;
+        public new SkeletonAnimation animation;
         public PlayerEquipsUIManager manager;
-        public JiaTeLinWeaponView weaponView;
+        public WeaponView OnFire;
 
         private IEnumerator Start()
         {
-            var w = GameConfigManager.weaponTable[1];
+            var w = GameConfigManager.weaponTable[0];
             var list = SpineUtils.GenerateSpineReplaceInfo(w, animation.Skeleton);
             manager.Equip(list);
             Debug.Log(list.ToStringFull());
             while (true)
             {
                 yield return new WaitForSeconds(0.1f);
-                weaponView.FireBullet();
-                
+                OnFire.OnFire();
             }
         }
     }

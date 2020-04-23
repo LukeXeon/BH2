@@ -34,8 +34,9 @@ namespace Dash.Scripts.UIManager
         [Header("Assets")] public GameObject roomItem;
         public GameObject typeItem;
         private BeforeJoinRoomAction beforeJoinRoomAction;
+#pragma warning disable 414
         private int currentRoomTypeId = -1;
-        private bool isOpen;
+#pragma warning restore 414
         private Dictionary<string, RoomItemUIManager> cacheRooms;
 
         private void Awake()
@@ -54,8 +55,7 @@ namespace Dash.Scripts.UIManager
             beforeJoinRoomAction = new BeforeJoinRoomAction(loadingMask, notifyError);
 
             back.onClick.AddListener(() =>
-            {
-                isOpen = false;
+            { ;
                 if (PhotonNetwork.InLobby)
                 {
                     PhotonNetwork.LeaveLobby();
@@ -95,7 +95,6 @@ namespace Dash.Scripts.UIManager
 
         public void Open()
         {
-            isOpen = true;
             animator.Play("Fade-in");
             if (!PhotonNetwork.InLobby)
             {

@@ -12,6 +12,6 @@ EditorBuildSettings:
     path: Assets/Dash/Sences/Desktop.unity
     guid: b6cb23a7576db9c438087566869cda15
   - enabled: 1
-    path: Assets/Dash/Sences/Level/Level1/Level1.unity
+    path: Assets/Dash/Sences/Level/Level1.unity
     guid: f592fe0fcdea0654baaa087d2378cb41
   m_configObjects: {}

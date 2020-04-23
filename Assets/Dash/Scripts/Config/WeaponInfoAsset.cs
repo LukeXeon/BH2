@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using Dash.Scripts.Core;
 using Dash.Scripts.Levels.View;
-using Spine;
-using Spine.Unity;
-using UnityEditor;
 using UnityEngine;
+
 
 namespace Dash.Scripts.Config
 {
@@ -22,6 +18,11 @@ namespace Dash.Scripts.Config
 
         public TextAsset xiaoGuo;
 
+        [Header("每秒发射子弹数量")]
+        public float sheShu;
+
+        public WeaponView weaponView;
+
         //替换列表
         public SlotItem[] slots;
 
@@ -32,8 +33,6 @@ namespace Dash.Scripts.Config
         public int sheSu;
         [Header("成长值")] public int gongJiLi2;
         public int sheSu2;
-
-        public WeaponView viewManager;
 
         [Serializable]
         public struct SlotItem

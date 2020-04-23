@@ -14,13 +14,14 @@ GameObject:
   - component: {fileID: 8238277080845339823}
   - component: {fileID: 8238277080845339809}
   - component: {fileID: -4584323755285702024}
+  - component: {fileID: -5809969059143972125}
   m_Layer: 12
   m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &8238277080845339818
 Transform:
   m_ObjectHideFlags: 0
@@ -126,6 +127,19 @@ MonoBehaviour:
   m_SynchronizeAngularVelocity: 0
   m_TeleportEnabled: 0
   m_TeleportIfDistanceGreaterThan: 3
+--- !u!114 &-5809969059143972125
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8238277080845339819}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6da75efc22d249c0a4844a1e176b8a59, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  guid: 
 --- !u!1 &8238277081177272650
 GameObject:
   m_ObjectHideFlags: 0
@@ -143,7 +157,7 @@ GameObject:
   - component: {fileID: 8238277081177272652}
   - component: {fileID: 8238277081177272653}
   - component: {fileID: 4736703732428140848}
-  - component: {fileID: 7942182918698382356}
+  - component: {fileID: 8246092352227616834}
   m_Layer: 12
   m_Name: Skeleton
   m_TagString: Untagged
@@ -283,6 +297,7 @@ MonoBehaviour:
   skeletonMecanim: {fileID: 8238277081177272654}
   framework: {fileID: 9100000, guid: 453ca6cd443cdc943a43ee7f21feb68f, type: 2}
   source: {fileID: 9100000, guid: ff8fdfbf136bfb949bc451f7e18543a2, type: 2}
+  shootSpeed: 1
 --- !u!114 &8238277081177272652
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -335,9 +350,15 @@ MonoBehaviour:
   - Type: 9
     SynchronizeType: 0
     Name: revive
+  - Type: 4
+    SynchronizeType: 2
+    Name: lianshe
   - Type: 9
     SynchronizeType: 0
     Name: kaiqiang
+  - Type: 1
+    SynchronizeType: 0
+    Name: kaiqiang_speed
   m_SynchronizeLayers:
   - SynchronizeType: 0
     LayerIndex: 0
@@ -356,7 +377,7 @@ SortingGroup:
   m_SortingLayerID: 1895017843
   m_SortingLayer: 8
   m_SortingOrder: 10
---- !u!114 &7942182918698382356
+--- !u!114 &8246092352227616834
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -369,13 +390,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   events:
-  - name: OnKaiQiang
-    id: -1045626201
+  - name: OnFire
+    id: 1288383992
     action:
       m_PersistentCalls:
         m_Calls:
         - m_Target: {fileID: 8238277080845339809}
-          m_MethodName: OnWeaponFireBullet
+          m_MethodName: OnFire
           m_Mode: 1
           m_Arguments:
             m_ObjectArgument: {fileID: 0}

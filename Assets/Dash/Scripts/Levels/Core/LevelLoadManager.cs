@@ -4,9 +4,12 @@ using System.Collections.Generic;
 using System.Linq;
 using Cinemachine;
 using Dash.Scripts.Config;
+using Dash.Scripts.Core;
 using Dash.Scripts.Levels.Config;
 using Dash.Scripts.Levels.View;
+using ExitGames.Client.Photon;
 using Photon.Pun;
+using Photon.Realtime;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
@@ -15,13 +18,15 @@ using UnityEngine.UI;
 
 namespace Dash.Scripts.Levels.Core
 {
-    public class LevelLoadManager : MonoBehaviour
+    public class LevelLoadManager : MonoBehaviourPunCallbacks, IOnEventCallback
     {
         public Image loadingRoot;
         public Image progress;
         public TextMeshProUGUI text;
-        public PhotonView photonView;
+        public GuidIndexer player;
         public OnLevelLoadedEvent onLevelLoadedEvent;
+        public const int startLoad = 1;
+        public const int onLoaded = 2;
         private readonly HashSet<int> loadedPlayers = new HashSet<int>();
 
         public class OnLevelLoadedEvent : UnityEvent
@@ -39,19 +44,22 @@ namespace Dash.Scripts.Levels.Core
 
         public void LoadRoomLevel()
         {
-            photonView.RPC(nameof(StartLoadLevel), RpcTarget.All);
+            PhotonNetwork.RaiseEvent(
+                startLoad,
+                null,
+                new RaiseEventOptions {Receivers = ReceiverGroup.All},
+                new SendOptions {Reliability = true}
+            );
         }
 
-        [PunRPC]
-        private void StartLoadLevel()
+        private void NotifyOnLoad()
         {
-            StartCoroutine(DoLoadLevel());
-        }
-
-        [PunRPC]
-        private void OnLoaded(int userId)
-        {
-            loadedPlayers.Add(userId);
+            PhotonNetwork.RaiseEvent(
+                onLoaded,
+                PhotonNetwork.LocalPlayer.ActorNumber,
+                new RaiseEventOptions {Receivers = ReceiverGroup.All},
+                new SendOptions {Reliability = true}
+            );
         }
 
         private IEnumerator DoLoadLevel()
@@ -72,9 +80,7 @@ namespace Dash.Scripts.Levels.Core
             text.text = "等待其他玩家";
             yield return op;
             //Send And Wait All Player Scene Loaded
-            photonView.RPC(nameof(OnLoaded), RpcTarget.All,
-                PhotonNetwork.LocalPlayer.ActorNumber
-            );
+            NotifyOnLoad();
             var waitAll = new WaitUntil(() =>
             {
                 return PhotonNetwork.PlayerList.All(i => loadedPlayers.Contains(i.ActorNumber));
@@ -91,7 +97,7 @@ namespace Dash.Scripts.Levels.Core
                     p => p.ActorNumber == PhotonNetwork.LocalPlayer.ActorNumber)
             ].position;
             var go = PhotonNetwork.Instantiate(
-                "player",
+                player.guid,
                 pos,
                 Quaternion.identity,
                 data: new object[]
@@ -101,25 +107,32 @@ namespace Dash.Scripts.Levels.Core
                 }
             );
             var controller = go.GetComponent<PlayerView>();
-            controller.onPlayerLoadedEvent.AddListener(() =>
-            {
-                photonView.RPC(nameof(OnLoaded), RpcTarget.All,
-                    PhotonNetwork.LocalPlayer.ActorNumber
-                );
-            });
+            controller.onPlayerLoadedEvent.AddListener(NotifyOnLoad);
             uiManager.weaponChanged.AddListener(info =>
             {
-                controller.photonView.RPC(nameof(controller.WeaponChanged), RpcTarget.All, info.typeId);
+                controller.photonView.RPC(nameof(controller.OnWeaponChanged), RpcTarget.All, info.typeId);
             });
             virtualCamera.Follow = go.transform;
             //Wait All Player
-            yield return new WaitForFixedUpdate();
             yield return Resources.UnloadUnusedAssets();
+            GC.Collect();
+            yield return new WaitForFixedUpdate();
             yield return waitAll;
             onLevelLoadedEvent.Invoke();
-            if (PhotonNetwork.IsMasterClient)
+            onLevelLoadedEvent.RemoveAllListeners();
+            loadedPlayers.Clear();
+            Destroy(gameObject);
+        }
+
+        public void OnEvent(EventData photonEvent)
+        {
+            if (photonEvent.Code == startLoad)
             {
-                PhotonNetwork.Destroy(this.gameObject);
+                StartCoroutine(DoLoadLevel());
+            }
+            else if (photonEvent.Code == onLoaded)
+            {
+                loadedPlayers.Add((int) photonEvent.CustomData);
             }
         }
     }
