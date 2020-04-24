@@ -109,8 +109,8 @@ namespace Dash.Scripts.Levels.Core
                 Quaternion.identity,
                 data: new object[]
                 {
-                    InLevelConfigManager.playerInfo.Item1.typeId,
-                    InLevelConfigManager.weaponInfos.First().Item1.typeId
+                    LevelConfigManager.playerInfo.Item1.typeId,
+                    LevelConfigManager.weaponInfos.First().Item1.typeId
                 }
             );
             var controller = go.GetComponent<PlayerView>();

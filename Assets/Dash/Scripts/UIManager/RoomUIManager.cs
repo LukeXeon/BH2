@@ -142,8 +142,8 @@ namespace Dash.Scripts.UIManager
             var table = new Hashtable
             {
                 ["displayName"] = CloudManager.GetNameInGame(),
-                ["playerTypeId"] = InLevelConfigManager.playerInfo.Item1.typeId,
-                ["weaponTypeId"] = InLevelConfigManager.weaponInfos.First().Item1.typeId,
+                ["playerTypeId"] = LevelConfigManager.playerInfo.Item1.typeId,
+                ["weaponTypeId"] = LevelConfigManager.weaponInfos.First().Item1.typeId,
                 ["isReady"] = PhotonNetwork.IsMasterClient
             };
             PhotonNetwork.LocalPlayer.SetCustomProperties(table);
@@ -152,18 +152,19 @@ namespace Dash.Scripts.UIManager
             Debug.Log(index + "playerTypeId");
             table = new Hashtable
             {
-                [index + "playerTypeId"] = InLevelConfigManager.playerInfo.Item1.typeId
+                [index + "playerTypeId"] = LevelConfigManager.playerInfo.Item1.typeId
             };
             PhotonNetwork.CurrentRoom.SetCustomProperties(table);
         }
 
         public override void OnLeftRoom()
         {
+            LevelConfigManager.Clear();
+            var rtcEngine = IRtcEngine.QueryEngine();
+            rtcEngine?.LeaveChannel();
             if (isOpen)
             {
                 animator.Play("Fade-out");
-                var rtcEngine = IRtcEngine.QueryEngine();
-                rtcEngine?.LeaveChannel();
                 ClearRoomPlayers();
                 FindObjectOfType<BackgroundMusicPlayer>()?.Back();
                 isOpen = false;
@@ -205,7 +206,6 @@ namespace Dash.Scripts.UIManager
 
         public override void OnPlayerLeftRoom(Player otherPlayer)
         {
-            InLevelConfigManager.Clear();
             CheckCanStartIfMaster();
             var item = noLocalPlayerItems[otherPlayer.ActorNumber];
             noLocalPlayerItems.Remove(otherPlayer.ActorNumber);

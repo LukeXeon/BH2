@@ -5,18 +5,21 @@ using Dash.Scripts.Config;
 
 namespace Dash.Scripts.Levels.Config
 {
-    public static class InLevelConfigManager
+    public static class LevelConfigManager
     {
         public static Tuple<PlayerInfoAsset, RuntimePlayerInfo> playerInfo;
 
-        public static List<Tuple<WeaponInfoAsset, RuntimeWeaponInfo>> weaponInfos =
+        public static readonly List<Tuple<WeaponInfoAsset, RuntimeWeaponInfo>> weaponInfos =
             new List<Tuple<WeaponInfoAsset, RuntimeWeaponInfo>>();
 
-        public static List<Tuple<ShengHenInfoAsset, RuntimeShengHenInfo>> shengHenInfos =
+        public static readonly List<Tuple<ShengHenInfoAsset, RuntimeShengHenInfo>> shengHenInfos =
             new List<Tuple<ShengHenInfoAsset, RuntimeShengHenInfo>>();
+
+        public static int currentWeaponIndex;
 
         public static void Prepare(CompletePlayer current)
         {
+            currentWeaponIndex = 0;
             var completePlayer = current;
             weaponInfos.Clear();
             shengHenInfos.Clear();
@@ -39,6 +42,7 @@ namespace Dash.Scripts.Levels.Config
 
         public static void Clear()
         {
+            currentWeaponIndex = 0;
             playerInfo = null;
             weaponInfos.Clear();
             shengHenInfos.Clear();

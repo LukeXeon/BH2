@@ -8,7 +8,8 @@ namespace Dash.Scripts.Levels.View
     public abstract class ActorView : MonoBehaviour
     {
         public OnActorDamageEvent onActorDamageEvent;
-        
+        public PhotonView photonView;
+
         [Serializable]
         public class OnActorDamageEvent : UnityEvent<int>
         {
@@ -20,6 +21,8 @@ namespace Dash.Scripts.Levels.View
             {
                 onActorDamageEvent = new OnActorDamageEvent();
             }
+
+            photonView = GetComponent<PhotonView>();
         }
 
 

@@ -29,7 +29,6 @@ namespace Dash.Scripts.Levels.Core
         public ModalWindowManager dialog;
         public GameObject mask;
         public OnWeaponChangedEvent weaponChanged;
-        private int currentWeaponIndex;
         private const float qieQiangJianGe = 0.3f;
         private float lastQieQiang;
 
@@ -40,10 +39,10 @@ namespace Dash.Scripts.Levels.Core
 
         private void Awake()
         {
-            var player = InLevelConfigManager.playerInfo.Item1;
+            var player = LevelConfigManager.playerInfo.Item1;
             icon.sprite = player.icon;
             playerName.text = player.displayName;
-            weapon.sprite = InLevelConfigManager.weaponInfos.First().Item1.sprite;
+            weapon.sprite = LevelConfigManager.weaponInfos.First().Item1.sprite;
             if (weaponChanged == null)
             {
                 weaponChanged = new OnWeaponChangedEvent();
@@ -57,20 +56,20 @@ namespace Dash.Scripts.Levels.Core
                     return;
                 }
 
-                var last = currentWeaponIndex - 1;
+                var last = LevelConfigManager.currentWeaponIndex - 1;
                 if (last < 0)
                 {
-                    last = InLevelConfigManager.weaponInfos.Count - 1;
+                    last = LevelConfigManager.weaponInfos.Count - 1;
                 }
 
                 Debug.Log(last);
-                if (last == currentWeaponIndex)
+                if (last == LevelConfigManager.currentWeaponIndex)
                 {
                     return;
                 }
 
-                var info = InLevelConfigManager.weaponInfos[last].Item1;
-                currentWeaponIndex = last;
+                var info = LevelConfigManager.weaponInfos[last].Item1;
+                LevelConfigManager.currentWeaponIndex = last;
                 weaponChanged.Invoke(info);
                 lastQieQiang = time;
             });
@@ -82,14 +81,14 @@ namespace Dash.Scripts.Levels.Core
                     return;
                 }
 
-                var last = currentWeaponIndex;
-                currentWeaponIndex = (last + 1) % InLevelConfigManager.weaponInfos.Count;
-                if (last == currentWeaponIndex)
+                var last = LevelConfigManager.currentWeaponIndex;
+                LevelConfigManager.currentWeaponIndex = (last + 1) % LevelConfigManager.weaponInfos.Count;
+                if (last == LevelConfigManager.currentWeaponIndex)
                 {
                     return;
                 }
 
-                var info = InLevelConfigManager.weaponInfos[currentWeaponIndex].Item1;
+                var info = LevelConfigManager.weaponInfos[LevelConfigManager.currentWeaponIndex].Item1;
                 weaponChanged.Invoke(info);
                 lastQieQiang = time;
             });

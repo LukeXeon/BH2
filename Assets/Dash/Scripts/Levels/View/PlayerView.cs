@@ -15,7 +15,6 @@ namespace Dash.Scripts.Levels.View
         public PoseManager poseManager;
         public SkeletonMecanim mecanim;
         public Animator animator;
-        public PhotonView photonView;
         public Transform bulletLocator;
         [Header("Event")] public OnPlayerLoadedEvent onPlayerLoadedEvent;
         private static readonly int IS_RUN = Animator.StringToHash("is_run");

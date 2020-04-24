@@ -6,10 +6,20 @@ namespace Dash.Scripts.Levels.View
     public abstract class WeaponView : MonoBehaviour
     {
         protected PlayerView playerView;
+        protected int targetMask;
+        protected bool isMine => playerView.photonView.IsMine;
 
         public void OnInitialize(PlayerView view)
         {
             this.playerView = view;
+            if (playerView.gameObject.layer == LayerMask.NameToLayer("Player"))
+            {
+                targetMask = LayerMask.GetMask("Npc");
+            }
+            else
+            {
+                targetMask = LayerMask.GetMask("Npc");
+            }
         }
 
         public abstract void OnFire();

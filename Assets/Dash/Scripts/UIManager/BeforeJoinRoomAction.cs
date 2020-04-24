@@ -29,7 +29,7 @@ namespace Dash.Scripts.UIManager
             try
             {
                 var player = await CloudManager.GetCompletePlayer();
-                InLevelConfigManager.Prepare(player);
+                LevelConfigManager.Prepare(player);
             }
             catch (Exception e)
             {
