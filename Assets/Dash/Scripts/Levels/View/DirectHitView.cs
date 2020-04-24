@@ -1,4 +1,5 @@
 using System;
+using Cinemachine;
 using Dash.Scripts.Levels.Config;
 using Photon.Pun;
 using UnityEngine;
@@ -27,6 +28,7 @@ namespace Dash.Scripts.Levels.View
 
         public override void OnFire()
         {
+            base.OnFire();
             if (isMine)
             {
                 var locator = shootLocators[Random.Range(0, shootLocators.Length)];

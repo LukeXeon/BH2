@@ -394,10 +394,10 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 1.35
+  m_Radius: 1.8
   m_Height: 5.421839
   m_Direction: 1
-  m_Center: {x: 0, y: 3.1732395, z: 0.61}
+  m_Center: {x: 0, y: 3.1732395, z: 0}
 --- !u!114 &1140673426
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -413,17 +413,17 @@ MonoBehaviour:
   onActorDamageEvent:
     m_PersistentCalls:
       m_Calls: []
-  target: {fileID: 0}
   agent: {fileID: 1140673427}
   animator: {fileID: 2545382971944027311}
-  mecanim: {fileID: 2545382971944027308}
-  distance: 10
   config:
     suoDiBanJing: 10
     gongJiLi1: 0
     gongJiLi2: 0
     fangYuLi: 0
     yiDongSuDu: 0
+  distance: 10
+  mecanim: {fileID: 2545382971944027308}
+  target: {fileID: 0}
 --- !u!195 &1140673427
 NavMeshAgent:
   m_ObjectHideFlags: 0

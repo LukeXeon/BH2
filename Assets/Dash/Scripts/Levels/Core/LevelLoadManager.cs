@@ -99,7 +99,7 @@ namespace Dash.Scripts.Levels.Core
             //Init Player
             var playerChuShengDian = GameObject.FindGameObjectsWithTag("PlayerChuShengDian")
                 .Select(g => g.transform).ToArray();
-            var virtualCamera = Camera.main.GetComponent<CinemachineVirtualCamera>();
+            var virtualCamera = FindObjectOfType<CinemachineVirtualCamera>();
             var uiManager = FindObjectOfType<LevelUIManager>();
             var pos = playerChuShengDian[
                 Array.FindIndex(PhotonNetwork.PlayerList,

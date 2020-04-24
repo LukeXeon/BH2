@@ -267,16 +267,20 @@ namespace Dash.Scripts.Cloud
             var t2 = new AVQuery<EPlayer>()
                 .WhereEqualTo("user", AVUser.CurrentUser)
                 .CountAsync();
-            var tCount = new AVQuery<AVUser>()
-                .CountAsync();
-            var userMate = (await t1).FirstOrDefault() ?? new EUserMate
+            var userMate = (await t1).FirstOrDefault();
+            if (userMate == null)
             {
-                user = AVUser.CurrentUser,
-                nameInGame = "玩家" + tCount.Result
-            };
+                var count = await new AVQuery<AVUser>()
+                    .CountAsync();
+                userMate = new EUserMate
+                {
+                    user = AVUser.CurrentUser,
+                    nameInGame = "玩家" + count
+                };
+            }
             localUserMate = userMate;
-            var count = await t2;
-            if (count == 0)
+            var playerCount = await t2;
+            if (playerCount == 0)
             {
                 var p = NewPlayer(0);
                 userMate.player = (EPlayer) p[0];
