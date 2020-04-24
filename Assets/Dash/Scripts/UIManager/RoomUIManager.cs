@@ -142,8 +142,8 @@ namespace Dash.Scripts.UIManager
             var table = new Hashtable
             {
                 ["displayName"] = CloudManager.GetNameInGame(),
-                ["playerTypeId"] = LevelConfigManager.playerInfo.Item1.typeId,
-                ["weaponTypeId"] = LevelConfigManager.weaponInfos.First().Item1.typeId,
+                ["playerTypeId"] = LocalPlayerInfo.playerInfo.Item1.typeId,
+                ["weaponTypeId"] = LocalPlayerInfo.weaponInfos.First().Item1.typeId,
                 ["isReady"] = PhotonNetwork.IsMasterClient
             };
             PhotonNetwork.LocalPlayer.SetCustomProperties(table);
@@ -152,14 +152,14 @@ namespace Dash.Scripts.UIManager
             Debug.Log(index + "playerTypeId");
             table = new Hashtable
             {
-                [index + "playerTypeId"] = LevelConfigManager.playerInfo.Item1.typeId
+                [index + "playerTypeId"] = LocalPlayerInfo.playerInfo.Item1.typeId
             };
             PhotonNetwork.CurrentRoom.SetCustomProperties(table);
         }
 
         public override void OnLeftRoom()
         {
-            LevelConfigManager.Clear();
+            LocalPlayerInfo.Clear();
             var rtcEngine = IRtcEngine.QueryEngine();
             rtcEngine?.LeaveChannel();
             if (isOpen)

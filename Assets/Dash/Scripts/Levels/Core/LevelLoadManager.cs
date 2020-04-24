@@ -6,6 +6,7 @@ using Cinemachine;
 using Dash.Scripts.Config;
 using Dash.Scripts.Core;
 using Dash.Scripts.Levels.Config;
+using Dash.Scripts.Levels.UIManager;
 using Dash.Scripts.Levels.View;
 using ExitGames.Client.Photon;
 using Photon.Pun;
@@ -109,8 +110,8 @@ namespace Dash.Scripts.Levels.Core
                 Quaternion.identity,
                 data: new object[]
                 {
-                    LevelConfigManager.playerInfo.Item1.typeId,
-                    LevelConfigManager.weaponInfos.First().Item1.typeId
+                    LocalPlayerInfo.playerInfo.Item1.typeId,
+                    LocalPlayerInfo.weaponInfos.First().Item1.typeId
                 }
             );
             var controller = go.GetComponent<PlayerView>();

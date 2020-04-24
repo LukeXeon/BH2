@@ -77,6 +77,8 @@ namespace Dash.Scripts.UIManager
 
         private Coroutine waitAnimCoroutine;
 
+        public static Sprite bootBackground;
+
         private void SetRandomLiveMotion()
         {
             var index = Random.Range(1, 18);
@@ -93,7 +95,7 @@ namespace Dash.Scripts.UIManager
             CloudManagerOnUserInfoChanged(CloudManager.GetUserInfo());
             CloudManagerOnPlayerChanged(CloudManager.GetCurrentPlayer());
             CloudManager.playerChanged += CloudManagerOnPlayerChanged;
-            CloudManager.userInfoChanged+= CloudManagerOnUserInfoChanged;
+            CloudManager.userInfoChanged += CloudManagerOnUserInfoChanged;
             var music = FindObjectOfType<BackgroundMusicPlayer>();
             var info = music.animator.GetCurrentAnimatorStateInfo(0);
             music.animator.Play(info.shortNameHash, 0, 1f);
@@ -165,10 +167,13 @@ namespace Dash.Scripts.UIManager
 
         private void CloudManagerOnUserInfoChanged(EUserMate obj)
         {
+            var level = GameConfigManager.GetUserLevel(obj.exp);
             displayName.text = obj.nameInGame;
             tiLiText.text = obj.tiLi.ToString();
             shuiJingText.text = obj.shuiJing.ToString();
-            expText.text = obj.exp.ToString();
+            expText.text = "经验值：" + level.currentExp;
+            levelText.text = "等级：" + level.count;
+            expBar.fillAmount = (float) level.currentExp / level.maxExp;
         }
 
         private void CloudManagerOnPlayerChanged(EPlayer obj)
@@ -185,37 +190,33 @@ namespace Dash.Scripts.UIManager
 
         private IEnumerator Start()
         {
-            if (BootstrapUIManager.bootBackground)
+            topBar.SetActive(false);
+            fullMask.gameObject.SetActive(true);
+            fullMask.alpha = 1;
+            var image = fullMask.GetComponent<Image>();
+            if (bootBackground)
             {
-                topBar.SetActive(false);
-                fullMask.gameObject.SetActive(true);
-                fullMask.alpha = 1;
-                var image = fullMask.GetComponent<Image>();
-                image.sprite = BootstrapUIManager.bootBackground;
-                BootstrapUIManager.bootBackground = null;
-                yield return Resources.UnloadUnusedAssets();
-                GC.Collect();
-                yield return new WaitForEndOfFrame();
-                while (fullMask.alpha > 0f)
-                {
-                    fullMask.alpha -= Time.deltaTime * 4;
-                    yield return new WaitForEndOfFrame();
-                }
-
-                Destroy(fullMask.gameObject);
-                fullMask = null;
-                topBar.SetActive(true);
-                animator.Play("Fade-in");
+                image.sprite = bootBackground;
+                bootBackground = null;
             }
             else
             {
-                Destroy(fullMask.gameObject);
-                yield return Resources.UnloadUnusedAssets();
-                GC.Collect();
-                yield return new WaitForEndOfFrame();
-                topBar.SetActive(true);
-                animator.Play("Fade-in");
+                image.color = Color.black;
             }
+
+            yield return Resources.UnloadUnusedAssets();
+            GC.Collect();
+            yield return new WaitForEndOfFrame();
+            while (fullMask.alpha > 0f)
+            {
+                fullMask.alpha -= Time.deltaTime * 4;
+                yield return new WaitForEndOfFrame();
+            }
+
+            Destroy(fullMask.gameObject);
+            fullMask = null;
+            topBar.SetActive(true);
+            animator.Play("Fade-in");
         }
 
         private void CancelWaitFinish()

@@ -1,4 +1,5 @@
 using System;
+using Dash.Scripts.Levels.UIManager;
 using Photon.Pun;
 using UnityEngine;
 using UnityEngine.Events;
@@ -8,10 +9,10 @@ namespace Dash.Scripts.Levels.View
     public abstract class ActorView : MonoBehaviour
     {
         public OnActorDamageEvent onActorDamageEvent;
-        public PhotonView photonView;
+        internal PhotonView photonView;
 
         [Serializable]
-        public class OnActorDamageEvent : UnityEvent<int>
+        public class OnActorDamageEvent : UnityEvent<Transform, int>
         {
         }
 
@@ -23,13 +24,12 @@ namespace Dash.Scripts.Levels.View
             }
 
             photonView = GetComponent<PhotonView>();
+            onActorDamageEvent.AddListener(FindObjectOfType<LevelUIManager>().OnShowDamage);
         }
-
-
+        
         [PunRPC]
         public virtual void OnDamage(int value)
         {
-            onActorDamageEvent.Invoke(value);
         }
 
         protected virtual void OnDestroy()

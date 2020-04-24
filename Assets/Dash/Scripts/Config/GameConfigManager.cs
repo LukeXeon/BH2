@@ -26,6 +26,7 @@ namespace Dash.Scripts.Config
             {
                 playerInfoAsset.skel.GetSkeletonData(true);
             }
+
             weaponTable = Resources.LoadAll<WeaponInfoAsset>("Config/Weapon").ToSortedDictionary(i => i.typeId, i => i);
             weaponTypeTable = Resources.LoadAll<WeaponTypeInfoAsset>("Config/WeaponType")
                 .ToSortedDictionary(i => i.matchName, i => i);
@@ -52,6 +53,11 @@ namespace Dash.Scripts.Config
         public static LevelInfo GetPlayerLevel(int exp)
         {
             return GetLevel(exp, levelInfo.playerMaxLevel, levelInfo.playerBaseLevelExp);
+        }
+
+        public static LevelInfo GetUserLevel(int exp)
+        {
+            return GetLevel(exp, levelInfo.userMaxLevel, levelInfo.userBaseLevelExp);
         }
 
         private static LevelInfo GetLevel(int exp, int maxLevel, int levelExp)

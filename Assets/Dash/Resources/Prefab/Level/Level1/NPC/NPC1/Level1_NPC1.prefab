@@ -313,7 +313,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &2545382973083229447
 Transform:
   m_ObjectHideFlags: 0
@@ -394,10 +394,10 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 1
+  m_Radius: 1.35
   m_Height: 5.421839
   m_Direction: 1
-  m_Center: {x: 0, y: 3.1732395, z: 0}
+  m_Center: {x: 0, y: 3.1732395, z: 0.61}
 --- !u!114 &1140673426
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -410,8 +410,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 390df961726e678498ae9d962fae56d0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  onActorDamageEvent:
+    m_PersistentCalls:
+      m_Calls: []
   target: {fileID: 0}
-  photonView: {fileID: 2545382973083229446}
   agent: {fileID: 1140673427}
   animator: {fileID: 2545382971944027311}
   mecanim: {fileID: 2545382971944027308}
@@ -441,7 +443,7 @@ NavMeshAgent:
   m_ObstacleAvoidanceType: 4
 --- !u!114 &-8116182863712303340
 MonoBehaviour:
-  m_ObjectHideFlags: 8
+  m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}

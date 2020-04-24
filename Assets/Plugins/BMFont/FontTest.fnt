@@ -1,0 +1,16 @@
+info face="Arial" size=32 bold=0 italic=0 charset="" unicode=1 stretchH=100 smooth=1 aa=1 padding=0,0,0,0 spacing=1,1 outline=0
+common lineHeight=32 base=26 scaleW=256 scaleH=128 pages=1 packed=0 alphaChnl=1 redChnl=0 greenChnl=0 blueChnl=0
+page id=0 file="EnemyNormalDamage_0.png"
+chars count=12
+char id=43   x=153   y=52    width=42    height=42    xoffset=0     yoffset=0     xadvance=42    page=0  chnl=15
+char id=45   x=196   y=52    width=39    height=20    xoffset=0     yoffset=0     xadvance=39    page=0  chnl=15
+char id=48   x=126   y=0     width=40    height=51    xoffset=0     yoffset=0     xadvance=40    page=0  chnl=15
+char id=49   x=121   y=52    width=31    height=49    xoffset=0     yoffset=0     xadvance=31    page=0  chnl=15
+char id=50   x=208   y=0     width=43    height=50    xoffset=0     yoffset=0     xadvance=43    page=0  chnl=15
+char id=51   x=0     y=0     width=41    height=51    xoffset=0     yoffset=0     xadvance=41    page=0  chnl=15
+char id=52   x=41    y=52    width=41    height=49    xoffset=0     yoffset=0     xadvance=41    page=0  chnl=15
+char id=53   x=0     y=52    width=40    height=50    xoffset=0     yoffset=0     xadvance=40    page=0  chnl=15
+char id=54   x=167   y=0     width=40    height=51    xoffset=0     yoffset=0     xadvance=40    page=0  chnl=15
+char id=55   x=83    y=52    width=37    height=49    xoffset=0     yoffset=0     xadvance=37    page=0  chnl=15
+char id=56   x=42    y=0     width=41    height=51    xoffset=0     yoffset=0     xadvance=41    page=0  chnl=15
+char id=57   x=84    y=0     width=41    height=51    xoffset=0     yoffset=0     xadvance=41    page=0  chnl=15

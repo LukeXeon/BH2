@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using Dash.Scripts.Levels.View;
 using Photon.Pun;
 using Spine.Unity;
 using UnityEngine;
@@ -6,16 +7,14 @@ using UnityEngine.AI;
 
 namespace Dash.Scripts.Levels.LevelManager.Level1
 {
-    public class L1NPC1Controller : MonoBehaviour, IPunObservable
+    public class L1NPC1View : NpcView, IPunObservable
     {
         public PhotonView target;
-        [Header("Com")] public PhotonView photonView;
-        public NavMeshAgent agent;
+        [Header("Com")] public NavMeshAgent agent;
         public Animator animator;
         public SkeletonMecanim mecanim;
         [Header("Config")] public float distance;
         public float suoDiBanJing;
-
 
         private int IS_RUN;
         private int playerLayerMask;
@@ -23,9 +22,11 @@ namespace Dash.Scripts.Levels.LevelManager.Level1
 
         [Header("Sync")] private int lastTargetViewId = int.MinValue;
         private int flipX = -1;
+        private static readonly int HIT = Animator.StringToHash("hit");
 
-        private void Awake()
+        protected override void Awake()
         {
+            base.Awake();
             IS_RUN = Animator.StringToHash("is_run");
             playerLayerMask = 1 << LayerMask.NameToLayer("Player");
             targetCollider = new Collider[1];
@@ -84,6 +85,12 @@ namespace Dash.Scripts.Levels.LevelManager.Level1
             mecanim.Skeleton.ScaleX = flipX;
         }
 
+        [PunRPC]
+        public override void OnDamage(int value)
+        {
+            animator.SetTrigger(HIT);
+            onActorDamageEvent.Invoke(transform, value);
+        }
 
         public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
         {

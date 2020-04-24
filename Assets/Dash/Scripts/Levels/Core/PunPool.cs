@@ -7,7 +7,7 @@ namespace Dash.Scripts.Levels.Core
     {
         public GameObject Instantiate(string prefabId, Vector3 position, Quaternion rotation)
         {
-            return ObjectPool.GlobalObtain(prefabId, position, rotation);
+            return ObjectPool.GlobalObtain(prefabId, position, rotation, true);
         }
 
         public void Destroy(GameObject gameObject)

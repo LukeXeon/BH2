@@ -5,6 +5,8 @@ namespace Dash.Scripts.Config
     [CreateAssetMenu(fileName = "GameInfo", menuName = "Info/Game")]
     public class LevelInfoAsset : ScriptableObject
     {
+        public int userMaxLevel;
+        public int userBaseLevelExp;
         public int shengHengMaxLevel;
         public int shengHengBaseLevelExp;
         public int weaponMaxLevel;

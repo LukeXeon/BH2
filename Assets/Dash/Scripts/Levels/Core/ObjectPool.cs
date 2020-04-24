@@ -9,12 +9,11 @@ namespace Dash.Scripts.Levels.Core
     {
         private static readonly LinkedList<ObjectPool> pools = new LinkedList<ObjectPool>();
 
-        public static GameObject GlobalObtain(string guid, Vector3 position, Quaternion rotation)
+        public static GameObject GlobalObtain(string guid, Vector3 position, Quaternion rotation, bool inactive)
         {
             foreach (var objectPool in pools)
             {
-                
-                var go = objectPool.Obtain(guid, position, rotation);
+                var go = objectPool.Obtain(guid, position, rotation, inactive);
                 if (go != null)
                 {
                     return go;
@@ -56,7 +55,7 @@ namespace Dash.Scripts.Levels.Core
         }
 
 
-        private Transform inactive;
+        private Transform inactivePoolRoot;
 
         private Dictionary<string, CacheItem> caches;
 
@@ -66,12 +65,13 @@ namespace Dash.Scripts.Levels.Core
             caches = new Dictionary<string, CacheItem>();
             var go = new GameObject("PoolRoot") {hideFlags = HideFlags.NotEditable};
             go.SetActive(false);
-            inactive = go.transform;
-            inactive.SetParent(transform);
+            inactivePoolRoot = go.transform;
+            inactivePoolRoot.SetParent(transform);
             if (prefabs != null && prefabs.Length > 0)
             {
                 foreach (var item in prefabs)
                 {
+                    var a = item.prefab.gameObject.activeSelf;
                     item.prefab.gameObject.SetActive(false);
                     var guid = item.prefab.guid;
                     var count = item.preloadAmount;
@@ -84,12 +84,13 @@ namespace Dash.Scripts.Levels.Core
                     var stack = new Stack<GameObject>();
                     for (int i = 0; i < count; i++)
                     {
-                        go = Instantiate(item.prefab.gameObject, inactive);
+                        go = Instantiate(item.prefab.gameObject, inactivePoolRoot);
                         go.name = item.prefab.gameObject.name + $"@({i})";
                         stack.Push(go);
                     }
 
                     caches.Add(guid, new CacheItem {prefabItem = item, allocCount = count, cache = stack});
+                    item.prefab.gameObject.SetActive(a);
                 }
             }
         }
@@ -99,7 +100,7 @@ namespace Dash.Scripts.Levels.Core
             pools.Remove(this);
         }
 
-        public GameObject Obtain(string guid, Vector3 position, Quaternion rotation)
+        public GameObject Obtain(string guid, Vector3 position, Quaternion rotation, bool inactive)
         {
             caches.TryGetValue(guid, out var cache);
             if (cache == null)
@@ -110,6 +111,7 @@ namespace Dash.Scripts.Levels.Core
             if (cache.cache != null && cache.cache.Count > 0)
             {
                 var go = cache.cache.Pop();
+                go.SetActive(!inactive);
                 go.transform.SetParent(null);
                 go.transform.position = position;
                 go.transform.rotation = rotation;
@@ -118,7 +120,11 @@ namespace Dash.Scripts.Levels.Core
                 return go;
             }
 
-            var go2 = Instantiate(cache.prefabItem.prefab.gameObject, position, rotation);
+            var pgo = cache.prefabItem.prefab.gameObject;
+            var a = pgo.activeSelf;
+            pgo.SetActive(!inactive);
+            var go2 = Instantiate(pgo, position, rotation);
+            pgo.SetActive(a);
             go2.name = cache.prefabItem.prefab.gameObject.name + $"@({cache.allocCount++})";
             return go2;
         }
@@ -155,7 +161,7 @@ namespace Dash.Scripts.Levels.Core
             if (cache.cache.Count < cache.prefabItem.maxAmount)
             {
                 go.GetComponent<IPoolLifecycle>()?.Recycle();
-                go.transform.SetParent(inactive);
+                go.transform.SetParent(inactivePoolRoot);
                 cache.cache.Push(go);
                 return true;
             }

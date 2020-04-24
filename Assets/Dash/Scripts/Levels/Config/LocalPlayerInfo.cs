@@ -5,7 +5,7 @@ using Dash.Scripts.Config;
 
 namespace Dash.Scripts.Levels.Config
 {
-    public static class LevelConfigManager
+    public static class LocalPlayerInfo
     {
         public static Tuple<PlayerInfoAsset, RuntimePlayerInfo> playerInfo;
 
@@ -14,12 +14,10 @@ namespace Dash.Scripts.Levels.Config
 
         public static readonly List<Tuple<ShengHenInfoAsset, RuntimeShengHenInfo>> shengHenInfos =
             new List<Tuple<ShengHenInfoAsset, RuntimeShengHenInfo>>();
-
-        public static int currentWeaponIndex;
-
+        
         public static void Prepare(CompletePlayer current)
         {
-            currentWeaponIndex = 0;
+     
             var completePlayer = current;
             weaponInfos.Clear();
             shengHenInfos.Clear();
@@ -38,11 +36,14 @@ namespace Dash.Scripts.Levels.Config
                 var runtimeInfo = RuntimeShengHenInfo.Build(eInUseShengHen);
                 shengHenInfos.Add(Tuple.Create(info, runtimeInfo));
             }
+            LocalPlayerDynamicInfo.currentWeaponIndex = 0;
+            LocalPlayerDynamicInfo.currentHp = playerInfo.Item2.shengMingZhi;
+            LocalPlayerDynamicInfo.currentMp = playerInfo.Item2.nengLiangZhi;
         }
 
         public static void Clear()
         {
-            currentWeaponIndex = 0;
+            LocalPlayerDynamicInfo.currentWeaponIndex = 0;
             playerInfo = null;
             weaponInfos.Clear();
             shengHenInfos.Clear();

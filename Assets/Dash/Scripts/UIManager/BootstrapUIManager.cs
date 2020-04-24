@@ -68,12 +68,12 @@ namespace Dash.Scripts.UIManager
 
         private AsyncOperation loadSceneAsync;
 
-        public static Sprite bootBackground;
 
         private void Awake()
         {
-            bootBackground = sprites[Random.Range(0, sprites.Length - 1)];
-            background.sprite = bootBackground;
+            videoPlayer.gameObject.SetActive(true);
+            DesktopUIManager.bootBackground = sprites[Random.Range(0, sprites.Length - 1)];
+            background.sprite = DesktopUIManager.bootBackground;
             signUp.onClick.AddListener(async () =>
             {
                 var u = usernameInSignUp.text;
@@ -187,7 +187,12 @@ namespace Dash.Scripts.UIManager
             });
         }
 
-        private IEnumerator Start()
+        public void OnBooted()
+        {
+            StartCoroutine(DoStart());
+        }
+
+        private IEnumerator DoStart()
         {
             if (Application.isEditor || PlayerPrefs.GetInt("first startup") == 1)
             {
@@ -201,15 +206,8 @@ namespace Dash.Scripts.UIManager
                 PlayerPrefs.SetInt("first startup", 1);
                 PlayerPrefs.Save();
                 videoPlayer.gameObject.SetActive(true);
-                var time = Time.realtimeSinceStartup;
                 var op = Resources.LoadAsync<VideoClip>("Video/BootVideo");
                 yield return op;
-                time = Time.realtimeSinceStartup - time;
-                if (time < 0.3f)
-                {
-                    yield return new WaitForSecondsRealtime(0.3f - time);
-                }
-
                 videoPlayer.clip = (VideoClip) op.asset;
                 videoPlayer.Prepare();
                 videoPlayer.prepareCompleted += p => p.Play();

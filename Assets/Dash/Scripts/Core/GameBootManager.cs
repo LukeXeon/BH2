@@ -22,7 +22,6 @@ namespace Dash.Scripts.Core
             Debug.Log("Boot Loaded");
             Application.targetFrameRate = 60;
             PhotonNetwork.PrefabPool = new PunPool();
-            PhotonNetwork.LogLevel = Application.isEditor ? PunLogLevel.Full : PunLogLevel.ErrorsOnly;
             info = Resources.LoadAll<GameBootInfoAsset>("Config/Game").Single();
             AVClient.Initialize(info.leanCloudId, info.leanCloudKey, info.leanCloudUrl);
             AVObject.RegisterSubclass<EInUseWeapon>();

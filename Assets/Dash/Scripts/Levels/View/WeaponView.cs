@@ -14,11 +14,11 @@ namespace Dash.Scripts.Levels.View
             this.playerView = view;
             if (playerView.gameObject.layer == LayerMask.NameToLayer("Player"))
             {
-                targetMask = LayerMask.GetMask("Npc");
+                targetMask = LayerMask.GetMask("NPC");
             }
             else
             {
-                targetMask = LayerMask.GetMask("Npc");
+                targetMask = LayerMask.GetMask("Player");
             }
         }
 

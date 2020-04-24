@@ -20,6 +20,8 @@ namespace Dash.Scripts.Config
 
         [Header("每秒发射子弹数量")]
         public float sheShu;
+        [Header("射程")]
+        public float sheCheng;
 
         public WeaponView weaponView;
 

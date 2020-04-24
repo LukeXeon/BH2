@@ -100,9 +100,10 @@ namespace Dash.Scripts.Levels.View
             animator.SetTrigger(KAIQIANG);
         }
 
+        [PunRPC]
         public override void OnDamage(int value)
         {
-            base.OnDamage(value);
+            
             animator.SetTrigger(HIT);
         }
 
