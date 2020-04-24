@@ -102,11 +102,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e9c7534560734b88985baec8df53b715, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  onActorDamageEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  photonView: {fileID: 0}
   speed: 10
   poseManager: {fileID: 8238277081177272655}
   mecanim: {fileID: 8238277081177272654}
   animator: {fileID: 8238277081177272641}
-  photonView: {fileID: 0}
   bulletLocator: {fileID: 0}
   onPlayerLoadedEvent:
     m_PersistentCalls:
@@ -351,7 +354,7 @@ MonoBehaviour:
     SynchronizeType: 0
     Name: revive
   - Type: 4
-    SynchronizeType: 2
+    SynchronizeType: 1
     Name: lianshe
   - Type: 9
     SynchronizeType: 0
