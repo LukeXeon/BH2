@@ -163,15 +163,21 @@ namespace Dash.Scripts.Levels.View
                 var move = speed * Time.fixedDeltaTime * new Vector3(Mathf.Abs(h) > 0 ? 1 * Mathf.Sign(h) : 0, 0,
                                Mathf.Abs(v) > 0 ? Mathf.Sign(v) : 0);
                 if (move != Vector3.zero)
+                {
                     animator.SetBool(IS_RUN, true);
+                    rigidbody.MovePosition(rigidbody.position += move);
+                }
                 else
+                {
                     animator.SetBool(IS_RUN, false);
+                    rigidbody.velocity = Vector3.zero;
+                }
 
                 if (h > 0)
                     flipX = 1;
-                else if (h < 0) flipX = -1;
-
-                rigidbody.MovePosition(rigidbody.position += move);
+                else if (h < 0) 
+                    flipX = -1;
+                
             }
 
 
