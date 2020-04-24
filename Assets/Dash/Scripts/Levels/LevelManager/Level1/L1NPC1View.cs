@@ -10,29 +10,38 @@ namespace Dash.Scripts.Levels.LevelManager.Level1
 {
     public class L1NPC1View : NpcView, IPunObservable
     {
-        public PhotonView target;
+        private static readonly int HIT = Animator.StringToHash("hit");
         [Header("Com")] public NavMeshAgent agent;
         public Animator animator;
-        public SkeletonMecanim mecanim;
-        [Header("Config")] public float distance;
         public L1NPC1Config config;
-        [Serializable]
-        public struct L1NPC1Config
-        {
-            public float suoDiBanJing;
-            public int gongJiLi1;
-            public int gongJiLi2;
-            public int fangYuLi;
-            public int yiDongSuDu;
-        }
+        [Header("Config")] public float distance;
+        private int flipX = -1;
 
         private int IS_RUN;
-        private int playerLayerMask;
-        private Collider[] targetCollider;
 
         [Header("Sync")] private int lastTargetViewId = int.MinValue;
-        private int flipX = -1;
-        private static readonly int HIT = Animator.StringToHash("hit");
+        public SkeletonMecanim mecanim;
+        private int playerLayerMask;
+        public PhotonView target;
+        private Collider[] targetCollider;
+
+        public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+        {
+            if (stream.IsWriting)
+            {
+                if (target == null)
+                    stream.SendNext(int.MaxValue);
+                else
+                    stream.SendNext(target.ViewID);
+
+                stream.SendNext(flipX);
+            }
+            else
+            {
+                lastTargetViewId = (int) stream.ReceiveNext();
+                flipX = (int) stream.ReceiveNext();
+            }
+        }
 
         protected override void Awake()
         {
@@ -59,10 +68,7 @@ namespace Dash.Scripts.Levels.LevelManager.Level1
                         playerLayerMask
                     );
                     var c = targetCollider.FirstOrDefault();
-                    if (c != null)
-                    {
-                        target = c.GetComponent<PhotonView>();
-                    }
+                    if (c != null) target = c.GetComponent<PhotonView>();
                 }
 
                 agent.enabled = true;
@@ -79,13 +85,8 @@ namespace Dash.Scripts.Levels.LevelManager.Level1
 
                 animator.SetBool(IS_RUN, agent.velocity != Vector3.zero);
                 if (agent.velocity.x > 0)
-                {
                     flipX = 1;
-                }
-                else if (agent.velocity.x < 0)
-                {
-                    flipX = -1;
-                }
+                else if (agent.velocity.x < 0) flipX = -1;
             }
             else
             {
@@ -102,26 +103,14 @@ namespace Dash.Scripts.Levels.LevelManager.Level1
             onActorDamageEvent.Invoke(transform, value);
         }
 
-        public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+        [Serializable]
+        public struct L1NPC1Config
         {
-            if (stream.IsWriting)
-            {
-                if (target == null)
-                {
-                    stream.SendNext(int.MaxValue);
-                }
-                else
-                {
-                    stream.SendNext(target.ViewID);
-                }
-
-                stream.SendNext(flipX);
-            }
-            else
-            {
-                lastTargetViewId = (int) stream.ReceiveNext();
-                flipX = (int) stream.ReceiveNext();
-            }
+            public float suoDiBanJing;
+            public int gongJiLi1;
+            public int gongJiLi2;
+            public int fangYuLi;
+            public int yiDongSuDu;
         }
     }
 }

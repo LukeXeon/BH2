@@ -16,7 +16,7 @@ namespace Dash.Scripts.Core
             {
                 var path = AssetDatabase.GetAssetPath(gameObject);
                 var id = AssetDatabase.AssetPathToGUID(path);
-                this.guid = id;
+                guid = id;
             }
             else
             {

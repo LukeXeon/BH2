@@ -9,15 +9,20 @@ namespace Dash.Scripts.Levels.Core
     {
         private static readonly LinkedList<ObjectPool> pools = new LinkedList<ObjectPool>();
 
+        private Dictionary<string, CacheItem> caches;
+
+
+        private Transform inactivePoolRoot;
+
+
+        public PrefabItem[] prefabs;
+
         public static GameObject GlobalObtain(string guid, Vector3 position, Quaternion rotation, bool inactive)
         {
             foreach (var objectPool in pools)
             {
                 var go = objectPool.Obtain(guid, position, rotation, inactive);
-                if (go != null)
-                {
-                    return go;
-                }
+                if (go != null) return go;
             }
 
             return null;
@@ -26,38 +31,11 @@ namespace Dash.Scripts.Levels.Core
         public static bool TryGlobalRelease(GameObject go)
         {
             foreach (var objectPool in pools)
-            {
                 if (objectPool.TryRelease(go))
-                {
                     return true;
-                }
-            }
 
             return false;
         }
-
-
-        public PrefabItem[] prefabs;
-
-        [Serializable]
-        public struct PrefabItem
-        {
-            public GuidIndexer prefab;
-            public int preloadAmount;
-            public int maxAmount;
-        }
-
-        private class CacheItem
-        {
-            public PrefabItem prefabItem;
-            public Stack<GameObject> cache;
-            public int allocCount;
-        }
-
-
-        private Transform inactivePoolRoot;
-
-        private Dictionary<string, CacheItem> caches;
 
         private void Awake()
         {
@@ -68,7 +46,6 @@ namespace Dash.Scripts.Levels.Core
             inactivePoolRoot = go.transform;
             inactivePoolRoot.SetParent(transform);
             if (prefabs != null && prefabs.Length > 0)
-            {
                 foreach (var item in prefabs)
                 {
                     var a = item.prefab.gameObject.activeSelf;
@@ -82,7 +59,7 @@ namespace Dash.Scripts.Levels.Core
                     }
 
                     var stack = new Stack<GameObject>();
-                    for (int i = 0; i < count; i++)
+                    for (var i = 0; i < count; i++)
                     {
                         go = Instantiate(item.prefab.gameObject, inactivePoolRoot);
                         go.name = item.prefab.gameObject.name + $"@({i})";
@@ -92,7 +69,6 @@ namespace Dash.Scripts.Levels.Core
                     caches.Add(guid, new CacheItem {prefabItem = item, allocCount = count, cache = stack});
                     item.prefab.gameObject.SetActive(a);
                 }
-            }
         }
 
         private void OnDestroy()
@@ -103,10 +79,7 @@ namespace Dash.Scripts.Levels.Core
         public GameObject Obtain(string guid, Vector3 position, Quaternion rotation, bool inactive)
         {
             caches.TryGetValue(guid, out var cache);
-            if (cache == null)
-            {
-                return null;
-            }
+            if (cache == null) return null;
 
             if (cache.cache != null && cache.cache.Count > 0)
             {
@@ -131,26 +104,17 @@ namespace Dash.Scripts.Levels.Core
 
         public void Release(GameObject go)
         {
-            if (!TryRelease(go))
-            {
-                Destroy(go);
-            }
+            if (!TryRelease(go)) Destroy(go);
         }
 
         public bool TryRelease(GameObject go)
         {
             var com = go.GetComponent<GuidIndexer>();
-            if (com == null)
-            {
-                return false;
-            }
+            if (com == null) return false;
 
             var guid = com.guid;
             caches.TryGetValue(guid, out var cache);
-            if (cache == null)
-            {
-                return false;
-            }
+            if (cache == null) return false;
 
             if (cache.cache == null)
             {
@@ -167,6 +131,21 @@ namespace Dash.Scripts.Levels.Core
             }
 
             return false;
+        }
+
+        [Serializable]
+        public struct PrefabItem
+        {
+            public GuidIndexer prefab;
+            public int preloadAmount;
+            public int maxAmount;
+        }
+
+        private class CacheItem
+        {
+            public int allocCount;
+            public Stack<GameObject> cache;
+            public PrefabItem prefabItem;
         }
     }
 }

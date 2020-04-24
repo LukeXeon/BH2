@@ -1,31 +1,30 @@
 using System;
 using System.Globalization;
-using Dash.Scripts.Config;
-using Dash.Scripts.Levels;
 using Dash.Scripts.Cloud;
+using Dash.Scripts.Config;
 using Dash.Scripts.Levels.Config;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.Video;
 
 namespace Dash.Scripts.UIManager
 {
     public class WeaponInfoUIManager : MonoBehaviour
     {
-        public Image image;
-        public GameObject root;
-        public TextMeshProUGUI displayName;
-        public TextMeshProUGUI gongJiLi;
-        public TextMeshProUGUI sheSu;
-        public TextMeshProUGUI xiaoGuo;
-        public Button button;
-        public TextMeshProUGUI btnText;
+        public Animator animator;
         public Button back;
+        public TextMeshProUGUI btnText;
+        public Button button;
+        public TextMeshProUGUI displayName;
         public Image exp;
         public TextMeshProUGUI expText;
+        public TextMeshProUGUI gongJiLi;
+        public Image image;
         public TextMeshProUGUI levelText;
-        public Animator animator;
+        public GameObject root;
+        public TextMeshProUGUI sheSu;
+        public TextMeshProUGUI xiaoGuo;
+
         public void Open(string btnTextValue, EWeapon weapon, Action<EWeapon> callback, Action onClose)
         {
             animator.Play("Fade-in");
@@ -41,10 +40,7 @@ namespace Dash.Scripts.UIManager
                 button.gameObject.SetActive(false);
             }
 
-            if (onClose != null)
-            {
-                back.onClick.AddListener(() => { onClose(); });
-            }
+            if (onClose != null) back.onClick.AddListener(() => { onClose(); });
 
             back.onClick.AddListener(Close);
             var info = GameConfigManager.weaponTable[weapon.typeId];
@@ -55,13 +51,9 @@ namespace Dash.Scripts.UIManager
             gongJiLi.text = runtime.gongJiLi.ToString();
             sheSu.text = runtime.sheSu.ToString(CultureInfo.InvariantCulture);
             if (info.xiaoGuo != null)
-            {
                 xiaoGuo.text = info.xiaoGuo.text;
-            }
             else
-            {
                 xiaoGuo.text = "全部木大";
-            }
 
             var l = GameConfigManager.GetWeaponLevel(weapon.exp);
             expText.text = l.currentExp + "/" + l.maxExp;

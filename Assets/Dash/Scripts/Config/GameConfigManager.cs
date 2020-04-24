@@ -22,10 +22,7 @@ namespace Dash.Scripts.Config
         static GameConfigManager()
         {
             playerTable = Resources.LoadAll<PlayerInfoAsset>("Config/Player").ToSortedDictionary(i => i.typeId, i => i);
-            foreach (var playerInfoAsset in playerTable.Values)
-            {
-                playerInfoAsset.skel.GetSkeletonData(true);
-            }
+            foreach (var playerInfoAsset in playerTable.Values) playerInfoAsset.skel.GetSkeletonData(true);
 
             weaponTable = Resources.LoadAll<WeaponInfoAsset>("Config/Weapon").ToSortedDictionary(i => i.typeId, i => i);
             weaponTypeTable = Resources.LoadAll<WeaponTypeInfoAsset>("Config/WeaponType")
@@ -62,19 +59,17 @@ namespace Dash.Scripts.Config
 
         private static LevelInfo GetLevel(int exp, int maxLevel, int levelExp)
         {
-            int i = 1;
+            var i = 1;
             for (; i <= maxLevel; i++)
             {
                 exp -= levelExp * i;
                 if (exp < 0)
-                {
                     return new LevelInfo
                     {
                         count = i,
                         currentExp = levelExp * i + exp,
                         maxExp = i * levelExp
                     };
-                }
             }
 
             return new LevelInfo

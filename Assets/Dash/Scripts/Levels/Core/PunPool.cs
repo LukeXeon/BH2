@@ -12,10 +12,7 @@ namespace Dash.Scripts.Levels.Core
 
         public void Destroy(GameObject gameObject)
         {
-            if (!ObjectPool.TryGlobalRelease(gameObject))
-            {
-                GameObject.Destroy(gameObject);
-            }
+            if (!ObjectPool.TryGlobalRelease(gameObject)) Object.Destroy(gameObject);
         }
     }
 }

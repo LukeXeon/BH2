@@ -1,7 +1,6 @@
 using System;
-using System.Linq;
-using Dash.Scripts.Config;
 using Dash.Scripts.Cloud;
+using Dash.Scripts.Config;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -10,11 +9,11 @@ namespace Dash.Scripts.UIManager
 {
     public class ShengHenCardUIManager : MonoBehaviour
     {
-        public TextMeshProUGUI level;
-        public Image image;
-        public TextMeshProUGUI displayName;
-        public GameObject markInUse;
         public Button button;
+        public TextMeshProUGUI displayName;
+        public Image image;
+        public TextMeshProUGUI level;
+        public GameObject markInUse;
 
         public void Apply(EShengHen shengHen, Action<EShengHen> callack)
         {

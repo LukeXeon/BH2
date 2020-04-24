@@ -2,9 +2,6 @@ namespace Dash.Scripts.Cloud
 {
     public class LuckDrawResult
     {
-        public int typeId;
-        public Type resultType;
-
         public enum Type
         {
             UnLockPlayer,
@@ -13,5 +10,8 @@ namespace Dash.Scripts.Cloud
             ShengHen,
             ExpAssets
         }
+
+        public Type resultType;
+        public int typeId;
     }
 }

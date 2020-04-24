@@ -4,14 +4,12 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
 namespace Dash.Scripts.Core
 {
     public sealed class UnityTaskScheduler : TaskScheduler
     {
         private static volatile TaskScheduler taskScheduler;
-        public static TaskScheduler MainThread => taskScheduler;
 
         private readonly SynchronizationContext synchronizationContext;
         private readonly ConcurrentQueue<Task> tasks;
@@ -24,9 +22,9 @@ namespace Dash.Scripts.Core
             waitQueue = new WaitWhile(() => tasks.IsEmpty);
         }
 
-        private class TaskRunner : MonoBehaviour
-        {
-        }
+        public static TaskScheduler MainThread => taskScheduler;
+
+        public override int MaximumConcurrencyLevel => 1;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         private static void Initialize()
@@ -52,10 +50,7 @@ namespace Dash.Scripts.Core
             while (Application.isPlaying)
             {
                 tasks.TryDequeue(out var task);
-                if (task != null)
-                {
-                    TryExecuteTask(task);
-                }
+                if (task != null) TryExecuteTask(task);
 
                 yield return waitQueue;
             }
@@ -71,6 +66,8 @@ namespace Dash.Scripts.Core
             return null;
         }
 
-        public override int MaximumConcurrencyLevel => 1;
+        private class TaskRunner : MonoBehaviour
+        {
+        }
     }
 }

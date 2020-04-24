@@ -1,6 +1,6 @@
 using System;
-using Dash.Scripts.Config;
 using Dash.Scripts.Cloud;
+using Dash.Scripts.Config;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -9,11 +9,11 @@ namespace Dash.Scripts.UIManager
 {
     public class WeaponCardUIManager : MonoBehaviour
     {
-        public TextMeshProUGUI level;
+        public Button button;
         public TextMeshProUGUI displayName;
         public Image image;
+        public TextMeshProUGUI level;
         public GameObject markInUse;
-        public Button button;
 
         public void Apply(EWeapon weapon, Action<EWeapon> callback)
         {

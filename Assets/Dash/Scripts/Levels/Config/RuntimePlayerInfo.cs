@@ -8,17 +8,17 @@ namespace Dash.Scripts.Levels.Config
     [Serializable]
     public class RuntimePlayerInfo
     {
-        public int gongJiLi;
         public int fangYuLi;
-        public int shengMingZhi;
+        public int gongJiLi;
         public int nengLiangZhi;
+        public int shengMingZhi;
 
         public static RuntimePlayerInfo Build(EPlayer player, List<EShengHen> shengHens)
         {
-            int gongJiLi = 0;
-            int fangYuLi = 0;
-            int shengMingZhi = 0;
-            int nengLiangZhi = 0;
+            var gongJiLi = 0;
+            var fangYuLi = 0;
+            var shengMingZhi = 0;
+            var nengLiangZhi = 0;
             var pinfo = GameConfigManager.playerTable[player.typeId];
             var pLevel = GameConfigManager.GetPlayerLevel(player.exp);
             gongJiLi += pinfo.gongJiLi;

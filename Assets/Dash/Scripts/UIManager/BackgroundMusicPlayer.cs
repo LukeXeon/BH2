@@ -4,14 +4,14 @@ namespace Dash.Scripts.UIManager
 {
     public class BackgroundMusicPlayer : MonoBehaviour
     {
+        public Animator animator;
+        private AudioClip back;
+        [Header("Assets")] public AudioClip desktop;
+        private int flag = 1;
+        private int PROPERTY;
+        public AudioClip room;
         public AudioSource source1;
         public AudioSource source2;
-        public Animator animator;
-        private int PROPERTY;
-        [Header("Assets")] public AudioClip desktop;
-        public AudioClip room;
-        private int flag = 1;
-        private AudioClip back;
 
         private void Awake()
         {

@@ -13,71 +13,70 @@ namespace Dash.Scripts.UIManager
 {
     public class DesktopUIManager : MonoBehaviour
     {
-        [Header("Top")] public NotificationManager notifySucceed;
-        public NotificationManager notifyError;
-        public Animator loadingMask;
-        public CanvasGroup fullMask;
-
-        [Header("Desktop")] public GameObject desktopRoot;
-
-        public Button live2DPanel;
-
-        public LiveCharacter live2DCharacter;
-
-        public AudioSource live2DAudioSource;
-
-        public AudioClip[] live2DAudioClips;
-
-        public GameObject desktop;
-
-        public Button openPlayWay;
-
-        public Button openBuJi;
-
-        public Button openZhuangBei;
-
-        public Button openCharacters;
+        public static Sprite bootBackground;
 
         public Animator animator;
-
-        public GameObject topBar;
-
-        public Image icon;
-
-        public TextMeshProUGUI displayName;
-
-        public TextMeshProUGUI expText;
-
-        public Image expBar;
-
-        public TextMeshProUGUI tiLiText;
-
-        public TextMeshProUGUI levelText;
-
-        public TextMeshProUGUI shuiJingText;
-
-        [Header("GuanQia")] public GuanQiaUIManager GuanQia;
-
-        public Button guanQiaBack;
 
         [Header("BuJi")] public Animator buJiAnimator;
 
         public Button buJiBack;
 
+        public GameObject desktop;
+
+        [Header("Desktop")] public GameObject desktopRoot;
+
+        public TextMeshProUGUI displayName;
+
+        public Image expBar;
+
+        public TextMeshProUGUI expText;
+        public CanvasGroup fullMask;
+
+        [Header("GuanQia")] public GuanQiaUIManager GuanQia;
+
+        public Button guanQiaBack;
+
+        public Image icon;
+
+        public TextMeshProUGUI levelText;
+
+        public AudioClip[] live2DAudioClips;
+
+        public AudioSource live2DAudioSource;
+
+        public LiveCharacter live2DCharacter;
+
+        public Button live2DPanel;
+        public Animator loadingMask;
+        public NotificationManager notifyError;
+        [Header("Top")] public NotificationManager notifySucceed;
+
         [Header("NvWuShen")] public Animator nvWuShen;
-        public NvWuShengUIManger nvWuShengUiManger;
 
         public Button nvWuShenBack;
+        public NvWuShengUIManger nvWuShengUiManger;
+
+        public Button openBuJi;
+
+        public Button openCharacters;
+
+        public Button openPlayWay;
+
+        public Button openZhuangBei;
 
         public NvWuShengUIManger playersUiManger;
 
-        [Header("ZhuangBei")] public Animator zhuangBei;
-        public ZhuangBeiUIManager zhuangBeiManager;
-        public Button zhuangBeiBack;
+        public TextMeshProUGUI shuiJingText;
+
+        public TextMeshProUGUI tiLiText;
+
+        public GameObject topBar;
 
         private Coroutine waitAnimCoroutine;
 
-        public static Sprite bootBackground;
+        [Header("ZhuangBei")] public Animator zhuangBei;
+        public Button zhuangBeiBack;
+        public ZhuangBeiUIManager zhuangBeiManager;
 
         private void SetRandomLiveMotion()
         {

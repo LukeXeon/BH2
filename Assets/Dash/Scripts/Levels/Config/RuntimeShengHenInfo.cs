@@ -3,19 +3,18 @@ using Dash.Scripts.Config;
 
 namespace Dash.Scripts.Levels.Config
 {
-    
     public class RuntimeShengHenInfo
     {
         public int fangYuLi;
-        public int shengMingZhi;
         public int nengLiangZhi;
+        public int shengMingZhi;
 
         public static RuntimeShengHenInfo Build(EShengHen shengHen)
         {
             var info = GameConfigManager.shengHenTable[shengHen.typeId];
-            int fangYuLi = info.fangYuLi;
-            int shengMingZhi = info.shengMingZhi;
-            int nengLiangZhi = info.nengLiangZhi;
+            var fangYuLi = info.fangYuLi;
+            var shengMingZhi = info.shengMingZhi;
+            var nengLiangZhi = info.nengLiangZhi;
             var level = GameConfigManager.GetShengHenLevel(shengHen.exp);
             fangYuLi += info.fangYuLi2 * level.count;
             shengMingZhi += info.shengMingZhi2 * level.count;

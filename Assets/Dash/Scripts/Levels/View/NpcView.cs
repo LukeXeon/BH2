@@ -1,7 +1,6 @@
 namespace Dash.Scripts.Levels.View
 {
-    public class NpcView: ActorView
+    public class NpcView : ActorView
     {
-        
     }
 }

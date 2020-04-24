@@ -11,8 +11,8 @@ namespace Dash.Scripts.Levels.Config
         public static RuntimeWeaponInfo Build(EWeapon weapon)
         {
             var info = GameConfigManager.weaponTable[weapon.typeId];
-            int gongJiLi = info.gongJiLi;
-            int sheSu = info.sheSu;
+            var gongJiLi = info.gongJiLi;
+            var sheSu = info.sheSu;
             var level = GameConfigManager.GetWeaponLevel(weapon.exp);
             gongJiLi += info.gongJiLi2 * level.count;
             sheSu += info.sheSu2 * level.count;

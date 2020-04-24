@@ -2,39 +2,36 @@
 using Dash.Scripts.Levels.View;
 using UnityEngine;
 
-
 namespace Dash.Scripts.Config
 {
     [CreateAssetMenu(fileName = "Weapon", menuName = "Info/Weapon")]
     [Serializable]
     public class WeaponInfoAsset : ScriptableObject
     {
-        public int typeId;
-
         //显示名称
         public string displayName;
 
-        public Sprite sprite;
+        [Header("基础值")] public int gongJiLi;
+        [Header("成长值")] public int gongJiLi2;
 
-        public TextAsset xiaoGuo;
+        [Header("射程")] public float sheCheng;
 
-        [Header("每秒发射子弹数量")]
-        public float sheShu;
-        [Header("射程")]
-        public float sheCheng;
+        [Header("每秒发射子弹数量")] public float sheShu;
 
-        public WeaponView weaponView;
+        public int sheSu;
+        public int sheSu2;
 
         //替换列表
         public SlotItem[] slots;
 
+        public Sprite sprite;
+        public int typeId;
+
         public WeaponTypeInfoAsset weaponType;
 
-        [Header("基础值")] public int gongJiLi;
+        public WeaponView weaponView;
 
-        public int sheSu;
-        [Header("成长值")] public int gongJiLi2;
-        public int sheSu2;
+        public TextAsset xiaoGuo;
 
         [Serializable]
         public struct SlotItem

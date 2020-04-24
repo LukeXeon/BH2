@@ -5,7 +5,7 @@ namespace Dash.Scripts.Cloud
     public class CompletePlayer
     {
         public EPlayer player;
-        public List<EWeapon> weapons;
         public List<EShengHen> shengHens;
+        public List<EWeapon> weapons;
     }
 }

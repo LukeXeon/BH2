@@ -8,7 +8,6 @@ using Photon.Pun;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Android;
-using Debug = UnityEngine.Debug;
 
 namespace Dash.Scripts.Core
 {
@@ -30,13 +29,9 @@ namespace Dash.Scripts.Core
             AVObject.RegisterSubclass<EPlayer>();
             AVObject.RegisterSubclass<EShengHen>();
             AVObject.RegisterSubclass<EWeapon>();
-            foreach (string permission in new[] {Permission.Microphone, Permission.Camera})
-            {
+            foreach (var permission in new[] {Permission.Microphone, Permission.Camera})
                 if (!Permission.HasUserAuthorizedPermission(permission))
-                {
                     Permission.RequestUserPermission(permission);
-                }
-            }
 
             var engine = IRtcEngine.GetEngine(info.agoraAppId);
             engine.SetChannelProfile(CHANNEL_PROFILE.CHANNEL_PROFILE_GAME);

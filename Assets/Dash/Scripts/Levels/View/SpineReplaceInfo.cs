@@ -1,5 +1,3 @@
-
-
 using Spine;
 
 namespace Dash.Scripts.Levels.View

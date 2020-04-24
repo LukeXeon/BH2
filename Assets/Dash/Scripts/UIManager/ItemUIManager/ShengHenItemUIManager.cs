@@ -1,6 +1,6 @@
 using System;
-using Dash.Scripts.Config;
 using Dash.Scripts.Cloud;
+using Dash.Scripts.Config;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -10,12 +10,12 @@ namespace Dash.Scripts.UIManager.ItemUIManager
     public class ShengHenItemUIManager : MonoBehaviour
     {
         public Button button;
+        public TextMeshProUGUI displayName;
         public Image image;
         public GameObject imageRoot;
-        public GameObject unSetRoot;
-        public TextMeshProUGUI displayName;
         public TextMeshProUGUI level;
         public Button tiHuan;
+        public GameObject unSetRoot;
 
         private void Awake()
         {

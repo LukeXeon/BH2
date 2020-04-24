@@ -9,32 +9,25 @@ namespace Dash.Scripts.UIManager.ItemUIManager
 {
     public class RoomItemUIManager : MonoBehaviour
     {
-        public TextMeshProUGUI roomByUser;
         public TextMeshProUGUI guanQiaMing;
         public Button jiaRu;
         public Image[] playerItems;
+        public TextMeshProUGUI roomByUser;
 
         public void Apply(RoomInfo roomInfo, Action callback)
         {
             roomInfo.CustomProperties.TryGetValue("displayName", out var displayName);
             if (displayName != null)
-            {
                 roomByUser.text = (string) displayName;
-            }
             else
-            {
                 roomByUser.text = "...";
-            }
 
             roomInfo.CustomProperties.TryGetValue("typeId", out var typeId);
             if (typeId != null)
-            {
                 guanQiaMing.text = GameConfigManager.guanQiaInfoTable[(int) typeId]?.displayName ?? "...";
-            }
 
-            for (int i = 0; i < 3; i++)
+            for (var i = 0; i < 3; i++)
             {
-                
                 roomInfo.CustomProperties.TryGetValue(i + "playerTypeId", out var playerTypeId);
                 Debug.Log(i + "playerTypeId" + playerTypeId);
                 if (playerTypeId != null && (int) playerTypeId != -1)

@@ -1,6 +1,6 @@
 using System;
-using Dash.Scripts.Config;
 using Dash.Scripts.Cloud;
+using Dash.Scripts.Config;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -10,11 +10,11 @@ namespace Dash.Scripts.UIManager.ItemUIManager
     public class WeaponItemUIManager : MonoBehaviour
     {
         public Button button;
-        public Image image;
+        public Button chaKan;
         public TextMeshProUGUI displayName;
+        public Image image;
         public TextMeshProUGUI level;
         public Button tiHuan;
-        public Button chaKan;
 
         private void Awake()
         {
@@ -28,8 +28,8 @@ namespace Dash.Scripts.UIManager.ItemUIManager
                 var info = GameConfigManager.weaponTable[weapon.typeId];
                 image.gameObject.SetActive(true);
                 image.sprite = info.sprite;
-                button.onClick.AddListener(call: () => onShow());
-                chaKan.onClick.AddListener(call: () => onChaKan());
+                button.onClick.AddListener(() => onShow());
+                chaKan.onClick.AddListener(() => onChaKan());
                 displayName.text = info.displayName;
                 level.text = "LV " + GameConfigManager.GetWeaponLevel(weapon.exp).count;
             }

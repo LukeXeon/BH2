@@ -9,15 +9,15 @@ namespace Dash.Scripts.UIManager
         public Button button;
         public UniWebView webView;
 
-        private void Start()
-        {
-            webView.SetBackButtonEnabled(false);
-        }
-
         public void Init(string url, Action back)
         {
             webView.Load(url);
             button.onClick.AddListener(() => back());
+        }
+
+        private void Start()
+        {
+            webView.SetBackButtonEnabled(false);
         }
     }
 }

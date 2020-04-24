@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections;
 using System.Linq;
-using Dash.Scripts.Config;
-using Dash.Scripts.Levels;
 using Dash.Scripts.Cloud;
+using Dash.Scripts.Config;
 using Dash.Scripts.Levels.Config;
 using Dash.Scripts.Levels.View;
 using Dash.Scripts.UI;
@@ -18,40 +17,39 @@ namespace Dash.Scripts.UIManager
 {
     public class NvWuShengUIManger : MonoBehaviour
     {
-        [Header("网络")] public Animator loadingMask;
-        public NotificationManager onError;
-        [Header("UI")] public Camera renderCamera;
+        private int currentIndex;
+        public TextMeshProUGUI dengji;
         public TextMeshProUGUI displayName;
-        public SkeletonAnimation skeletonAnimation;
+        private Equipments equipments;
         public PlayerEquipsUIManager equipsUiManager;
-        [Header("基本属性")] public TextMeshProUGUI gongJiLi;
-        public TextMeshProUGUI fangYuLi;
-        public TextMeshProUGUI shengMingZhi;
-        public TextMeshProUGUI nengLiangZhi;
-        [Header("圣痕和武器")] public GameObject lockMask;
-        public GameObject tabs;
-        public WeaponItemUIManager[] weapons;
-        public ShengHenItemUIManager[] shengHens;
-        [Header("玩家角色列表")] public GameObject playerListContent;
-        [Header("选为出战")] public GameObject xuanWeiChuZhanRoot;
-        public Button xuanWeiChuZhan;
-        public Image xuanWeiChuZHanImage;
-        public TextMeshProUGUI xuanWeiChuZhanText;
-        public Color32 normalColor;
-        public Color32 selectColor;
-        public ZhuangBeiUIManager zhuangBeiUiManager;
 
         public Image expBar;
-        public TextMeshProUGUI dengji;
         public TextMeshProUGUI expText;
+        public TextMeshProUGUI fangYuLi;
+        [Header("基本属性")] public TextMeshProUGUI gongJiLi;
+        [Header("网络")] public Animator loadingMask;
+        [Header("圣痕和武器")] public GameObject lockMask;
+        public TextMeshProUGUI nengLiangZhi;
+        public Color32 normalColor;
 
         [Header("Assets")] public Material normalMaterial;
+        public NotificationManager onError;
         public GameObject playerItemPrefab;
 
         private PlayerItemUIManager[] playerItems;
-
-        private int currentIndex;
-        private Equipments equipments;
+        [Header("玩家角色列表")] public GameObject playerListContent;
+        [Header("UI")] public Camera renderCamera;
+        public Color32 selectColor;
+        public ShengHenItemUIManager[] shengHens;
+        public TextMeshProUGUI shengMingZhi;
+        public SkeletonAnimation skeletonAnimation;
+        public GameObject tabs;
+        public WeaponItemUIManager[] weapons;
+        public Button xuanWeiChuZhan;
+        public Image xuanWeiChuZHanImage;
+        [Header("选为出战")] public GameObject xuanWeiChuZhanRoot;
+        public TextMeshProUGUI xuanWeiChuZhanText;
+        public ZhuangBeiUIManager zhuangBeiUiManager;
 
         private void Awake()
         {
@@ -67,9 +65,9 @@ namespace Dash.Scripts.UIManager
 
         private void ApplyPlayers()
         {
-            for (int i = 0; i < playerItems.Length; i++)
+            for (var i = 0; i < playerItems.Length; i++)
             {
-                int index = i;
+                var index = i;
                 var player = equipments.players.Values.FirstOrDefault(o => o.player.typeId == index)?.player;
                 playerItems[i].Apply(
                     player,
@@ -108,15 +106,9 @@ namespace Dash.Scripts.UIManager
 
         private void ClearAllCallback()
         {
-            foreach (var item in shengHens)
-            {
-                item.Clear();
-            }
+            foreach (var item in shengHens) item.Clear();
 
-            foreach (var item in weapons)
-            {
-                item.Clear();
-            }
+            foreach (var item in weapons) item.Clear();
 
             xuanWeiChuZhan.onClick.RemoveAllListeners();
         }
@@ -142,7 +134,8 @@ namespace Dash.Scripts.UIManager
                 xuanWeiChuZhanText.text = "选为出战";
                 xuanWeiChuZhan.onClick.AddListener(async () =>
                 {
-                    var myPlayer = equipments.players.Values.FirstOrDefault(o => o.player.typeId == currentIndex)?.player;
+                    var myPlayer = equipments.players.Values.FirstOrDefault(o => o.player.typeId == currentIndex)
+                        ?.player;
                     if (myPlayer != null)
                     {
                         BeginWaitNetwork();
@@ -189,7 +182,7 @@ namespace Dash.Scripts.UIManager
             ApplyNormalAnim();
             ApplyWeaponCallbacks(inUse);
             ApplyShengHenCallbacks(inUse);
-            EWeapon currentW = inUse.weapons.FirstOrDefault(o => o.weapon != null)?.weapon;
+            var currentW = inUse.weapons.FirstOrDefault(o => o.weapon != null)?.weapon;
             ApplyPlayerWeapon(currentW, withAnim);
         }
 
@@ -204,23 +197,19 @@ namespace Dash.Scripts.UIManager
                 equipsUiManager.Equip(list);
 
                 if (withAnim)
-                {
                     TiaoQiang(winfo.weaponType.matchName);
-                }
                 else
-                {
                     skeletonAnimation.AnimationState.SetAnimation(
                         0,
                         winfo.weaponType.matchName + "_idle",
                         true
                     );
-                }
             }
         }
 
         private void ApplyWeaponCallbacks(PlayerWithUsing inUse)
         {
-            for (int i = 0; i < 3; i++)
+            for (var i = 0; i < 3; i++)
             {
                 var inUseWeapon = inUse.weapons[i];
                 var weapon = inUseWeapon.weapon;
@@ -235,15 +224,9 @@ namespace Dash.Scripts.UIManager
                         var result = await CloudManager.ReplaceWeapon(inUseWeapon, o);
                         var unload = result[0];
                         var upload = result[1];
-                        if (unload != null)
-                        {
-                            equipments.weapons[unload.ObjectId] = unload;
-                        }
+                        if (unload != null) equipments.weapons[unload.ObjectId] = unload;
 
-                        if (upload != null)
-                        {
-                            equipments.weapons[upload.ObjectId] = upload;
-                        }
+                        if (upload != null) equipments.weapons[upload.ObjectId] = upload;
 
                         zhuangBeiUiManager.FastClose();
                         zhuangBeiUiManager.weaponInfo.Close();
@@ -261,10 +244,7 @@ namespace Dash.Scripts.UIManager
                 Action<EWeapon> onOpenPanel = o => { zhuangBeiUiManager.weaponInfo.Open("装备", o, onSelect, null); };
                 if (weapon != null)
                 {
-                    if (inUse.weapons.Count(o => o.weapon != null) != 1)
-                    {
-                        onUnload = () => onSelect(null);
-                    }
+                    if (inUse.weapons.Count(o => o.weapon != null) != 1) onUnload = () => onSelect(null);
 
                     onShow = () => { zhuangBeiUiManager.weaponInfo.Open(null, weapon, null, null); };
                     onChaKan = () => { ApplyPlayerWeapon(weapon); };
@@ -279,10 +259,7 @@ namespace Dash.Scripts.UIManager
             }
 
 
-            foreach (var item in weapons)
-            {
-                item.SetShowTiHuan(true);
-            }
+            foreach (var item in weapons) item.SetShowTiHuan(true);
 
             var isSingle = inUse.weapons.Count(o => o.weapon != null) == 1;
             if (isSingle)
@@ -294,7 +271,7 @@ namespace Dash.Scripts.UIManager
 
         private void ApplyShengHenCallbacks(PlayerWithUsing inUse)
         {
-            for (int i = 0; i < 3; i++)
+            for (var i = 0; i < 3; i++)
             {
                 var inUseshengHen = inUse.shengHens[i];
                 var shengHen = inUseshengHen.shengHen;
@@ -309,15 +286,9 @@ namespace Dash.Scripts.UIManager
                         var result = await CloudManager.ReplaceShengHen(inUseshengHen, o);
                         var unload = result[0];
                         var upload = result[1];
-                        if (unload != null)
-                        {
-                            equipments.shengHens[unload.ObjectId] = unload;
-                        }
+                        if (unload != null) equipments.shengHens[unload.ObjectId] = unload;
 
-                        if (upload != null)
-                        {
-                            equipments.shengHens[upload.ObjectId] = upload;
-                        }
+                        if (upload != null) equipments.shengHens[upload.ObjectId] = upload;
 
                         zhuangBeiUiManager.FastClose();
                         zhuangBeiUiManager.shengHenInfo.Close();

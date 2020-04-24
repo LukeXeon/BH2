@@ -6,6 +6,11 @@ namespace Dash.Scripts.Core
 {
     public static class UnityAsyncExtensions
     {
+        public static UnityAsyncOperationAwaitable GetAwaiter(this AsyncOperation operation)
+        {
+            return new UnityAsyncOperationAwaitable(operation);
+        }
+
         public struct UnityAsyncOperationAwaitable : INotifyCompletion
         {
             private readonly AsyncOperation operation;
@@ -22,12 +27,10 @@ namespace Dash.Scripts.Core
 
             public bool IsCompleted => operation.isDone;
 
-            public AsyncOperation GetResult() => operation;
-        }
-
-        public static UnityAsyncOperationAwaitable GetAwaiter(this AsyncOperation operation)
-        {
-            return new UnityAsyncOperationAwaitable(operation);
+            public AsyncOperation GetResult()
+            {
+                return operation;
+            }
         }
     }
 }

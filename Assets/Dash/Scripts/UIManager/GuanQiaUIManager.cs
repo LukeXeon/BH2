@@ -9,19 +9,21 @@ namespace Dash.Scripts.UIManager
 {
     public class GuanQiaUIManager : MonoBehaviour
     {
-        public Button piPei;
-        public Button duiWu;
-        public TextMeshProUGUI title;
-        public Button left;
-        public Button right;
         public Animator animator;
-        public Image image;
-        public TextMeshProUGUI textContent;
-        public DuiWuListUIManager duiWuList;
-        public Animator loadingMask;
-        public NotificationManager onError;
 
         private BeforeJoinRoomAction beforeJoinRoomAction;
+
+        private int currentId;
+        public Button duiWu;
+        public DuiWuListUIManager duiWuList;
+        public Image image;
+        public Button left;
+        public Animator loadingMask;
+        public NotificationManager onError;
+        public Button piPei;
+        public Button right;
+        public TextMeshProUGUI textContent;
+        public TextMeshProUGUI title;
 
         private void Awake()
         {
@@ -33,8 +35,6 @@ namespace Dash.Scripts.UIManager
             });
             duiWu.onClick.AddListener(() => { duiWuList.Open(); });
         }
-
-        private int currentId;
 
         public void Open()
         {
@@ -58,13 +58,9 @@ namespace Dash.Scripts.UIManager
             animator.Play("Load-in");
             title.text = info.displayName;
             if (info.miaoShu)
-            {
                 textContent.text = info.miaoShu.text;
-            }
             else
-            {
                 textContent.text = "";
-            }
         }
 
         private void BeginWaitNetwork()

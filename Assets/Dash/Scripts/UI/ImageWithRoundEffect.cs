@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,10 +7,10 @@ namespace Dash.Scripts.UI
     [RequireComponent(typeof(Image), typeof(RectTransform))]
     public class ImageWithRoundEffect : MonoBehaviour
     {
-        public float radius;
         private static readonly int Props = Shader.PropertyToID("_WidthHeightRadius");
-        private Material material;
         private Image image;
+        private Material material;
+        public float radius;
 
         private void Awake()
         {
@@ -20,15 +19,9 @@ namespace Dash.Scripts.UI
 
         private void InitImage()
         {
-            if (image == null)
-            {
-                image = GetComponent<Image>();
-            }
+            if (image == null) image = GetComponent<Image>();
 
-            if (image == null)
-            {
-                image = gameObject.AddComponent<Image>();
-            }
+            if (image == null) image = gameObject.AddComponent<Image>();
         }
 
         private void Start()
@@ -36,7 +29,7 @@ namespace Dash.Scripts.UI
             Refresh();
         }
 
-        void OnRectTransformDimensionsChange()
+        private void OnRectTransformDimensionsChange()
         {
             Refresh();
         }
@@ -49,16 +42,10 @@ namespace Dash.Scripts.UI
 
         private void Refresh()
         {
-            if (Application.isEditor || image == null)
-            {
-                InitImage();
-            }
+            if (Application.isEditor || image == null) InitImage();
 
             var rect = ((RectTransform) transform).rect;
-            if (material == null)
-            {
-                material = new Material(Shader.Find("UI/RoundedCorners/RoundedCorners"));
-            }
+            if (material == null) material = new Material(Shader.Find("UI/RoundedCorners/RoundedCorners"));
 
             material.SetVector(Props, new Vector4(rect.width, rect.height, radius, 0));
 

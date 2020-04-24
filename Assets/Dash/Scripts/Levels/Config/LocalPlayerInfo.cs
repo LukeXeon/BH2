@@ -14,10 +14,9 @@ namespace Dash.Scripts.Levels.Config
 
         public static readonly List<Tuple<ShengHenInfoAsset, RuntimeShengHenInfo>> shengHenInfos =
             new List<Tuple<ShengHenInfoAsset, RuntimeShengHenInfo>>();
-        
+
         public static void Prepare(CompletePlayer current)
         {
-     
             var completePlayer = current;
             weaponInfos.Clear();
             shengHenInfos.Clear();
@@ -36,6 +35,7 @@ namespace Dash.Scripts.Levels.Config
                 var runtimeInfo = RuntimeShengHenInfo.Build(eInUseShengHen);
                 shengHenInfos.Add(Tuple.Create(info, runtimeInfo));
             }
+
             LocalPlayerDynamicInfo.currentWeaponIndex = 0;
             LocalPlayerDynamicInfo.currentHp = playerInfo.Item2.shengMingZhi;
             LocalPlayerDynamicInfo.currentMp = playerInfo.Item2.nengLiangZhi;

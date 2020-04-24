@@ -10,21 +10,21 @@ namespace Dash.Scripts.Levels.View
 {
     public class PoseManager : MonoBehaviour
     {
-        [Header("Display")] public Animator animator;
-        public SkeletonMecanim skeletonMecanim;
-        [Header("Assets")] public RuntimeAnimatorController framework;
-        public RuntimeAnimatorController source;
-
         private static readonly ConditionalWeakTable<RuntimeAnimatorController, Dictionary<string, AnimationClip>>
             clipsCache
                 = new ConditionalWeakTable<RuntimeAnimatorController, Dictionary<string, AnimationClip>>();
 
+        private readonly Dictionary<WeaponInfoAsset, Skin> skinCache = new Dictionary<WeaponInfoAsset, Skin>();
+
         private readonly List<KeyValuePair<AnimationClip, AnimationClip>> temp =
             new List<KeyValuePair<AnimationClip, AnimationClip>>(10);
 
-        private readonly Dictionary<WeaponInfoAsset, Skin> skinCache = new Dictionary<WeaponInfoAsset, Skin>();
+        [Header("Display")] public Animator animator;
+        [Header("Assets")] public RuntimeAnimatorController framework;
 
         public float shootSpeed = 1;
+        public SkeletonMecanim skeletonMecanim;
+        public RuntimeAnimatorController source;
 
         private static Dictionary<string, AnimationClip> GetClips(RuntimeAnimatorController controller)
         {
@@ -56,27 +56,19 @@ namespace Dash.Scripts.Levels.View
             temp.Add(new KeyValuePair<AnimationClip, AnimationClip>(controller["temp_run"], runClip));
             temp.Add(new KeyValuePair<AnimationClip, AnimationClip>(controller["temp_idle"], idleClip));
             if (weaponInfoAsset.weaponType.canLianShe)
-            {
                 temp.Add(new KeyValuePair<AnimationClip, AnimationClip>(controller["temp_kaiqiang"],
                     kaiQiangClip));
-            }
             else
-            {
                 temp.Add(new KeyValuePair<AnimationClip, AnimationClip>(controller["temp_kaiqiang_single"],
                     kaiQiangClip));
-            }
 
             temp.Add(new KeyValuePair<AnimationClip, AnimationClip>(controller["temp_taoqiang"], taoQiangClip));
             if (weaponInfoAsset.weaponType.canLianShe)
-            {
                 temp.Add(new KeyValuePair<AnimationClip, AnimationClip>(controller["temp_run_kaiqiang"],
                     runKaiQiangClip));
-            }
             else
-            {
                 temp.Add(new KeyValuePair<AnimationClip, AnimationClip>(controller["temp_run_kaiqiang_single"],
                     runKaiQiangClip));
-            }
 
             temp.Add(new KeyValuePair<AnimationClip, AnimationClip>(controller["temp_run_taoqiang"], runTaoQiangClip));
             controller.ApplyOverrides(temp);
@@ -90,6 +82,7 @@ namespace Dash.Scripts.Levels.View
                 var time = 1f / weaponInfoAsset.sheShu;
                 shootSpeed = kaiQiangClip.length / time;
             }
+
             return controller;
         }
 
@@ -108,18 +101,13 @@ namespace Dash.Scripts.Levels.View
             else
             {
                 var list = SpineUtils.GenerateSpineReplaceInfo(weaponInfoAsset, skeletonMecanim.Skeleton);
-                Skin equipsSkin = new Skin("Equips");
+                var equipsSkin = new Skin("Equips");
                 var templateSkin = skeletonMecanim.Skeleton.Data.DefaultSkin;
-                if (templateSkin != null)
-                {
-                    equipsSkin.AddSkin(templateSkin);
-                }
+                if (templateSkin != null) equipsSkin.AddSkin(templateSkin);
 
                 foreach (var spineReplaceInfo in list)
-                {
                     equipsSkin.SetAttachment(spineReplaceInfo.slotIndex, spineReplaceInfo.name,
                         spineReplaceInfo.attachment);
-                }
 
                 skeletonMecanim.Skeleton.SetSkin(equipsSkin);
 

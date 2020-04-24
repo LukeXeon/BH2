@@ -1,43 +1,43 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Dash.Scripts.Config;
 using Dash.Scripts.Cloud;
+using Dash.Scripts.Config;
 using Dash.Scripts.UI;
 using Dash.Scripts.UIManager.ItemUIManager;
+using ExitGames.Client.Photon;
 using Michsky.UI.ModernUIPack;
 using Photon.Pun;
 using Photon.Realtime;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 namespace Dash.Scripts.UIManager
 {
     public class DuiWuListUIManager : MonoBehaviourPunCallbacks
     {
         private const int MAX_DISPLAY_COUNT = 30;
-
-        [Header("UI")] public Transform roomsRoot;
-        public Transform typesRoot;
-        public TMP_InputField roomId;
-        public Button join;
-        public Button randomJoin;
-        public Button createRoom;
-        public Button back;
         public Animator animator;
-        public Animator loadingMask;
-        public NotificationManager notifySucceed;
-        public NotificationManager notifyError;
-        public RoomUIManager roomUiManager;
-
-        [Header("Assets")] public GameObject roomItem;
-        public GameObject typeItem;
+        public Button back;
         private BeforeJoinRoomAction beforeJoinRoomAction;
+        private Dictionary<string, RoomItemUIManager> cacheRooms;
+        public Button createRoom;
 #pragma warning disable 414
         private int currentRoomTypeId = -1;
 #pragma warning restore 414
-        private Dictionary<string, RoomItemUIManager> cacheRooms;
+        public Button join;
+        public Animator loadingMask;
+        public NotificationManager notifyError;
+        public NotificationManager notifySucceed;
+        public Button randomJoin;
+        public TMP_InputField roomId;
+
+        [Header("Assets")] public GameObject roomItem;
+
+        [Header("UI")] public Transform roomsRoot;
+        public RoomUIManager roomUiManager;
+        public GameObject typeItem;
+        public Transform typesRoot;
 
         private void Awake()
         {
@@ -55,11 +55,9 @@ namespace Dash.Scripts.UIManager
             beforeJoinRoomAction = new BeforeJoinRoomAction(loadingMask, notifyError);
 
             back.onClick.AddListener(() =>
-            { ;
-                if (PhotonNetwork.InLobby)
-                {
-                    PhotonNetwork.LeaveLobby();
-                }
+            {
+                ;
+                if (PhotonNetwork.InLobby) PhotonNetwork.LeaveLobby();
 
                 animator.Play("Fade-out");
             });
@@ -96,10 +94,7 @@ namespace Dash.Scripts.UIManager
         public void Open()
         {
             animator.Play("Fade-in");
-            if (!PhotonNetwork.InLobby)
-            {
-                PhotonNetwork.JoinLobby();
-            }
+            if (!PhotonNetwork.InLobby) PhotonNetwork.JoinLobby();
         }
 
         public override void OnRoomListUpdate(List<RoomInfo> roomList)
@@ -135,15 +130,9 @@ namespace Dash.Scripts.UIManager
                 }
             }
 
-            foreach (var newCacheKey in newCache.Keys)
-            {
-                oldCache.Remove(newCacheKey);
-            }
+            foreach (var newCacheKey in newCache.Keys) oldCache.Remove(newCacheKey);
 
-            foreach (var roomItemUiManager in oldCache.Values)
-            {
-                Destroy(roomItemUiManager.gameObject);
-            }
+            foreach (var roomItemUiManager in oldCache.Values) Destroy(roomItemUiManager.gameObject);
 
             cacheRooms = newCache;
         }
@@ -164,10 +153,7 @@ namespace Dash.Scripts.UIManager
 
         private void ClearRooms()
         {
-            foreach (Transform room in roomsRoot)
-            {
-                Destroy(room.gameObject);
-            }
+            foreach (Transform room in roomsRoot) Destroy(room.gameObject);
         }
 
         public override void OnLeftLobby()

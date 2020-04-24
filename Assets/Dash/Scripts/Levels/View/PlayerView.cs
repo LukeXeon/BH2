@@ -11,12 +11,6 @@ namespace Dash.Scripts.Levels.View
 {
     public class PlayerView : ActorView, IPunObservable
     {
-        public float speed;
-        public PoseManager poseManager;
-        public SkeletonMecanim mecanim;
-        public Animator animator;
-        public Transform bulletLocator;
-        [Header("Event")] public OnPlayerLoadedEvent onPlayerLoadedEvent;
         private static readonly int IS_RUN = Animator.StringToHash("is_run");
         private static readonly int TAOQIANG = Animator.StringToHash("taoqiang");
         private static readonly int KAIQIANG = Animator.StringToHash("kaiqiang");
@@ -25,22 +19,31 @@ namespace Dash.Scripts.Levels.View
         private static readonly Dictionary<(Type, string), MethodInfo> methodInfos =
             new Dictionary<(Type, string), MethodInfo>();
 
-        private new Rigidbody rigidbody;
+        private static readonly int KAIQIANG_SPEED = Animator.StringToHash("kaiqiang_speed");
+        private static readonly int HIT = Animator.StringToHash("hit");
+        public Animator animator;
+        public Transform bulletLocator;
 
         private int flipX = 1;
+        private float lastShoot;
+        public SkeletonMecanim mecanim;
+        [Header("Event")] public OnPlayerLoadedEvent onPlayerLoadedEvent;
+        public PoseManager poseManager;
+
+        private new Rigidbody rigidbody;
+        public float speed;
+        private float timeBetweenBullets;
+        private WeaponView weaponView;
 
         //Weapon
         public WeaponInfoAsset weaponInfoAsset { get; private set; }
-        private WeaponView weaponView;
-        private float timeBetweenBullets;
-        private float lastShoot;
-        private static readonly int KAIQIANG_SPEED = Animator.StringToHash("kaiqiang_speed");
-        private static readonly int HIT = Animator.StringToHash("hit");
 
-
-        [Serializable]
-        public class OnPlayerLoadedEvent : UnityEvent
+        public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
         {
+            if (stream.IsWriting)
+                stream.SendNext(flipX);
+            else
+                flipX = (int) stream.ReceiveNext();
         }
 
         protected override void Awake()
@@ -48,16 +51,13 @@ namespace Dash.Scripts.Levels.View
             base.Awake();
             rigidbody = GetComponent<Rigidbody>();
             photonView = GetComponent<PhotonView>();
-            if (onPlayerLoadedEvent == null)
-            {
-                onPlayerLoadedEvent = new OnPlayerLoadedEvent();
-            }
+            if (onPlayerLoadedEvent == null) onPlayerLoadedEvent = new OnPlayerLoadedEvent();
         }
 
         private void Start()
         {
-            int playerTypeId = (int) photonView.InstantiationData[0];
-            int weaponTypeId = (int) photonView.InstantiationData[1];
+            var playerTypeId = (int) photonView.InstantiationData[0];
+            var weaponTypeId = (int) photonView.InstantiationData[1];
             var info = GameConfigManager.playerTable[playerTypeId];
             mecanim.skeletonDataAsset = info.skel;
             mecanim.Initialize(true);
@@ -68,10 +68,7 @@ namespace Dash.Scripts.Levels.View
         [PunRPC]
         public void OnWeaponChanged(int typeId)
         {
-            if (weaponView)
-            {
-                Destroy(weaponView.gameObject);
-            }
+            if (weaponView) Destroy(weaponView.gameObject);
 
             weaponInfoAsset = GameConfigManager.weaponTable[typeId];
             poseManager.SetPose(weaponInfoAsset);
@@ -85,13 +82,10 @@ namespace Dash.Scripts.Levels.View
             lastShoot = 0;
             timeBetweenBullets = 1f / weaponInfoAsset.sheShu;
         }
-        
+
         public void OnSingleFireAnimationCallback()
         {
-            if (photonView.IsMine)
-            {
-                weaponView.OnFire();
-            }
+            if (photonView.IsMine) weaponView.OnFire();
         }
 
         [PunRPC]
@@ -103,7 +97,6 @@ namespace Dash.Scripts.Levels.View
         [PunRPC]
         public override void OnDamage(int value)
         {
-            
             animator.SetTrigger(HIT);
         }
 
@@ -120,10 +113,7 @@ namespace Dash.Scripts.Levels.View
                     methodInfos[(type, method)] = methodInfo;
                 }
 
-                if (methodInfo != null)
-                {
-                    methodInfo.Invoke(weaponView, args);
-                }
+                if (methodInfo != null) methodInfo.Invoke(weaponView, args);
             }
         }
 
@@ -133,10 +123,7 @@ namespace Dash.Scripts.Levels.View
             {
                 var isKaiQiangPressed = ETCInput.GetButton("kaiqiang");
                 //先更新动画，如果能够连射确保动画状态同步
-                if (weaponInfoAsset.weaponType.canLianShe)
-                {
-                    animator.SetBool(LIANSHE, isKaiQiangPressed);
-                }
+                if (weaponInfoAsset.weaponType.canLianShe) animator.SetBool(LIANSHE, isKaiQiangPressed);
 
                 var time = Time.time;
                 //如果上次射击时间间隔已过
@@ -176,22 +163,13 @@ namespace Dash.Scripts.Levels.View
                 var move = speed * Time.fixedDeltaTime * new Vector3(Mathf.Abs(h) > 0 ? 1 * Mathf.Sign(h) : 0, 0,
                                Mathf.Abs(v) > 0 ? Mathf.Sign(v) : 0);
                 if (move != Vector3.zero)
-                {
                     animator.SetBool(IS_RUN, true);
-                }
                 else
-                {
                     animator.SetBool(IS_RUN, false);
-                }
 
                 if (h > 0)
-                {
                     flipX = 1;
-                }
-                else if (h < 0)
-                {
-                    flipX = -1;
-                }
+                else if (h < 0) flipX = -1;
 
                 rigidbody.MovePosition(rigidbody.position += move);
             }
@@ -200,16 +178,10 @@ namespace Dash.Scripts.Levels.View
             mecanim.Skeleton.ScaleX = flipX;
         }
 
-        public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+
+        [Serializable]
+        public class OnPlayerLoadedEvent : UnityEvent
         {
-            if (stream.IsWriting)
-            {
-                stream.SendNext(flipX);
-            }
-            else
-            {
-                flipX = (int) stream.ReceiveNext();
-            }
         }
     }
 }

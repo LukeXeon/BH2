@@ -16,7 +16,7 @@ MonoBehaviour:
   displayName: "\u6C99\u6F20\u4E4B\u9E70"
   sprite: {fileID: 21300000, guid: 4543bd955bc985b4bba21a53b036fa22, type: 3}
   xiaoGuo: {fileID: 0}
-  sheShu: 1.2
+  sheShu: 1.5
   sheCheng: 100
   weaponView: {fileID: 2912336256578919192, guid: b50b646fcf2be73488f9657d0d050728,
     type: 3}

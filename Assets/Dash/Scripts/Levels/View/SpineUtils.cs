@@ -11,10 +11,10 @@ namespace Dash.Scripts.Levels.View
     {
         private static Dictionary<WeaponInfoAsset, List<SpineReplaceInfo>> cachedAttachments =
             new Dictionary<WeaponInfoAsset, List<SpineReplaceInfo>>();
-        
+
         public static List<SpineReplaceInfo> GenerateSpineReplaceInfo(WeaponInfoAsset item, Skeleton asset)
         {
-            List<SpineReplaceInfo> li = new List<SpineReplaceInfo>();
+            var li = new List<SpineReplaceInfo>();
             foreach (var s in item.slots)
             {
                 var ss = GenerateSpineReplaceInfo(item.weaponType.matchName, s, asset);
@@ -30,7 +30,7 @@ namespace Dash.Scripts.Levels.View
             Skeleton asset
         )
         {
-            int slotIndex = asset.FindSlotIndex(item.name);
+            var slotIndex = asset.FindSlotIndex(item.name);
             return item.attachments
                 .Select(aItem => GenerateSpineReplaceInfo(type, aItem, asset, slotIndex)).ToList();
         }
@@ -44,7 +44,7 @@ namespace Dash.Scripts.Levels.View
         {
             var sprite = item.sprite;
             var templateSkin = asset.Data.FindSkin("default");
-            RegionAttachment templateAttachment = (RegionAttachment) templateSkin.GetAttachment(slotIndex, item.name);
+            var templateAttachment = (RegionAttachment) templateSkin.GetAttachment(slotIndex, item.name);
             var m = new Material(Shader.Find("Spine/Skeleton"));
             var h = sprite.texture.height;
             var w = sprite.texture.width;

@@ -9,19 +9,19 @@ namespace Dash.Scripts.UIManager.ItemUIManager
 {
     public class PlayerInRoomItemUIManager : MonoBehaviour
     {
-        public GameObject isReady;
-        public GameObject isMaster;
-        public TextMeshProUGUI displayName;
-        public SkeletonAnimation skeletonAnimation;
-        public PlayerEquipsUIManager playerEquipsUiManager;
-        private int currentWeaponTypeId;
         private int currentPlayerId;
+        private int currentWeaponTypeId;
+        public TextMeshProUGUI displayName;
+        public GameObject isMaster;
+        public GameObject isReady;
+        public PlayerEquipsUIManager playerEquipsUiManager;
+        public SkeletonAnimation skeletonAnimation;
 
         public void Clear()
         {
             skeletonAnimation.gameObject.SetActive(false);
             isReady.SetActive(false);
-            isMaster.SetActive(false); 
+            isMaster.SetActive(false);
             displayName.text = null;
             currentWeaponTypeId = int.MinValue;
             currentPlayerId = int.MinValue;
@@ -50,7 +50,7 @@ namespace Dash.Scripts.UIManager.ItemUIManager
                 }
             }
 
-            this.displayName.text = displayNameValue as string ?? "...";
+            displayName.text = displayNameValue as string ?? "...";
             if (player.IsMasterClient)
             {
                 isMaster.SetActive(true);

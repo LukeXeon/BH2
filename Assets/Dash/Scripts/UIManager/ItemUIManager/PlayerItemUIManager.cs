@@ -1,6 +1,6 @@
 using System;
-using Dash.Scripts.Config;
 using Dash.Scripts.Cloud;
+using Dash.Scripts.Config;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,9 +8,9 @@ namespace Dash.Scripts.UIManager
 {
     public class PlayerItemUIManager : MonoBehaviour
     {
-        public GameObject markInLock;
         public Button button;
         public Image image;
+        public GameObject markInLock;
 
         public void Init(PlayerInfoAsset infoAsset)
         {
@@ -23,13 +23,9 @@ namespace Dash.Scripts.UIManager
             markInLock.SetActive(player == null);
             button.onClick.RemoveAllListeners();
             if (player != null)
-            {
                 button.onClick.AddListener(() => { onUnLock(); });
-            }
             else
-            {
                 button.onClick.AddListener(() => onLock());
-            }
         }
     }
 }

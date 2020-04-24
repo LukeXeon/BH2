@@ -12,20 +12,20 @@ namespace Dash.Scripts.UIManager
 {
     public class BuJiUIManager : MonoBehaviour
     {
-        [Header("UI")] public NotificationManager notifySucceed;
-        public NotificationManager notifyError;
-        public Animator loadingMask;
-        public VideoPlayer buJiPlayer;
-        public float keyTime;
-        public Button begin;
-        public Button finish;
         public Animator animator;
+        public Button begin;
+        public VideoPlayer buJiPlayer;
         public GameObject content;
+        public Button finish;
+        public float keyTime;
+        public Animator loadingMask;
+        public NotificationManager notifyError;
+        [Header("UI")] public NotificationManager notifySucceed;
 
         [Header("Assets")] public GameObject playerAddExpCardPrefab;
         public GameObject playerUnLockCardPrefab;
-        public GameObject weaponCardPrefab;
         public GameObject shengHenPrefab;
+        public GameObject weaponCardPrefab;
 
         private void Awake()
         {
@@ -70,10 +70,7 @@ namespace Dash.Scripts.UIManager
                             break;
                     }
 
-                    if (luckCardUiManager != null)
-                    {
-                        luckCardUiManager.Apply(r);
-                    }
+                    if (luckCardUiManager != null) luckCardUiManager.Apply(r);
                 }
                 catch (Exception e)
                 {
@@ -90,19 +87,13 @@ namespace Dash.Scripts.UIManager
             finish.onClick.AddListener(() =>
             {
                 animator.Play("Result-out");
-                foreach (Transform item in content.transform)
-                {
-                    Destroy(item.gameObject);
-                }
+                foreach (Transform item in content.transform) Destroy(item.gameObject);
             });
         }
 
         private static IEnumerator WaitVideoTargetTime(VideoPlayer videoPlayer, float time, Action callback)
         {
-            while (videoPlayer.time < time)
-            {
-                yield return null;
-            }
+            while (videoPlayer.time < time) yield return null;
 
             callback();
         }

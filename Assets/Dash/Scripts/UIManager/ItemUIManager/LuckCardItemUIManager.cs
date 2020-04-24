@@ -1,5 +1,5 @@
-using Dash.Scripts.Config;
 using Dash.Scripts.Cloud;
+using Dash.Scripts.Config;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -8,9 +8,9 @@ namespace Dash.Scripts.UIManager.ItemUIManager
 {
     public class LuckCardItemUIManager : MonoBehaviour
     {
+        public TextMeshProUGUI content;
         public Image image;
         public TextMeshProUGUI title;
-        public TextMeshProUGUI content;
 
         public void Apply(LuckDrawResult result)
         {

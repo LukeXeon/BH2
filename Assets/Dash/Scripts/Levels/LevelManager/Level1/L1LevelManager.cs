@@ -3,15 +3,13 @@ using Dash.Scripts.Core;
 using Dash.Scripts.Levels.Core;
 using Photon.Pun;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 namespace Dash.Scripts.Levels.LevelManager.Level1
 {
-
     public class L1LevelManager : MonoBehaviour
     {
-        public GuidIndexer[] NPCs;
         public Transform[] NpcChuShengDian;
+        public GuidIndexer[] NPCs;
 
         private void Awake()
         {

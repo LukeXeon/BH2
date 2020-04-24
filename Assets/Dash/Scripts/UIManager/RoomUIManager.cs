@@ -14,36 +14,40 @@ using Photon.Realtime;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 namespace Dash.Scripts.UIManager
 {
     public class RoomUIManager : MonoBehaviourPunCallbacks, IOnEventCallback
     {
-        [Header("MainUI")] public TextMeshProUGUI idText;
-        public PlayerInRoomItemUIManager[] playerItems;
-        public Button back;
-        public Button start;
-        public Button ready;
-        public TextMeshProUGUI readyText;
-        public SwitchManager openYuYing;
-        public SwitchManager openMaiKeFeng;
-        public Animator animator;
-        public Button idBtn;
-        public NotificationManager onError;
-        public NotificationManager onSuccess;
-        public Animator loadingMask;
-        [Header("LoadingUI")] public Image loadingRoot;
-        public Image progress;
-
-        [Header("Asset")] public Color readyColor;
-        public Color unReadyColor;
-        public LevelLoadManager loadManager;
-
         private readonly Dictionary<int, PlayerInRoomItemUIManager> noLocalPlayerItems =
             new Dictionary<int, PlayerInRoomItemUIManager>(3);
 
+        public Animator animator;
+        public Button back;
+        public Button idBtn;
+        [Header("MainUI")] public TextMeshProUGUI idText;
+
         private bool isOpen;
+        public Animator loadingMask;
+        [Header("LoadingUI")] public Image loadingRoot;
+        public LevelLoadManager loadManager;
+        public NotificationManager onError;
+        public NotificationManager onSuccess;
+        public SwitchManager openMaiKeFeng;
+        public SwitchManager openYuYing;
+        public PlayerInRoomItemUIManager[] playerItems;
+        public Image progress;
+        public Button ready;
+
+        [Header("Asset")] public Color readyColor;
+        public TextMeshProUGUI readyText;
+        public Button start;
+        public Color unReadyColor;
+
+        public void OnEvent(EventData photonEvent)
+        {
+            if (photonEvent.Code == LevelLoadManager.OnStartLoad) ClearRoomPlayers();
+        }
 
         private void Awake()
         {
@@ -58,7 +62,7 @@ namespace Dash.Scripts.UIManager
                     p => p.ActorNumber == PhotonNetwork.LocalPlayer.ActorNumber);
                 var table2 = new Hashtable
                 {
-                    [index + "playerTypeId"] = CloudManager.GetCurrentPlayer().typeId,
+                    [index + "playerTypeId"] = CloudManager.GetCurrentPlayer().typeId
                 };
                 PhotonNetwork.CurrentRoom.SetCustomProperties(table2);
                 PhotonNetwork.LeaveRoom();
@@ -76,13 +80,9 @@ namespace Dash.Scripts.UIManager
                     playerItems[1].Apply(PhotonNetwork.LocalPlayer);
                     var image = (Image) ready.targetGraphic;
                     if (isReady)
-                    {
                         image.color = readyColor;
-                    }
                     else
-                    {
                         image.color = unReadyColor;
-                    }
                 }
             });
             start.onClick.AddListener(() =>
@@ -175,18 +175,12 @@ namespace Dash.Scripts.UIManager
         {
             CheckCanStartIfMaster();
             if (noLocalPlayerItems.Count != PhotonNetwork.PlayerList.Length - 1)
-            {
                 foreach (var player in PhotonNetwork.PlayerList)
-                {
                     ApplyRoomPlayer(player);
-                }
-            }
             else
-            {
                 ApplyRoomPlayer(targetPlayer);
-            }
         }
-        
+
         public override void OnPlayerEnteredRoom(Player newPlayer)
         {
             CheckCanStartIfMaster();
@@ -245,7 +239,6 @@ namespace Dash.Scripts.UIManager
             {
                 var canStart = true;
                 foreach (var player in PhotonNetwork.PlayerList)
-                {
                     if (!player.IsMasterClient)
                     {
                         player.CustomProperties.TryGetValue("isReady", out var value);
@@ -255,7 +248,6 @@ namespace Dash.Scripts.UIManager
                             break;
                         }
                     }
-                }
 
                 var img = (Image) start.targetGraphic;
                 if (canStart)
@@ -287,10 +279,7 @@ namespace Dash.Scripts.UIManager
 
         private void ClearRoomPlayers()
         {
-            foreach (var playerInRoomItemUiManager in playerItems)
-            {
-                playerInRoomItemUiManager.Clear();
-            }
+            foreach (var playerInRoomItemUiManager in playerItems) playerInRoomItemUiManager.Clear();
 
             noLocalPlayerItems.Clear();
         }
@@ -322,14 +311,6 @@ namespace Dash.Scripts.UIManager
             {
                 noLocalPlayerItems.Add(player.ActorNumber, right);
                 right.Apply(player);
-            }
-        }
-
-        public void OnEvent(EventData photonEvent)
-        {
-            if (photonEvent.Code == LevelLoadManager.OnStartLoad)
-            {
-                ClearRoomPlayers();
             }
         }
     }

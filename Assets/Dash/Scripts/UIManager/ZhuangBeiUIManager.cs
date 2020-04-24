@@ -11,38 +11,38 @@ namespace Dash.Scripts.UIManager
 {
     public class ZhuangBeiUIManager : MonoBehaviour
     {
-        [Header("UI")] public Animator loadingMask;
-        public NotificationManager onSucceed;
-        public NotificationManager onError;
-
-        public Button openWeapon;
-        public Button openShengHen;
-        public Button openCaiLiao;
-        public GameObject weaponPanel;
-        public GameObject shengHenPanel;
-        public GameObject caiLiaoPanel;
-        public GameObject weaponContent;
-        public GameObject shengHenContent;
-        public GameObject caiLiaoContent;
+        public Animator animator;
         public Button backOnly;
         public Button backToDesktop;
-        public GameObject typeList;
-        public Animator animator;
-        public ShengHenInfoUIManager shengHenInfo;
-        public WeaponInfoUIManager weaponInfo;
+
+        private Button[] buttons;
+        public GameObject caiLiaoContent;
+        public GameObject caiLiaoPanel;
+        [Header("UI")] public Animator loadingMask;
+        public NotificationManager onError;
+        public NotificationManager onSucceed;
+        public Button openCaiLiao;
+        public Button openShengHen;
+
+        public Button openWeapon;
+        private GameObject[] panels;
 
 
         [Header("Assets")] public Sprite selectSprite;
-        public Sprite unSelectSprite;
-        public GameObject weaponPrefab;
+        public GameObject shengHenContent;
+        public ShengHenInfoUIManager shengHenInfo;
+        public GameObject shengHenPanel;
         public GameObject shengHenPrefab;
-        public GameObject unLoadWeaponPrefab;
-        public GameObject unLoadShengHenPrefab;
-
-        private Button[] buttons;
-        private GameObject[] panels;
-        private Dictionary<string, EWeapon> weapons;
         private Dictionary<string, EShengHen> shengHens;
+        public GameObject typeList;
+        public GameObject unLoadShengHenPrefab;
+        public GameObject unLoadWeaponPrefab;
+        public Sprite unSelectSprite;
+        public GameObject weaponContent;
+        public WeaponInfoUIManager weaponInfo;
+        public GameObject weaponPanel;
+        public GameObject weaponPrefab;
+        private Dictionary<string, EWeapon> weapons;
 
         private void Awake()
         {
@@ -56,7 +56,7 @@ namespace Dash.Scripts.UIManager
                     try
                     {
                         SelectButton(openWeapon);
-                        this.weapons = await CloudManager.GetUserWeapons();
+                        weapons = await CloudManager.GetUserWeapons();
                         LoadWeapons(weapons.Values, o => { weaponInfo.Open("强化", o, o1 => { }, null); });
                     }
                     catch (Exception e)
@@ -81,7 +81,7 @@ namespace Dash.Scripts.UIManager
                     try
                     {
                         SelectButton(openShengHen);
-                        this.shengHens = await CloudManager.GetUserShengHen();
+                        shengHens = await CloudManager.GetUserShengHen();
                         LoadShengHens(shengHens.Values, o => { shengHenInfo.Open("强化", o, o1 => { }, null); });
                     }
                     catch (Exception e)
@@ -142,17 +142,14 @@ namespace Dash.Scripts.UIManager
 
         private void SelectButton(Button button)
         {
-            for (int i = 0; i < buttons.Length; i++)
+            for (var i = 0; i < buttons.Length; i++)
             {
                 buttons[i].GetComponent<Image>().sprite = unSelectSprite;
                 panels[i].SetActive(false);
             }
 
             var index = Array.IndexOf(buttons, button);
-            if (index != -1)
-            {
-                panels[index].SetActive(true);
-            }
+            if (index != -1) panels[index].SetActive(true);
 
             button.GetComponent<Image>().sprite = selectSprite;
         }
@@ -163,17 +160,12 @@ namespace Dash.Scripts.UIManager
             backOnly.gameObject.SetActive(true);
             backToDesktop.gameObject.SetActive(false);
             animator.Play("Fade-in");
-            for (int i = 0; i < buttons.Length; i++)
-            {
-                panels[i].SetActive(false);
-            }
+            for (var i = 0; i < buttons.Length; i++) panels[i].SetActive(false);
 
             panels[0].SetActive(true);
             if (onUnload != null)
-            {
                 Instantiate(unLoadWeaponPrefab, weaponContent.transform).GetComponent<Button>().onClick
                     .AddListener(() => onUnload());
-            }
 
             LoadWeapons(weapons, callback);
         }
@@ -184,17 +176,12 @@ namespace Dash.Scripts.UIManager
             backOnly.gameObject.SetActive(true);
             backToDesktop.gameObject.SetActive(false);
             animator.Play("Fade-in");
-            for (int i = 0; i < buttons.Length; i++)
-            {
-                panels[i].SetActive(false);
-            }
+            for (var i = 0; i < buttons.Length; i++) panels[i].SetActive(false);
 
             panels[1].SetActive(true);
             if (onUnload != null)
-            {
                 Instantiate(unLoadShengHenPrefab, shengHenContent.transform).GetComponent<Button>().onClick
                     .AddListener(() => onUnload());
-            }
 
             LoadShengHens(shengHens, callback);
         }
@@ -205,7 +192,7 @@ namespace Dash.Scripts.UIManager
             typeList.SetActive(true);
             backOnly.gameObject.SetActive(false);
             backToDesktop.gameObject.SetActive(true);
-            for (int i = 0; i < buttons.Length; i++)
+            for (var i = 0; i < buttons.Length; i++)
             {
                 buttons[i].GetComponent<Image>().sprite = unSelectSprite;
                 panels[i].SetActive(false);
@@ -231,15 +218,9 @@ namespace Dash.Scripts.UIManager
             StopAllCoroutines();
             weapons = null;
             shengHens = null;
-            foreach (Transform tf in weaponContent.transform)
-            {
-                Destroy(tf.gameObject);
-            }
+            foreach (Transform tf in weaponContent.transform) Destroy(tf.gameObject);
 
-            foreach (Transform tf in shengHenContent.transform)
-            {
-                Destroy(tf.gameObject);
-            }
+            foreach (Transform tf in shengHenContent.transform) Destroy(tf.gameObject);
         }
 
         private void BeginWaitNetwork()

@@ -21,29 +21,31 @@ namespace Dash.Scripts.Levels.Core
 {
     public class LevelLoadManager : MonoBehaviour, IOnEventCallback
     {
-        public Image loadingRoot;
-        public Image progress;
-        public TextMeshProUGUI text;
-        public GuidIndexer player;
-        public OnLevelLoadedEvent onLevelLoadedEvent;
         public const int OnStartLoad = 1;
         public const int OnPlayerLoaded = 2;
         public const int OnLoadComplete = 3;
-        private readonly HashSet<int> playerLoaded = new HashSet<int>();
         private readonly HashSet<int> loadComplete = new HashSet<int>();
+        private readonly HashSet<int> playerLoaded = new HashSet<int>();
+        public Image loadingRoot;
+        public OnLevelLoadedEvent onLevelLoadedEvent;
+        public GuidIndexer player;
+        public Image progress;
+        public TextMeshProUGUI text;
 
-        public class OnLevelLoadedEvent : UnityEvent
+        public void OnEvent(EventData photonEvent)
         {
+            if (photonEvent.Code == OnStartLoad)
+                StartCoroutine(DoLoadLevel());
+            else if (photonEvent.Code == OnPlayerLoaded)
+                playerLoaded.Add((int) photonEvent.CustomData);
+            else if (photonEvent.Code == OnLoadComplete) loadComplete.Add((int) photonEvent.CustomData);
         }
 
         private void Awake()
         {
             PhotonNetwork.AddCallbackTarget(this);
             DontDestroyOnLoad(gameObject);
-            if (onLevelLoadedEvent == null)
-            {
-                onLevelLoadedEvent = new OnLevelLoadedEvent();
-            }
+            if (onLevelLoadedEvent == null) onLevelLoadedEvent = new OnLevelLoadedEvent();
         }
 
         private void OnDestroy()
@@ -73,7 +75,6 @@ namespace Dash.Scripts.Levels.Core
 
         private IEnumerator DoLoadLevel()
         {
-
             text.text = "Loading";
             PhotonNetwork.CurrentRoom.CustomProperties.TryGetValue("typeId", out var typeId);
             var scene = GameConfigManager.guanQiaInfoTable[(int) typeId];
@@ -135,20 +136,8 @@ namespace Dash.Scripts.Levels.Core
             Destroy(gameObject);
         }
 
-        public void OnEvent(EventData photonEvent)
+        public class OnLevelLoadedEvent : UnityEvent
         {
-            if (photonEvent.Code == OnStartLoad)
-            {
-                StartCoroutine(DoLoadLevel());
-            }
-            else if (photonEvent.Code == OnPlayerLoaded)
-            {
-                playerLoaded.Add((int) photonEvent.CustomData);
-            }
-            else if (photonEvent.Code == OnLoadComplete)
-            {
-                loadComplete.Add((int) photonEvent.CustomData);
-            }
         }
     }
 }

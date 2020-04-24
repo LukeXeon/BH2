@@ -18,55 +18,54 @@ namespace Dash.Scripts.UIManager
 {
     public class BootstrapUIManager : MonoBehaviourPunCallbacks
     {
-        public Sprite[] sprites;
-
-        public VideoPlayer videoPlayer;
-
-        public ModalWindowTabs tabs;
-
-        public NotificationManager notifySucceed;
-
-        public NotificationManager notifyError;
-
-        public Canvas canvas;
+        public AudioSource audioSource;
 
         public Image background;
 
-        public GameObject progressBarRoot;
+        public Button backToLogin;
 
-        public TextMeshProUGUI progressBarText;
+        public Canvas canvas;
 
-        public Image progressBar;
+        public Button githubLogin;
 
-        public Animator waitWindow;
+        public Button loadNext;
 
-        public ModalWindowManager windowManager;
-
-        public AudioSource audioSource;
-
-        [Header("login")] public TMP_InputField username;
-
-        public TMP_InputField password;
+        private AsyncOperation loadSceneAsync;
 
         public Button login;
 
-        [Header("signUp")] public TMP_InputField usernameInSignUp;
+        public NotificationManager notifyError;
+
+        public NotificationManager notifySucceed;
+
+        public TMP_InputField password;
 
         public TMP_InputField passwordInSignUp;
 
         public TMP_InputField passwordInSignUp2;
 
-        public Button githubLogin;
+        public Image progressBar;
+
+        public GameObject progressBarRoot;
+
+        public TextMeshProUGUI progressBarText;
 
         public Button signUp;
+        public Sprite[] sprites;
+
+        public ModalWindowTabs tabs;
+
+        [Header("login")] public TMP_InputField username;
+
+        [Header("signUp")] public TMP_InputField usernameInSignUp;
+
+        public VideoPlayer videoPlayer;
+
+        public Animator waitWindow;
+
+        public ModalWindowManager windowManager;
 
         public GameObject yiJingDengLuRoot;
-
-        public Button loadNext;
-
-        public Button backToLogin;
-
-        private AsyncOperation loadSceneAsync;
 
 
         private void Awake()
@@ -226,11 +225,8 @@ namespace Dash.Scripts.UIManager
             var t = PlayerPrefs.GetString("token");
             windowManager.gameObject.SetActive(false);
             if (string.IsNullOrEmpty(t))
-            {
                 StartCoroutine(ShowWindow1());
-            }
             else
-            {
                 try
                 {
                     await CloudManager.LogInWithToken(t);
@@ -241,7 +237,6 @@ namespace Dash.Scripts.UIManager
                     Debug.Log(e);
                     StartCoroutine(ShowWindow1());
                 }
-            }
         }
 
         private IEnumerator ShowWindow1()

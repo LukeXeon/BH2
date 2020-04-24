@@ -8,12 +8,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using Dash.Scripts.Config;
 using Dash.Scripts.Core;
+using Flurl;
 using LeanCloud;
 using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.Networking;
 using Random = UnityEngine.Random;
-using Url = Flurl.Url;
 
 namespace Dash.Scripts.Cloud
 {
@@ -24,6 +24,8 @@ namespace Dash.Scripts.Cloud
         private const string errorMessageInLogIn = "网络错误或玩家不存在";
 
         private const string errorMessageInternal = "游戏内部错误";
+
+        private static EUserMate localUserMate;
 
         public static string GetLogInUrl()
         {
@@ -42,8 +44,6 @@ namespace Dash.Scripts.Cloud
         {
             return @"http://localhost:10086/oauth/redirect/";
         }
-
-        private static EUserMate localUserMate;
 
         private static EWeapon NewWeapon(int typeId)
         {
@@ -66,14 +66,14 @@ namespace Dash.Scripts.Cloud
 
         private static List<AVObject> NewPlayer(int typeId)
         {
-            List<AVObject> list = new List<AVObject>();
+            var list = new List<AVObject>();
             var player = new EPlayer();
             player.user = AVUser.CurrentUser;
             player.typeId = typeId;
             player.exp = 0;
             var inUseWeapon = new List<EInUseWeapon>();
             var inUseShengHen = new List<EInUseShengHen>();
-            for (int i = 0; i < 3; i++)
+            for (var i = 0; i < 3; i++)
             {
                 inUseWeapon.Add(new EInUseWeapon
                 {
@@ -185,19 +185,13 @@ namespace Dash.Scripts.Cloud
                 .Include("player")
                 .WhereEqualTo("user", AVUser.CurrentUser)
                 .FindAsync();
-            foreach (var item in await t0)
-            {
-                e.weapons.Add(item.ObjectId, item);
-            }
+            foreach (var item in await t0) e.weapons.Add(item.ObjectId, item);
 
             var t1 = new AVQuery<EShengHen>()
                 .Include("player")
                 .WhereEqualTo("user", AVUser.CurrentUser)
                 .FindAsync();
-            foreach (var item in await t1)
-            {
-                e.shengHens.Add(item.ObjectId, item);
-            }
+            foreach (var item in await t1) e.shengHens.Add(item.ObjectId, item);
 
             var t2 = new AVQuery<EInUseWeapon>()
                 .Include("player")
@@ -253,14 +247,9 @@ namespace Dash.Scripts.Cloud
         public static async Task SignUp(string username, string password, string password2)
         {
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password) || string.IsNullOrEmpty(password2))
-            {
                 throw new ArgumentException("用户名和密码不能为空");
-            }
 
-            if (password != password2)
-            {
-                throw new ArgumentException("两次输入的密码不一致");
-            }
+            if (password != password2) throw new ArgumentException("两次输入的密码不一致");
 
             var myUser = new AVUser
             {
@@ -305,31 +294,10 @@ namespace Dash.Scripts.Cloud
         public static async Task LogIn(string username, string password)
         {
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
-            {
                 throw new ArgumentException("用户名和密码不能为空");
-            }
 
             await AVUser.LogInAsync(username, password);
             await HandleLogin();
-        }
-
-        private struct UnityWebRequestAwaitable : INotifyCompletion
-        {
-            private readonly UnityWebRequestAsyncOperation operation;
-
-            public UnityWebRequestAwaitable(UnityWebRequestAsyncOperation operation)
-            {
-                this.operation = operation;
-            }
-
-            public void OnCompleted(Action continuation)
-            {
-                operation.completed += o => continuation();
-            }
-
-            public bool IsCompleted => operation.isDone;
-
-            public UnityWebRequest GetResult() => operation.webRequest;
         }
 
         private static UnityWebRequestAwaitable GetAwaiter(this UnityWebRequestAsyncOperation operation)
@@ -346,10 +314,7 @@ namespace Dash.Scripts.Cloud
             var ctxTask = http.GetContextAsync();
             var cancelTask = Task.Run(async () =>
                 {
-                    while (!cancellationToken.IsCancellationRequested && !ctxTask.IsCompleted)
-                    {
-                        await Task.Yield();
-                    }
+                    while (!cancellationToken.IsCancellationRequested && !ctxTask.IsCompleted) await Task.Yield();
                 }
                 , cancellationToken);
             await Task.WhenAny(cancelTask, ctxTask);
@@ -371,7 +336,7 @@ namespace Dash.Scripts.Cloud
             await wr.SendWebRequest();
             var token =
                 JsonConvert.DeserializeObject<Dictionary<string, string>>(wr.downloadHandler.text)["access_token"];
-            UnityWebRequest request = UnityWebRequest.Get("https://api.github.com/user");
+            var request = UnityWebRequest.Get("https://api.github.com/user");
             request.SetRequestHeader("Authorization", "token " + token);
             request.SetRequestHeader("Accept", "application/json");
             await request.SendWebRequest();
@@ -398,7 +363,7 @@ namespace Dash.Scripts.Cloud
             EShengHen shengHen
         )
         {
-            List<AVObject> toUpdate = new List<AVObject> {index};
+            var toUpdate = new List<AVObject> {index};
             var player = index.player;
             var old = index.shengHen;
             if (old != null)
@@ -424,7 +389,7 @@ namespace Dash.Scripts.Cloud
             EWeapon weapon
         )
         {
-            List<AVObject> toUpdate = new List<AVObject> {index};
+            var toUpdate = new List<AVObject> {index};
             var player = index.player;
             var old = index.weapon;
             if (old != null)
@@ -463,7 +428,7 @@ namespace Dash.Scripts.Cloud
             {
                 player = player,
                 weapons = w.Where(i => i.weapon != null).Select(i => i.weapon).ToList(),
-                shengHens = s.Where(i => i.shengHen != null).Select(i => i.shengHen).ToList(),
+                shengHens = s.Where(i => i.shengHen != null).Select(i => i.shengHen).ToList()
             };
         }
 
@@ -500,6 +465,28 @@ namespace Dash.Scripts.Cloud
             localUserMate.nameInGame = name;
             await localUserMate.SaveAsync();
             userInfoChanged?.Invoke(localUserMate);
+        }
+
+        private struct UnityWebRequestAwaitable : INotifyCompletion
+        {
+            private readonly UnityWebRequestAsyncOperation operation;
+
+            public UnityWebRequestAwaitable(UnityWebRequestAsyncOperation operation)
+            {
+                this.operation = operation;
+            }
+
+            public void OnCompleted(Action continuation)
+            {
+                operation.completed += o => continuation();
+            }
+
+            public bool IsCompleted => operation.isDone;
+
+            public UnityWebRequest GetResult()
+            {
+                return operation.webRequest;
+            }
         }
     }
 }

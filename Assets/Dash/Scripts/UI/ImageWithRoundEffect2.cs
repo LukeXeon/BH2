@@ -7,24 +7,23 @@ namespace Dash.Scripts.UI
     [RequireComponent(typeof(Image), typeof(RectTransform))]
     public class ImageWithRoundEffect2 : MonoBehaviour
     {
-        private readonly int prop_halfSize = Shader.PropertyToID("_halfSize");
-        private readonly int prop_radiuses = Shader.PropertyToID("_r");
-
-        private readonly int prop_rect2props = Shader.PropertyToID("_rect2props");
-
         // Vector2.right rotated clockwise by 45 degrees
         private static readonly Vector2 wNorm = new Vector2(.7071068f, -.7071068f);
 
         // Vector2.right rotated counter-clockwise by 45 degrees
         private static readonly Vector2 hNorm = new Vector2(.7071068f, .7071068f);
+        private readonly int prop_halfSize = Shader.PropertyToID("_halfSize");
+        private readonly int prop_radiuses = Shader.PropertyToID("_r");
+
+        private readonly int prop_rect2props = Shader.PropertyToID("_rect2props");
+        private Image image;
+        private Material material;
 
         public Vector4 r;
-        private Material material;
 
         // xy - position,
         // zw - halfSize
-        [HideInInspector, SerializeField] private Vector4 rect2props;
-        private Image image;
+        [HideInInspector] [SerializeField] private Vector4 rect2props;
 
         private void Awake()
         {
@@ -36,7 +35,7 @@ namespace Dash.Scripts.UI
             Refresh();
         }
 
-        void OnRectTransformDimensionsChange()
+        private void OnRectTransformDimensionsChange()
         {
             Refresh();
         }
@@ -69,7 +68,7 @@ namespace Dash.Scripts.UI
             // Vector that goes from point E to point G, which is top-left of rect2
             var egVec = hNorm * Vector2.Dot(efVec, hNorm);
             // Position of point E relative to center of coord system
-            var ePoint = new Vector2(r.x - (size.x / 2), size.y / 2);
+            var ePoint = new Vector2(r.x - size.x / 2, size.y / 2);
             // Origin of rect2 relative to center of coord system
             // ePoint + egVec == vector to top-left corner of rect2
             // wNorm * halfWidth + hNorm * -halfHeight == vector from top-left corner to center
@@ -80,30 +79,18 @@ namespace Dash.Scripts.UI
 
         private void InitImage()
         {
-            if (image == null)
-            {
-                image = GetComponent<Image>();
-            }
+            if (image == null) image = GetComponent<Image>();
 
-            if (image == null)
-            {
-                image = gameObject.AddComponent<Image>();
-            }
+            if (image == null) image = gameObject.AddComponent<Image>();
         }
 
         private void Refresh()
         {
-            if (Application.isEditor || image == null)
-            {
-                InitImage();
-            }
+            if (Application.isEditor || image == null) InitImage();
 
             var rect = ((RectTransform) transform).rect;
             RecalculateProps(rect.size);
-            if (material == null)
-            {
-                material = new Material(Shader.Find("UI/RoundedCorners/IndependentRoundedCorners"));
-            }
+            if (material == null) material = new Material(Shader.Find("UI/RoundedCorners/IndependentRoundedCorners"));
 
             material.SetVector(prop_rect2props, rect2props);
             material.SetVector(prop_halfSize, rect.size * .5f);

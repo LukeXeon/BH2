@@ -1,20 +1,17 @@
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using Dash.Scripts.Cloud;
 using Dash.Scripts.Levels.Config;
 using Dash.Scripts.UI;
-using ExitGames.Client.Photon;
 using Michsky.UI.ModernUIPack;
-using Photon.Pun;
 using UnityEngine;
 
 namespace Dash.Scripts.UIManager
 {
     public class BeforeJoinRoomAction
     {
-        private readonly NotificationManager onError;
         private readonly Animator loadingMask;
+        private readonly NotificationManager onError;
 
         public BeforeJoinRoomAction(Animator loadingMask, NotificationManager onError)
         {

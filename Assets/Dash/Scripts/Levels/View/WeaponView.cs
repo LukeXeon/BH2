@@ -11,15 +11,11 @@ namespace Dash.Scripts.Levels.View
 
         public void OnInitialize(PlayerView view)
         {
-            this.playerView = view;
+            playerView = view;
             if (playerView.gameObject.layer == LayerMask.NameToLayer("Player"))
-            {
                 targetMask = LayerMask.GetMask("NPC");
-            }
             else
-            {
                 targetMask = LayerMask.GetMask("Player");
-            }
         }
 
         public abstract void OnFire();

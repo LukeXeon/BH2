@@ -1,7 +1,6 @@
 using System;
-using Dash.Scripts.Config;
-using Dash.Scripts.Levels;
 using Dash.Scripts.Cloud;
+using Dash.Scripts.Config;
 using Dash.Scripts.Levels.Config;
 using TMPro;
 using UnityEngine;
@@ -11,20 +10,20 @@ namespace Dash.Scripts.UIManager
 {
     public class ShengHenInfoUIManager : MonoBehaviour
     {
-        public Image image;
-        public GameObject root;
-        public TextMeshProUGUI displayName;
-        public TextMeshProUGUI fangYuLi;
-        public TextMeshProUGUI shengMingZhi;
-        public TextMeshProUGUI nengLiangZhi;
-        public TextMeshProUGUI xiaoGuo;
-        public Button button;
-        public TextMeshProUGUI btnText;
+        public Animator animator;
         public Button back;
+        public TextMeshProUGUI btnText;
+        public Button button;
+        public TextMeshProUGUI displayName;
         public Image exp;
         public TextMeshProUGUI expText;
+        public TextMeshProUGUI fangYuLi;
+        public Image image;
         public TextMeshProUGUI levelText;
-        public Animator animator;
+        public TextMeshProUGUI nengLiangZhi;
+        public GameObject root;
+        public TextMeshProUGUI shengMingZhi;
+        public TextMeshProUGUI xiaoGuo;
 
         public void Open(string btnTextValue, EShengHen shengHen, Action<EShengHen> callback, Action onClose)
         {
@@ -40,10 +39,7 @@ namespace Dash.Scripts.UIManager
                 button.gameObject.SetActive(false);
             }
 
-            if (onClose != null)
-            {
-                back.onClick.AddListener(() => { onClose(); });
-            }
+            if (onClose != null) back.onClick.AddListener(() => { onClose(); });
 
             back.onClick.AddListener(Close);
             root.SetActive(true);
@@ -55,13 +51,9 @@ namespace Dash.Scripts.UIManager
             shengMingZhi.text = runtime.shengMingZhi.ToString();
             nengLiangZhi.text = runtime.shengMingZhi.ToString();
             if (info.xiaoGuo != null)
-            {
                 xiaoGuo.text = info.xiaoGuo.text;
-            }
             else
-            {
                 xiaoGuo.text = "全部木大";
-            }
 
             var l = GameConfigManager.GetShengHenLevel(shengHen.exp);
             expText.text = l.currentExp + "/" + l.maxExp;

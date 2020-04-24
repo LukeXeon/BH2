@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -7,14 +6,14 @@ namespace Dash.Scripts.UIManager
     [RequireComponent(typeof(RectTransform), typeof(GridLayoutGroup))]
     public class GridLayoutGroupAutoExpand : MonoBehaviour
     {
-        public int rowCount = 2;
+        private GridLayoutGroup gridLayoutGroup;
 
         private RectTransform rectTransform;
-        private GridLayoutGroup gridLayoutGroup;
+        public int rowCount = 2;
 
         private void Awake()
         {
-            rectTransform  = transform as RectTransform;
+            rectTransform = transform as RectTransform;
             gridLayoutGroup = GetComponent<GridLayoutGroup>();
         }
 
@@ -27,8 +26,8 @@ namespace Dash.Scripts.UIManager
         {
             Apply();
         }
-        
-        void OnRectTransformDimensionsChange()
+
+        private void OnRectTransformDimensionsChange()
         {
             Awake();
             Apply();
