@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections;
 using Dash.Scripts.Cloud;
+using Dash.Scripts.Config;
 using Dash.Scripts.UI;
 using Michsky.UI.ModernUIPack;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
@@ -40,6 +42,20 @@ namespace Dash.Scripts.UIManager
 
         public GameObject topBar;
 
+        public Image icon;
+
+        public TextMeshProUGUI displayName;
+
+        public TextMeshProUGUI expText;
+
+        public Image expBar;
+
+        public TextMeshProUGUI tiLiText;
+
+        public TextMeshProUGUI levelText;
+
+        public TextMeshProUGUI shuiJingText;
+
         [Header("GuanQia")] public GuanQiaUIManager GuanQia;
 
         public Button guanQiaBack;
@@ -74,6 +90,10 @@ namespace Dash.Scripts.UIManager
 
         private void Awake()
         {
+            CloudManagerOnUserInfoChanged(CloudManager.GetUserInfo());
+            CloudManagerOnPlayerChanged(CloudManager.GetCurrentPlayer());
+            CloudManager.playerChanged += CloudManagerOnPlayerChanged;
+            CloudManager.userInfoChanged+= CloudManagerOnUserInfoChanged;
             var music = FindObjectOfType<BackgroundMusicPlayer>();
             var info = music.animator.GetCurrentAnimatorStateInfo(0);
             music.animator.Play(info.shortNameHash, 0, 1f);
@@ -143,26 +163,59 @@ namespace Dash.Scripts.UIManager
             });
         }
 
+        private void CloudManagerOnUserInfoChanged(EUserMate obj)
+        {
+            displayName.text = obj.nameInGame;
+            tiLiText.text = obj.tiLi.ToString();
+            shuiJingText.text = obj.shuiJing.ToString();
+            expText.text = obj.exp.ToString();
+        }
+
+        private void CloudManagerOnPlayerChanged(EPlayer obj)
+        {
+            var info = GameConfigManager.playerTable[obj.typeId];
+            icon.sprite = info.icon;
+        }
+
+        private void OnDestroy()
+        {
+            CloudManager.userInfoChanged -= CloudManagerOnUserInfoChanged;
+            CloudManager.playerChanged -= CloudManagerOnPlayerChanged;
+        }
+
         private IEnumerator Start()
         {
-            topBar.SetActive(false);
-            fullMask.gameObject.SetActive(true);
-            fullMask.alpha = 1;
-            var image = fullMask.GetComponent<Image>();
-            image.sprite = BootstrapUIManager.bootBackground;
-            yield return Resources.UnloadUnusedAssets();
-            GC.Collect();
-            yield return new WaitForEndOfFrame();
-            while (fullMask.alpha > 0f)
+            if (BootstrapUIManager.bootBackground)
             {
-                fullMask.alpha -= Time.deltaTime * 4;
+                topBar.SetActive(false);
+                fullMask.gameObject.SetActive(true);
+                fullMask.alpha = 1;
+                var image = fullMask.GetComponent<Image>();
+                image.sprite = BootstrapUIManager.bootBackground;
+                BootstrapUIManager.bootBackground = null;
+                yield return Resources.UnloadUnusedAssets();
+                GC.Collect();
                 yield return new WaitForEndOfFrame();
-            }
+                while (fullMask.alpha > 0f)
+                {
+                    fullMask.alpha -= Time.deltaTime * 4;
+                    yield return new WaitForEndOfFrame();
+                }
 
-            Destroy(fullMask.gameObject);
-            fullMask = null;
-            topBar.SetActive(true);
-            animator.Play("Fade-in");
+                Destroy(fullMask.gameObject);
+                fullMask = null;
+                topBar.SetActive(true);
+                animator.Play("Fade-in");
+            }
+            else
+            {
+                Destroy(fullMask.gameObject);
+                yield return Resources.UnloadUnusedAssets();
+                GC.Collect();
+                yield return new WaitForEndOfFrame();
+                topBar.SetActive(true);
+                animator.Play("Fade-in");
+            }
         }
 
         private void CancelWaitFinish()

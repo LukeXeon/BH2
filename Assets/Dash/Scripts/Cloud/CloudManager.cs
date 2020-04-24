@@ -34,6 +34,10 @@ namespace Dash.Scripts.Cloud
             return login.ToString();
         }
 
+        public static event Action<EPlayer> playerChanged;
+
+        public static event Action<EUserMate> userInfoChanged;
+
         private static string GetCallbackUrl()
         {
             return @"http://localhost:10086/oauth/redirect/";
@@ -185,6 +189,7 @@ namespace Dash.Scripts.Cloud
             {
                 e.weapons.Add(item.ObjectId, item);
             }
+
             var t1 = new AVQuery<EShengHen>()
                 .Include("player")
                 .WhereEqualTo("user", AVUser.CurrentUser)
@@ -193,6 +198,7 @@ namespace Dash.Scripts.Cloud
             {
                 e.shengHens.Add(item.ObjectId, item);
             }
+
             var t2 = new AVQuery<EInUseWeapon>()
                 .Include("player")
                 .Include("weapon")
@@ -213,6 +219,7 @@ namespace Dash.Scripts.Cloud
 
                 inUse.weapons.Add(item);
             }
+
             var t3 = new AVQuery<EInUseShengHen>()
                 .Include("player")
                 .Include("shengHen")
@@ -233,7 +240,7 @@ namespace Dash.Scripts.Cloud
 
                 inUse.shengHens.Add(item);
             }
-            
+
             foreach (var inUse in e.players.Values)
             {
                 inUse.shengHens.Sort((o1, o2) => o1.index.CompareTo(o2.index));
@@ -464,7 +471,9 @@ namespace Dash.Scripts.Cloud
         {
             localUserMate.player = player;
             await localUserMate.SaveAsync();
+            playerChanged?.Invoke(player);
         }
+
 
         public static async Task LogOut()
         {
@@ -481,10 +490,16 @@ namespace Dash.Scripts.Cloud
             return localUserMate.nameInGame;
         }
 
+        public static EUserMate GetUserInfo()
+        {
+            return localUserMate;
+        }
+
         public static async Task SetNameInGame(string name)
         {
             localUserMate.nameInGame = name;
             await localUserMate.SaveAsync();
+            userInfoChanged?.Invoke(localUserMate);
         }
     }
 }

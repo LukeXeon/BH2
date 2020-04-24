@@ -33,7 +33,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_AnchoredPosition.x
-    path: Root/Image (1)
+    path: Root/Top
     classID: 224
     script: {fileID: 0}
   - curve:
@@ -61,7 +61,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_AnchoredPosition.y
-    path: Root/Image (1)
+    path: Root/Top
     classID: 224
     script: {fileID: 0}
   m_PPtrCurves: []
@@ -73,14 +73,14 @@ AnimationClip:
   m_ClipBindingConstant:
     genericBindings:
     - serializedVersion: 2
-      path: 3599258825
+      path: 3685470990
       attribute: 538195251
       script: {fileID: 0}
       typeID: 224
       customType: 28
       isPPtrCurve: 0
     - serializedVersion: 2
-      path: 3599258825
+      path: 3685470990
       attribute: 1460864421
       script: {fileID: 0}
       typeID: 224
@@ -124,7 +124,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_AnchoredPosition.x
-    path: Root/Image (1)
+    path: Root/Top
     classID: 224
     script: {fileID: 0}
   - curve:
@@ -152,7 +152,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_AnchoredPosition.y
-    path: Root/Image (1)
+    path: Root/Top
     classID: 224
     script: {fileID: 0}
   m_EulerEditorCurves: []

@@ -129,6 +129,7 @@ namespace Dash.Scripts.UIManager
 
         public override void OnJoinedRoom()
         {
+            isOpen = true;
             ClearRoomPlayers();
             InstallUIMasterOrClient();
             var musicPlayer = FindObjectOfType<BackgroundMusicPlayer>();
@@ -158,11 +159,15 @@ namespace Dash.Scripts.UIManager
 
         public override void OnLeftRoom()
         {
-            animator.Play("Fade-out");
-            var rtcEngine = IRtcEngine.QueryEngine();
-            rtcEngine?.LeaveChannel();
-            ClearRoomPlayers();
-            FindObjectOfType<BackgroundMusicPlayer>()?.Back();
+            if (isOpen)
+            {
+                animator.Play("Fade-out");
+                var rtcEngine = IRtcEngine.QueryEngine();
+                rtcEngine?.LeaveChannel();
+                ClearRoomPlayers();
+                FindObjectOfType<BackgroundMusicPlayer>()?.Back();
+                isOpen = false;
+            }
         }
 
         public override void OnPlayerPropertiesUpdate(Player targetPlayer, Hashtable changedProps)
@@ -180,8 +185,7 @@ namespace Dash.Scripts.UIManager
                 ApplyRoomPlayer(targetPlayer);
             }
         }
-
-
+        
         public override void OnPlayerEnteredRoom(Player newPlayer)
         {
             CheckCanStartIfMaster();

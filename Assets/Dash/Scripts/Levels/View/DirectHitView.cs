@@ -1,4 +1,3 @@
-using System.Collections;
 using UnityEngine;
 
 namespace Dash.Scripts.Levels.View
@@ -8,6 +7,8 @@ namespace Dash.Scripts.Levels.View
         public LineRenderer shootLine;
         private ParticleSystem[] particleSystems;
         private static readonly int KAIQIANG = Animator.StringToHash("kaiqiang");
+        
+        
 
         private void Awake()
         {
@@ -20,8 +21,8 @@ namespace Dash.Scripts.Levels.View
 
         public override void OnFire()
         {
-            OnSync(Vector3.zero);
-            //RpcInHost(nameof(OnSync), Vector3.zero);
+            
+            RpcInPlayerView(nameof(OnSync), Vector3.zero);
         }
         
 

@@ -65,6 +65,8 @@ MonoBehaviour:
   - OnWeaponChanged
   - OnFire0
   - OnFire
+  - OnSingleFire
+  - OnSyncSingleFireAnimation
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

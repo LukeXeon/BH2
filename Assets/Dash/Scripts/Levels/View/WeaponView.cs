@@ -14,10 +14,10 @@ namespace Dash.Scripts.Levels.View
 
         public abstract void OnFire();
 
-        public void RpcInHost(string method, params object[] objects)
+        public void RpcInPlayerView(string method, params object[] objects)
         {
             playerView.photonView.RPC(
-                nameof(playerView.OnChildCall),
+                nameof(playerView.OnChildRpc),
                 RpcTarget.All,
                 method,
                 objects

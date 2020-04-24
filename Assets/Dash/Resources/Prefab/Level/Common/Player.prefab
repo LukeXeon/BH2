@@ -396,7 +396,7 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls:
         - m_Target: {fileID: 8238277080845339809}
-          m_MethodName: OnFire
+          m_MethodName: OnSingleFireAnimationCallback
           m_Mode: 1
           m_Arguments:
             m_ObjectArgument: {fileID: 0}

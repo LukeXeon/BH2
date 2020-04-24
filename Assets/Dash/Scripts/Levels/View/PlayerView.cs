@@ -28,7 +28,6 @@ namespace Dash.Scripts.Levels.View
 
         private new Rigidbody rigidbody;
 
-
         private int flipX = 1;
 
         //Weapon
@@ -37,6 +36,7 @@ namespace Dash.Scripts.Levels.View
         private float timeBetweenBullets;
         private float lastShoot;
         private static readonly int KAIQIANG_SPEED = Animator.StringToHash("kaiqiang_speed");
+        private static readonly int HIT = Animator.StringToHash("hit");
 
 
         [Serializable]
@@ -44,8 +44,9 @@ namespace Dash.Scripts.Levels.View
         {
         }
 
-        private void Awake()
+        protected override void Awake()
         {
+            base.Awake();
             rigidbody = GetComponent<Rigidbody>();
             photonView = GetComponent<PhotonView>();
             if (onPlayerLoadedEvent == null)
@@ -85,22 +86,29 @@ namespace Dash.Scripts.Levels.View
             lastShoot = 0;
             timeBetweenBullets = 1f / weaponInfoAsset.sheShu;
         }
-
-        //首先这肯定是isMine==true的情况下调用的
-        [PunRPC]
-        public void OnFire()
+        
+        public void OnSingleFireAnimationCallback()
         {
-            weaponView.OnFire();
+            if (photonView.IsMine)
+            {
+                weaponView.OnFire();
+            }
         }
 
         [PunRPC]
-        public void OnFire0()
+        public void OnSyncSingleFireAnimation()
         {
             animator.SetTrigger(KAIQIANG);
         }
 
+        public override void OnDamage(int value)
+        {
+            base.OnDamage(value);
+            animator.SetTrigger(HIT);
+        }
+
         [PunRPC]
-        public void OnChildCall(string method, object[] args)
+        public void OnChildRpc(string method, object[] args)
         {
             if (weaponView)
             {
@@ -137,13 +145,13 @@ namespace Dash.Scripts.Levels.View
                     //如果是连射的且按键按下，则发射一颗子弹
                     if (weaponInfoAsset.weaponType.canLianShe && isKaiQiangPressed)
                     {
-                        photonView.RPC(nameof(OnFire), RpcTarget.All);
+                        weaponView.OnFire();
                         lastShoot = time;
                     }
-                    //否则，该帧如果按下键才会发射单射武器
+                    //否则，该帧如果按下键才会发射单射武器，需要先同步动画
                     else if (ETCInput.GetButtonDown("kaiqiang"))
                     {
-                        photonView.RPC(nameof(OnFire0), RpcTarget.All);
+                        photonView.RPC(nameof(OnSyncSingleFireAnimation), RpcTarget.All);
                         lastShoot = time;
                     }
                 }
