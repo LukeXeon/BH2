@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Dash.Scripts.Levels.View;
 using Photon.Pun;
 using Spine.Unity;
@@ -14,7 +15,16 @@ namespace Dash.Scripts.Levels.LevelManager.Level1
         public Animator animator;
         public SkeletonMecanim mecanim;
         [Header("Config")] public float distance;
-        public float suoDiBanJing;
+        public L1NPC1Config config;
+        [Serializable]
+        public struct L1NPC1Config
+        {
+            public float suoDiBanJing;
+            public int gongJiLi1;
+            public int gongJiLi2;
+            public int fangYuLi;
+            public int yiDongSuDu;
+        }
 
         private int IS_RUN;
         private int playerLayerMask;
@@ -44,7 +54,7 @@ namespace Dash.Scripts.Levels.LevelManager.Level1
                 {
                     Physics.OverlapSphereNonAlloc(
                         transform.position,
-                        suoDiBanJing,
+                        config.suoDiBanJing,
                         targetCollider,
                         playerLayerMask
                     );

@@ -48,7 +48,6 @@ namespace Dash.Scripts.Levels.View
                     Debug.Log(actorView.gameObject);
                     if (actorView)
                     {
-                        Debug.Log(actorView.gameObject);
                         var value = data.gongJiLi;
                         actorView.photonView.RPC(nameof(actorView.OnDamage), RpcTarget.All, value);
                         RpcInPlayerView(nameof(OnSync), position, shootHit.point);

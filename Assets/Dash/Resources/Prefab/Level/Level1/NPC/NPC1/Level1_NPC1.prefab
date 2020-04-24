@@ -418,7 +418,12 @@ MonoBehaviour:
   animator: {fileID: 2545382971944027311}
   mecanim: {fileID: 2545382971944027308}
   distance: 10
-  suoDiBanJing: 99999
+  config:
+    suoDiBanJing: 10
+    gongJiLi1: 0
+    gongJiLi2: 0
+    fangYuLi: 0
+    yiDongSuDu: 0
 --- !u!195 &1140673427
 NavMeshAgent:
   m_ObjectHideFlags: 0
