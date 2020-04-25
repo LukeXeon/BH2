@@ -21,7 +21,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &8238277080845339818
 Transform:
   m_ObjectHideFlags: 0
@@ -105,15 +105,14 @@ MonoBehaviour:
   onActorDamageEvent:
     m_PersistentCalls:
       m_Calls: []
-  photonView: {fileID: 0}
-  speed: 10
-  poseManager: {fileID: 8238277081177272655}
-  mecanim: {fileID: 8238277081177272654}
   animator: {fileID: 8238277081177272641}
   bulletLocator: {fileID: 0}
+  mecanim: {fileID: 8238277081177272654}
   onPlayerLoadedEvent:
     m_PersistentCalls:
       m_Calls: []
+  poseManager: {fileID: 8238277081177272655}
+  speed: 10
 --- !u!114 &-4584323755285702024
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -297,10 +296,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animator: {fileID: 8238277081177272641}
-  skeletonMecanim: {fileID: 8238277081177272654}
   framework: {fileID: 9100000, guid: 453ca6cd443cdc943a43ee7f21feb68f, type: 2}
-  source: {fileID: 9100000, guid: ff8fdfbf136bfb949bc451f7e18543a2, type: 2}
   shootSpeed: 1
+  skeletonMecanim: {fileID: 8238277081177272654}
+  source: {fileID: 9100000, guid: ff8fdfbf136bfb949bc451f7e18543a2, type: 2}
 --- !u!114 &8238277081177272652
 MonoBehaviour:
   m_ObjectHideFlags: 0

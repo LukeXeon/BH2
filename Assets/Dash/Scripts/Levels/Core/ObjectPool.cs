@@ -48,8 +48,7 @@ namespace Dash.Scripts.Levels.Core
             if (prefabs != null && prefabs.Length > 0)
                 foreach (var item in prefabs)
                 {
-                    var a = item.prefab.gameObject.activeSelf;
-                    item.prefab.gameObject.SetActive(false);
+
                     var guid = item.prefab.guid;
                     var count = item.preloadAmount;
                     if (count <= 0)
@@ -59,6 +58,8 @@ namespace Dash.Scripts.Levels.Core
                     }
 
                     var stack = new Stack<GameObject>();
+                    var a = item.prefab.gameObject.activeSelf;
+                    item.prefab.gameObject.SetActive(false);
                     for (var i = 0; i < count; i++)
                     {
                         go = Instantiate(item.prefab.gameObject, inactivePoolRoot);
@@ -66,8 +67,8 @@ namespace Dash.Scripts.Levels.Core
                         stack.Push(go);
                     }
 
-                    caches.Add(guid, new CacheItem {prefabItem = item, allocCount = count, cache = stack});
                     item.prefab.gameObject.SetActive(a);
+                    caches.Add(guid, new CacheItem {prefabItem = item, allocCount = count, cache = stack});
                 }
         }
 

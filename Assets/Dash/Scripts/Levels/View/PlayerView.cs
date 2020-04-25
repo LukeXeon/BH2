@@ -25,15 +25,18 @@ namespace Dash.Scripts.Levels.View
         public Transform bulletLocator;
 
         private int flipX = 1;
-        private float lastShoot;
         public SkeletonMecanim mecanim;
         [Header("Event")] public OnPlayerLoadedEvent onPlayerLoadedEvent;
         public PoseManager poseManager;
 
         private new Rigidbody rigidbody;
         public float speed;
-        private float timeBetweenBullets;
         private WeaponView weaponView;
+
+        [Serializable]
+        public class OnPlayerLoadedEvent : UnityEvent
+        {
+        }
 
         //Weapon
         public WeaponInfoAsset weaponInfoAsset { get; private set; }
@@ -51,7 +54,10 @@ namespace Dash.Scripts.Levels.View
             base.Awake();
             rigidbody = GetComponent<Rigidbody>();
             photonView = GetComponent<PhotonView>();
-            if (onPlayerLoadedEvent == null) onPlayerLoadedEvent = new OnPlayerLoadedEvent();
+            if (onPlayerLoadedEvent == null)
+            {
+                onPlayerLoadedEvent = new OnPlayerLoadedEvent();
+            }
         }
 
         private void Start()
@@ -68,7 +74,10 @@ namespace Dash.Scripts.Levels.View
         [PunRPC]
         public void OnWeaponChanged(int typeId)
         {
-            if (weaponView) Destroy(weaponView.gameObject);
+            if (weaponView)
+            {
+                Destroy(weaponView.gameObject);
+            }
 
             weaponInfoAsset = GameConfigManager.weaponTable[typeId];
             poseManager.SetPose(weaponInfoAsset);
@@ -78,18 +87,19 @@ namespace Dash.Scripts.Levels.View
             animator.SetFloat(KAIQIANG_SPEED, poseManager.shootSpeed);
             var go = Instantiate(weaponInfoAsset.weaponView.gameObject, transform);
             weaponView = go.GetComponent<WeaponView>();
-            weaponView.OnInitialize(this);
-            lastShoot = 0;
-            timeBetweenBullets = 1f / weaponInfoAsset.sheShu;
+            weaponView.OnInitialize(this, weaponInfoAsset);
         }
 
         public void OnSingleFireAnimationCallback()
         {
-            if (photonView.IsMine) weaponView.OnFire();
+            if (photonView.IsMine)
+            {
+                weaponView.OnFire();
+            }
         }
 
         [PunRPC]
-        public void OnSyncSingleFireAnimation()
+        private void OnFireSingle()
         {
             animator.SetTrigger(KAIQIANG);
         }
@@ -123,23 +133,23 @@ namespace Dash.Scripts.Levels.View
             {
                 var isKaiQiangPressed = ETCInput.GetButton("kaiqiang");
                 //先更新动画，如果能够连射确保动画状态同步
-                if (weaponInfoAsset.weaponType.canLianShe) animator.SetBool(LIANSHE, isKaiQiangPressed);
-
-                var time = Time.time;
+                if (weaponInfoAsset.weaponType.canLianShe)
+                {
+                    animator.SetBool(LIANSHE, isKaiQiangPressed);
+                }
+                
                 //如果上次射击时间间隔已过
-                if (time - lastShoot >= timeBetweenBullets)
+                if (weaponView.canFire)
                 {
                     //如果是连射的且按键按下，则发射一颗子弹
                     if (weaponInfoAsset.weaponType.canLianShe && isKaiQiangPressed)
                     {
                         weaponView.OnFire();
-                        lastShoot = time;
                     }
                     //否则，该帧如果按下键才会发射单射武器，需要先同步动画
                     else if (ETCInput.GetButtonDown("kaiqiang"))
                     {
-                        photonView.RPC(nameof(OnSyncSingleFireAnimation), RpcTarget.All);
-                        lastShoot = time;
+                        photonView.RPC(nameof(OnFireSingle), RpcTarget.All);
                     }
                 }
 
@@ -175,19 +185,12 @@ namespace Dash.Scripts.Levels.View
 
                 if (h > 0)
                     flipX = 1;
-                else if (h < 0) 
+                else if (h < 0)
                     flipX = -1;
-                
             }
 
 
             mecanim.Skeleton.ScaleX = flipX;
-        }
-
-
-        [Serializable]
-        public class OnPlayerLoadedEvent : UnityEvent
-        {
         }
     }
 }
