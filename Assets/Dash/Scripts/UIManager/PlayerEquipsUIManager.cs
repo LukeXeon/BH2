@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Dash.Scripts.Levels.View;
+using Dash.Scripts.GamePlay.View;
 using Spine;
 using Spine.Unity;
 using UnityEngine;

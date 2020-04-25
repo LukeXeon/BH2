@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Dash.Scripts.Levels.View
+namespace Dash.Scripts.GamePlay.View
 {
     public class AudioView : MonoBehaviour
     {
@@ -33,6 +33,14 @@ namespace Dash.Scripts.Levels.View
                     it = it.Next;
                 }
             }
+        }
+
+        public static AudioView Create(Transform root)
+        {
+            var go = new GameObject("AudioSources");
+            go.transform.SetParent(root);
+            go.transform.localPosition = Vector3.zero;
+            return go.AddComponent<AudioView>();
         }
 
         public AudioSource GetOrCreateSource()

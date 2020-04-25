@@ -12,10 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c2facfaac8824fa68671c3f618cf3a45, type: 3}
   m_Name: LevelInfo
   m_EditorClassIdentifier: 
-  shengHengMaxLevel: 30
-  shengHengBaseLevelExp: 500
-  weaponMaxLevel: 30
-  weaponBaseLevelExp: 500
-  playerMaxLevel: 80
   playerBaseLevelExp: 1000
   playerLuckDrawExpAddOnce: 1
+  playerMaxLevel: 80
+  shengHengBaseLevelExp: 500
+  shengHengMaxLevel: 30
+  userBaseLevelExp: 1000
+  userMaxLevel: 80
+  weaponBaseLevelExp: 500
+  weaponMaxLevel: 30

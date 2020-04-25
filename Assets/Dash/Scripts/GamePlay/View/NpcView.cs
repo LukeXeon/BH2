@@ -1,4 +1,4 @@
-namespace Dash.Scripts.Levels.View
+namespace Dash.Scripts.GamePlay.View
 {
     public class NpcView : ActorView
     {

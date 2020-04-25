@@ -1,9 +1,9 @@
 using System.Collections;
-using Dash.Scripts.Levels.Core;
+using Dash.Scripts.GamePlay.Core;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Dash.Scripts.Levels.UIManager
+namespace Dash.Scripts.GamePlay.UIManager
 {
     public class DamageTextUIManager : MonoBehaviour, IPoolLifecycle
     {

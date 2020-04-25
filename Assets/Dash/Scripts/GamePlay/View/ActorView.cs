@@ -1,10 +1,10 @@
 using System;
-using Dash.Scripts.Levels.UIManager;
+using Dash.Scripts.GamePlay.UIManager;
 using Photon.Pun;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace Dash.Scripts.Levels.View
+namespace Dash.Scripts.GamePlay.View
 {
     public abstract class ActorView : MonoBehaviour
     {

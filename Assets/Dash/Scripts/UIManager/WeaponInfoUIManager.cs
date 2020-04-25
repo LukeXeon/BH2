@@ -2,7 +2,7 @@ using System;
 using System.Globalization;
 using Dash.Scripts.Cloud;
 using Dash.Scripts.Config;
-using Dash.Scripts.Levels.Config;
+using Dash.Scripts.GamePlay.Config;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;

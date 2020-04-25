@@ -1,7 +1,7 @@
 using Dash.Scripts.Cloud;
 using Dash.Scripts.Config;
 
-namespace Dash.Scripts.Levels.Config
+namespace Dash.Scripts.GamePlay.Config
 {
     public class RuntimeWeaponInfo
     {

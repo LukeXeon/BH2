@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Dash.Scripts.Cloud;
 using Dash.Scripts.Config;
 
-namespace Dash.Scripts.Levels.Config
+namespace Dash.Scripts.GamePlay.Config
 {
     [Serializable]
     public class RuntimePlayerInfo

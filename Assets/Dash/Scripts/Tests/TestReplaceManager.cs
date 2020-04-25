@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 using Dash.Scripts.Config;
-using Dash.Scripts.Levels.View;
+using Dash.Scripts.GamePlay.View;
 using Dash.Scripts.UIManager;
 using Photon.Realtime;
 using Spine.Unity;

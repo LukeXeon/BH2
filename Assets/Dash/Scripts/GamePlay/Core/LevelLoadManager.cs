@@ -5,9 +5,9 @@ using System.Linq;
 using Cinemachine;
 using Dash.Scripts.Config;
 using Dash.Scripts.Core;
-using Dash.Scripts.Levels.Config;
-using Dash.Scripts.Levels.UIManager;
-using Dash.Scripts.Levels.View;
+using Dash.Scripts.GamePlay.Config;
+using Dash.Scripts.GamePlay.UIManager;
+using Dash.Scripts.GamePlay.View;
 using ExitGames.Client.Photon;
 using Photon.Pun;
 using Photon.Realtime;
@@ -17,7 +17,7 @@ using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-namespace Dash.Scripts.Levels.Core
+namespace Dash.Scripts.GamePlay.Core
 {
     public class LevelLoadManager : MonoBehaviour, IOnEventCallback
     {
@@ -111,8 +111,8 @@ namespace Dash.Scripts.Levels.Core
                 Quaternion.identity,
                 data: new object[]
                 {
-                    LocalPlayerInfo.playerInfo.Item1.typeId,
-                    LocalPlayerInfo.weaponInfos.Select(i => i.Item1.typeId).ToArray()
+                    GamePlayConfigManager.playerInfo.Item1.typeId,
+                    GamePlayConfigManager.weaponInfos.Select(i => i.Item1.typeId).ToArray()
                 }
             );
             var controller = go.GetComponent<PlayerView>();

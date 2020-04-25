@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Linq;
-using Dash.Scripts.Levels.View;
+using Dash.Scripts.GamePlay.View;
 using Photon.Pun;
 using Spine.Unity;
 using UnityEngine;
 using UnityEngine.AI;
 
-namespace Dash.Scripts.Levels.LevelManager.Level1
+namespace Dash.Scripts.GamePlay.Levels.Level1
 {
     public class L1NPC1View : NpcView, IPunObservable
     {
@@ -47,7 +47,7 @@ namespace Dash.Scripts.Levels.LevelManager.Level1
         {
             base.Awake();
             IS_RUN = Animator.StringToHash("is_run");
-            playerLayerMask = 1 << LayerMask.NameToLayer("Player");
+            playerLayerMask = LayerMask.GetMask("Player");
             targetCollider = new Collider[1];
         }
 

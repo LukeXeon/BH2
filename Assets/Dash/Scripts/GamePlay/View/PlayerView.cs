@@ -8,7 +8,7 @@ using Spine.Unity;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace Dash.Scripts.Levels.View
+namespace Dash.Scripts.GamePlay.View
 {
     public class PlayerView : ActorView, IPunObservable
     {
@@ -64,11 +64,7 @@ namespace Dash.Scripts.Levels.View
             {
                 onPlayerLoadedEvent = new OnPlayerLoadedEvent();
             }
-
-            var go = new GameObject("AudioSources");
-            go.transform.SetParent(transform);
-            go.transform.localPosition = Vector3.zero;
-            audioView = go.AddComponent<AudioView>();
+            audioView = AudioView.Create(this.transform);
         }
 
         private void Start()

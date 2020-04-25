@@ -1,6 +1,6 @@
 using Photon.Pun;
 
-namespace Dash.Scripts.Levels.Config
+namespace Dash.Scripts.GamePlay.Config
 {
     public static class LocalPlayer
     {

@@ -1,5 +1,5 @@
 ﻿using System;
-using Dash.Scripts.Levels.View;
+using Dash.Scripts.GamePlay.View;
 using UnityEngine;
 
 namespace Dash.Scripts.Config

@@ -1,8 +1,7 @@
-using Dash.Scripts.Config;
 using Photon.Pun;
 using UnityEngine;
 
-namespace Dash.Scripts.Levels.View
+namespace Dash.Scripts.GamePlay.View
 {
     public abstract class WeaponView : MonoBehaviour
     {
@@ -11,7 +10,6 @@ namespace Dash.Scripts.Levels.View
         protected bool isMine => playerView.photonView.IsMine;
         private Animator cameraAnim;
         private static readonly int CAMERA_SHAKE_TRIGGER = Animator.StringToHash("CameraShakeTrigger");
-       
 
         public virtual void SetFlipX(int x)
         {
@@ -22,12 +20,12 @@ namespace Dash.Scripts.Levels.View
             playerView = view;
             targetMask = LayerMask.GetMask("NPC");
             var cam = Camera.main;
-            if (cam != null)
+            if (view.photonView.IsMine && cam != null)
             {
                 cameraAnim = cam.GetComponent<Animator>();
             }
         }
-
+        
         public void Fire()
         {
             if (isMine)
@@ -47,8 +45,7 @@ namespace Dash.Scripts.Levels.View
                 cameraAnim.SetTrigger(CAMERA_SHAKE_TRIGGER);
             }
         }
-
-
+        
         public void RpcInPlayerView(string method, params object[] objects)
         {
             playerView.photonView.RPC(

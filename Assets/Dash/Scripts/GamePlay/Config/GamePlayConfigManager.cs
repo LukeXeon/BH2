@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using Dash.Scripts.Cloud;
 using Dash.Scripts.Config;
 
-namespace Dash.Scripts.Levels.Config
+namespace Dash.Scripts.GamePlay.Config
 {
-    public static class LocalPlayerInfo
+    public static class GamePlayConfigManager
     {
         public static Tuple<PlayerInfoAsset, RuntimePlayerInfo> playerInfo;
 
@@ -37,7 +37,7 @@ namespace Dash.Scripts.Levels.Config
             }
 
             LocalPlayer.weaponIndex = 0;
-            LocalPlayer.hp = playerInfo.Item1.shengMingZhi;
+            LocalPlayer.hp = playerInfo.Item2.shengMingZhi;
             LocalPlayer.mp = playerInfo.Item2.nengLiangZhi;
         }
 

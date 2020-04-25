@@ -1,10 +1,10 @@
 using System;
-using Dash.Scripts.Levels.Config;
+using Dash.Scripts.GamePlay.Config;
 using Photon.Pun;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace Dash.Scripts.Levels.View
+namespace Dash.Scripts.GamePlay.View
 {
     public class DirectHitView : WeaponView
     {
@@ -31,7 +31,7 @@ namespace Dash.Scripts.Levels.View
             var locator = shootLocators[Random.Range(0, shootLocators.Length)];
             var position = locator.position;
             var index = LocalPlayer.weaponIndex;
-            var (info, data) = LocalPlayerInfo.weaponInfos[index];
+            var (info, data) = GamePlayConfigManager.weaponInfos[index];
             var range = info.sheCheng;
             var shootRay = new Ray
             {
@@ -60,7 +60,7 @@ namespace Dash.Scripts.Levels.View
         {
             timer += Time.deltaTime;
             var index = LocalPlayer.weaponIndex;
-            var info = LocalPlayerInfo.weaponInfos[index];
+            var info = GamePlayConfigManager.weaponInfos[index];
             var timeBetweenBullets = Mathf.Min(1f / info.Item1.sheShu, 0.15f);
             if (timer >= timeBetweenBullets * effectsDisplayTime)
             {

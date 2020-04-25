@@ -2,9 +2,9 @@
 using System.Linq;
 using Dash.Scripts.Config;
 using Dash.Scripts.Core;
-using Dash.Scripts.Levels.Config;
-using Dash.Scripts.Levels.Core;
-using Dash.Scripts.Levels.View;
+using Dash.Scripts.GamePlay.Config;
+using Dash.Scripts.GamePlay.Core;
+using Dash.Scripts.GamePlay.View;
 using Michsky.UI.ModernUIPack;
 using Photon.Pun;
 using TMPro;
@@ -13,7 +13,7 @@ using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-namespace Dash.Scripts.Levels.UIManager
+namespace Dash.Scripts.GamePlay.UIManager
 {
     public class LevelUIManager : MonoBehaviour
     {
@@ -37,10 +37,10 @@ namespace Dash.Scripts.Levels.UIManager
 
         private void Awake()
         {
-            var player = LocalPlayerInfo.playerInfo.Item1;
+            var player = GamePlayConfigManager.playerInfo.Item1;
             icon.sprite = player.icon;
             playerName.text = player.displayName;
-            weapon.sprite = LocalPlayerInfo.weaponInfos.First().Item1.sprite;
+            weapon.sprite = GamePlayConfigManager.weaponInfos.First().Item1.sprite;
             if (weaponChanged == null) weaponChanged = new OnWeaponChangedEvent();
 
             leftWeapon.onClick.AddListener(() =>
@@ -49,12 +49,12 @@ namespace Dash.Scripts.Levels.UIManager
                 if (time - lastQieQiang < qieQiangJianGe) return;
 
                 var last = LocalPlayer.weaponIndex - 1;
-                if (last < 0) last = LocalPlayerInfo.weaponInfos.Count - 1;
+                if (last < 0) last = GamePlayConfigManager.weaponInfos.Count - 1;
 
                 Debug.Log(last);
                 if (last == LocalPlayer.weaponIndex) return;
 
-                var info = LocalPlayerInfo.weaponInfos[last].Item1;
+                var info = GamePlayConfigManager.weaponInfos[last].Item1;
                 LocalPlayer.weaponIndex = last;
                 weaponChanged.Invoke(info);
                 lastQieQiang = time;
@@ -65,10 +65,10 @@ namespace Dash.Scripts.Levels.UIManager
                 if (time - lastQieQiang < qieQiangJianGe) return;
 
                 var last = LocalPlayer.weaponIndex;
-                LocalPlayer.weaponIndex = (last + 1) % LocalPlayerInfo.weaponInfos.Count;
+                LocalPlayer.weaponIndex = (last + 1) % GamePlayConfigManager.weaponInfos.Count;
                 if (last == LocalPlayer.weaponIndex) return;
 
-                var info = LocalPlayerInfo.weaponInfos[LocalPlayer.weaponIndex].Item1;
+                var info = GamePlayConfigManager.weaponInfos[LocalPlayer.weaponIndex].Item1;
                 weaponChanged.Invoke(info);
                 lastQieQiang = time;
             });
@@ -114,10 +114,10 @@ namespace Dash.Scripts.Levels.UIManager
 
         private void RefreshPlayerUI()
         {
-            lanTiao.fillAmount = (float) LocalPlayer.hp / LocalPlayerInfo.playerInfo.Item2.shengMingZhi;
-            xueTiao.fillAmount = (float) LocalPlayer.mp / LocalPlayerInfo.playerInfo.Item2.nengLiangZhi;
-            xueText.text = LocalPlayer.hp + "/" + LocalPlayerInfo.playerInfo.Item2.shengMingZhi;
-            lanText.text = LocalPlayer.mp + "/" + LocalPlayerInfo.playerInfo.Item2.nengLiangZhi;
+            lanTiao.fillAmount = (float) LocalPlayer.hp / GamePlayConfigManager.playerInfo.Item2.shengMingZhi;
+            xueTiao.fillAmount = (float) LocalPlayer.mp / GamePlayConfigManager.playerInfo.Item2.nengLiangZhi;
+            xueText.text = LocalPlayer.hp + "/" + GamePlayConfigManager.playerInfo.Item2.shengMingZhi;
+            lanText.text = LocalPlayer.mp + "/" + GamePlayConfigManager.playerInfo.Item2.nengLiangZhi;
         }
 
 

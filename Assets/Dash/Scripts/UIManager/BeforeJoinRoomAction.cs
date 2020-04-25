@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using Dash.Scripts.Cloud;
-using Dash.Scripts.Levels.Config;
+using Dash.Scripts.GamePlay.Config;
 using Dash.Scripts.UI;
 using Michsky.UI.ModernUIPack;
 using UnityEngine;
@@ -26,7 +26,7 @@ namespace Dash.Scripts.UIManager
             try
             {
                 var player = await CloudManager.GetCompletePlayer();
-                LocalPlayerInfo.Prepare(player);
+                GamePlayConfigManager.Prepare(player);
             }
             catch (Exception e)
             {

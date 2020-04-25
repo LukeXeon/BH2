@@ -1,5 +1,5 @@
 ﻿using Dash.Scripts.Config;
-using Dash.Scripts.Levels.View;
+using Dash.Scripts.GamePlay.View;
 using Photon.Realtime;
 using Spine.Unity;
 using TMPro;

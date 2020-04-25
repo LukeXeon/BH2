@@ -1,4 +1,4 @@
-namespace Dash.Scripts.Levels.Core
+namespace Dash.Scripts.GamePlay.Core
 {
     public interface IPoolLifecycle
     {

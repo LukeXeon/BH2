@@ -5,7 +5,7 @@ using Spine;
 using Spine.Unity.AttachmentTools;
 using UnityEngine;
 
-namespace Dash.Scripts.Levels.View
+namespace Dash.Scripts.GamePlay.View
 {
     public static class SpineUtils
     {
