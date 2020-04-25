@@ -47,14 +47,14 @@ namespace Dash.Scripts.Levels.UIManager
                 var time = Time.time;
                 if (time - lastQieQiang < qieQiangJianGe) return;
 
-                var last = LocalPlayerDynamicInfo.currentWeaponIndex - 1;
+                var last = LevelLocalPlayer.weaponIndex - 1;
                 if (last < 0) last = LocalPlayerInfo.weaponInfos.Count - 1;
 
                 Debug.Log(last);
-                if (last == LocalPlayerDynamicInfo.currentWeaponIndex) return;
+                if (last == LevelLocalPlayer.weaponIndex) return;
 
                 var info = LocalPlayerInfo.weaponInfos[last].Item1;
-                LocalPlayerDynamicInfo.currentWeaponIndex = last;
+                LevelLocalPlayer.weaponIndex = last;
                 weaponChanged.Invoke(info);
                 lastQieQiang = time;
             });
@@ -63,11 +63,11 @@ namespace Dash.Scripts.Levels.UIManager
                 var time = Time.time;
                 if (time - lastQieQiang < qieQiangJianGe) return;
 
-                var last = LocalPlayerDynamicInfo.currentWeaponIndex;
-                LocalPlayerDynamicInfo.currentWeaponIndex = (last + 1) % LocalPlayerInfo.weaponInfos.Count;
-                if (last == LocalPlayerDynamicInfo.currentWeaponIndex) return;
+                var last = LevelLocalPlayer.weaponIndex;
+                LevelLocalPlayer.weaponIndex = (last + 1) % LocalPlayerInfo.weaponInfos.Count;
+                if (last == LevelLocalPlayer.weaponIndex) return;
 
-                var info = LocalPlayerInfo.weaponInfos[LocalPlayerDynamicInfo.currentWeaponIndex].Item1;
+                var info = LocalPlayerInfo.weaponInfos[LevelLocalPlayer.weaponIndex].Item1;
                 weaponChanged.Invoke(info);
                 lastQieQiang = time;
             });

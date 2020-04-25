@@ -33,7 +33,7 @@ namespace Dash.Scripts.Levels.View
             {
                 var locator = shootLocators[Random.Range(0, shootLocators.Length)];
                 var position = locator.position;
-                var index = LocalPlayerDynamicInfo.currentWeaponIndex;
+                var index = LevelLocalPlayer.weaponIndex;
                 var (info, data) = LocalPlayerInfo.weaponInfos[index];
                 var range = info.sheCheng;
                 var shootRay = new Ray
@@ -67,7 +67,7 @@ namespace Dash.Scripts.Levels.View
         private void Update()
         {
             timer += Time.deltaTime;
-            var index = LocalPlayerDynamicInfo.currentWeaponIndex;
+            var index = LevelLocalPlayer.weaponIndex;
             var info = LocalPlayerInfo.weaponInfos[index];
             var timeBetweenBullets = Mathf.Min(1f / info.Item1.sheShu, 0.15f);
             if (timer >= timeBetweenBullets * effectsDisplayTime) shootLine.gameObject.SetActive(false);
