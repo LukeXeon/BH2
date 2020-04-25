@@ -216,21 +216,35 @@ namespace Dash.Scripts.UIManager
                 Action onShow = null;
                 Action onChaKan = null;
                 Action onUnload = null;
-                Action<EWeapon> onSelect = async o =>
+
+                async void OnSelect(EWeapon o)
                 {
                     BeginWaitNetwork();
                     try
                     {
-                        var result = await CloudManager.ReplaceWeapon(inUseWeapon, o);
-                        var unload = result[0];
-                        var upload = result[1];
-                        if (unload != null) equipments.weapons[unload.ObjectId] = unload;
+                        if (o != null && inUse.weapons.Any(w => w.weapon?.typeId == o.typeId))
+                        {
+                            onError.Show("不允许", "同类型武器最多同时携带一件");
+                        }
+                        else
+                        {
+                            var result = await CloudManager.ReplaceWeapon(inUseWeapon, o);
+                            var unload = result[0];
+                            var upload = result[1];
+                            if (unload != null)
+                            {
+                                equipments.weapons[unload.ObjectId] = unload;
+                            }
 
-                        if (upload != null) equipments.weapons[upload.ObjectId] = upload;
+                            if (upload != null)
+                            {
+                                equipments.weapons[upload.ObjectId] = upload;
+                            }
 
-                        zhuangBeiUiManager.FastClose();
-                        zhuangBeiUiManager.weaponInfo.Close();
-                        ApplyPanel();
+                            zhuangBeiUiManager.FastClose();
+                            zhuangBeiUiManager.weaponInfo.Close();
+                            ApplyPanel();
+                        }
                     }
                     catch (Exception e)
                     {
@@ -240,22 +254,28 @@ namespace Dash.Scripts.UIManager
                     {
                         EndWaitNetWork();
                     }
-                };
-                Action<EWeapon> onOpenPanel = o => { zhuangBeiUiManager.weaponInfo.Open("装备", o, onSelect, null); };
+                }
+
+                void OnOpenPanel(EWeapon o)
+                {
+                    zhuangBeiUiManager.weaponInfo.Open("装备", o, OnSelect, null);
+                }
+
                 if (weapon != null)
                 {
-                    if (inUse.weapons.Count(o => o.weapon != null) != 1) onUnload = () => onSelect(null);
+                    if (inUse.weapons.Count(o => o.weapon != null) != 1) onUnload = () => OnSelect(null);
 
                     onShow = () => { zhuangBeiUiManager.weaponInfo.Open(null, weapon, null, null); };
                     onChaKan = () => { ApplyPlayerWeapon(weapon); };
                 }
 
-                Action onTihuan = () =>
+                void OnTihuan()
                 {
                     var toSelect = equipments.weapons.Values.Where(www => www.player == null).ToList();
-                    zhuangBeiUiManager.OpenToSelectWeapon(toSelect, onUnload, onOpenPanel);
-                };
-                weapons[i].Apply(weapon, onShow, onChaKan, onTihuan);
+                    zhuangBeiUiManager.OpenToSelectWeapon(toSelect, onUnload, OnOpenPanel);
+                }
+
+                weapons[i].Apply(weapon, onShow, onChaKan, OnTihuan);
             }
 
 

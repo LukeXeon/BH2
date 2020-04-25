@@ -12,21 +12,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c05adadf0975f004785ae64569ed32a9, type: 3}
   m_Name: "\u6C99\u6F20\u4E4B\u9E70"
   m_EditorClassIdentifier: 
-  typeId: 0
   displayName: "\u6C99\u6F20\u4E4B\u9E70"
-  sprite: {fileID: 21300000, guid: 4543bd955bc985b4bba21a53b036fa22, type: 3}
-  xiaoGuo: {fileID: 0}
-  sheShu: 1.5
+  gongJiLi: 0
+  gongJiLi2: 0
   sheCheng: 100
-  weaponView: {fileID: 2912336256578919192, guid: b50b646fcf2be73488f9657d0d050728,
-    type: 3}
+  sheShu: 1.5
+  sheSu: 0
+  sheSu2: 0
   slots:
   - name: IWeapon
     attachments:
     - name: zhongshouqiang
       sprite: {fileID: 21300000, guid: 4543bd955bc985b4bba21a53b036fa22, type: 3}
+  sprite: {fileID: 21300000, guid: 4543bd955bc985b4bba21a53b036fa22, type: 3}
+  typeId: 0
   weaponType: {fileID: 11400000, guid: c998eef7973627343b98509420dbe466, type: 2}
-  gongJiLi: 0
-  sheSu: 0
-  gongJiLi2: 0
-  sheSu2: 0
+  weaponView: {fileID: 8095019966929354405, guid: b50b646fcf2be73488f9657d0d050728,
+    type: 3}
+  xiaoGuo: {fileID: 0}

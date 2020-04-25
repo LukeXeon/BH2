@@ -100,7 +100,7 @@ namespace Dash.Scripts.Levels.LevelManager.Level1
         public override void OnDamage(int value)
         {
             animator.SetTrigger(HIT);
-            onActorDamageEvent.Invoke(transform, value);
+            onActorDamageEvent.Invoke(this, value);
         }
 
         [Serializable]

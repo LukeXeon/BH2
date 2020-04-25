@@ -9,13 +9,15 @@ namespace Dash.Scripts.Levels.View
         protected PlayerView playerView;
         protected int targetMask;
         protected bool isMine => playerView.photonView.IsMine;
-        public bool canFire => Time.time - lastShoot >= timeBetweenBullets;
         private Animator cameraAnim;
         private static readonly int CAMERA_SHAKE_TRIGGER = Animator.StringToHash("CameraShakeTrigger");
-        private float timeBetweenBullets;
-        private float lastShoot;
+       
 
-        public void OnInitialize(PlayerView view, WeaponInfoAsset weaponInfoAsset)
+        public virtual void SetFlipX(int x)
+        {
+        }
+
+        public void OnInitialize(PlayerView view)
         {
             playerView = view;
             targetMask = LayerMask.GetMask("NPC");
@@ -24,18 +26,28 @@ namespace Dash.Scripts.Levels.View
             {
                 cameraAnim = cam.GetComponent<Animator>();
             }
-
-            timeBetweenBullets = 1f / weaponInfoAsset.sheShu;
         }
 
-        public virtual void OnFire()
+        public void Fire()
         {
-            if (isMine && cameraAnim)
+            if (isMine)
             {
-                lastShoot = Time.time;
+                OnFire();
+            }
+            else
+            {
+                Debug.LogError("客户端逻辑有错误");
+            }
+        }
+
+        protected virtual void OnFire()
+        {
+            if (cameraAnim)
+            {
                 cameraAnim.SetTrigger(CAMERA_SHAKE_TRIGGER);
             }
         }
+
 
         public void RpcInPlayerView(string method, params object[] objects)
         {

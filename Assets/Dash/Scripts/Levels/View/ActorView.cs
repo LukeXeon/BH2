@@ -29,7 +29,7 @@ namespace Dash.Scripts.Levels.View
         }
 
         [Serializable]
-        public class OnActorDamageEvent : UnityEvent<Transform, int>
+        public class OnActorDamageEvent : UnityEvent<ActorView, int>
         {
         }
     }

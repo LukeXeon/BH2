@@ -4,6 +4,7 @@ using Dash.Scripts.Config;
 using Dash.Scripts.Core;
 using Dash.Scripts.Levels.Config;
 using Dash.Scripts.Levels.Core;
+using Dash.Scripts.Levels.View;
 using Michsky.UI.ModernUIPack;
 using Photon.Pun;
 using TMPro;
@@ -47,14 +48,14 @@ namespace Dash.Scripts.Levels.UIManager
                 var time = Time.time;
                 if (time - lastQieQiang < qieQiangJianGe) return;
 
-                var last = LevelLocalPlayer.weaponIndex - 1;
+                var last = LocalPlayer.weaponIndex - 1;
                 if (last < 0) last = LocalPlayerInfo.weaponInfos.Count - 1;
 
                 Debug.Log(last);
-                if (last == LevelLocalPlayer.weaponIndex) return;
+                if (last == LocalPlayer.weaponIndex) return;
 
                 var info = LocalPlayerInfo.weaponInfos[last].Item1;
-                LevelLocalPlayer.weaponIndex = last;
+                LocalPlayer.weaponIndex = last;
                 weaponChanged.Invoke(info);
                 lastQieQiang = time;
             });
@@ -63,11 +64,11 @@ namespace Dash.Scripts.Levels.UIManager
                 var time = Time.time;
                 if (time - lastQieQiang < qieQiangJianGe) return;
 
-                var last = LevelLocalPlayer.weaponIndex;
-                LevelLocalPlayer.weaponIndex = (last + 1) % LocalPlayerInfo.weaponInfos.Count;
-                if (last == LevelLocalPlayer.weaponIndex) return;
+                var last = LocalPlayer.weaponIndex;
+                LocalPlayer.weaponIndex = (last + 1) % LocalPlayerInfo.weaponInfos.Count;
+                if (last == LocalPlayer.weaponIndex) return;
 
-                var info = LocalPlayerInfo.weaponInfos[LevelLocalPlayer.weaponIndex].Item1;
+                var info = LocalPlayerInfo.weaponInfos[LocalPlayer.weaponIndex].Item1;
                 weaponChanged.Invoke(info);
                 lastQieQiang = time;
             });
@@ -82,12 +83,43 @@ namespace Dash.Scripts.Levels.UIManager
             });
         }
 
-        public void OnShowDamage(Transform pos, int value)
+        private void Start()
+        {
+            RefreshPlayerUI();
+        }
+
+        private void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.U))
+            {
+                leftWeapon.onClick.Invoke();
+            }
+
+            if (Input.GetKeyDown(KeyCode.I))
+            {
+                rightWeapon.onClick.Invoke();
+            }
+        }
+
+        public void OnShowDamage(ActorView pos, int value)
         {
             var go = ObjectPool.GlobalObtain(damageText.guid, Vector3.zero, Quaternion.identity, false);
             go.transform.SetParent(icon.canvas.transform);
-            go.GetComponent<DamageTextUIManager>().Initialize(pos, value);
+            go.GetComponent<DamageTextUIManager>().Initialize(pos.transform, value);
+            if (pos.photonView.IsMine)
+            {
+                RefreshPlayerUI();
+            }
         }
+
+        private void RefreshPlayerUI()
+        {
+            lanTiao.fillAmount = (float) LocalPlayer.hp / LocalPlayerInfo.playerInfo.Item2.shengMingZhi;
+            xueTiao.fillAmount = (float) LocalPlayer.mp / LocalPlayerInfo.playerInfo.Item2.nengLiangZhi;
+            xueText.text = LocalPlayer.hp + "/" + LocalPlayerInfo.playerInfo.Item2.shengMingZhi;
+            lanText.text = LocalPlayer.mp + "/" + LocalPlayerInfo.playerInfo.Item2.nengLiangZhi;
+        }
+
 
         [Serializable]
         public class OnWeaponChangedEvent : UnityEvent<WeaponInfoAsset>

@@ -23,7 +23,7 @@ namespace Dash.Scripts.Tests
             while (true)
             {
                 yield return new WaitForSeconds(0.1f);
-                OnFire.OnFire();
+                OnFire.Fire();
             }
         }
     }

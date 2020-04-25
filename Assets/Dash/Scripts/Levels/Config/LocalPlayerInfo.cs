@@ -36,9 +36,9 @@ namespace Dash.Scripts.Levels.Config
                 shengHenInfos.Add(Tuple.Create(info, runtimeInfo));
             }
 
-            LevelLocalPlayer.weaponIndex = 0;
-            LevelLocalPlayer.hp = playerInfo.Item1.shengMingZhi;
-            LevelLocalPlayer.mp = playerInfo.Item2.nengLiangZhi;
+            LocalPlayer.weaponIndex = 0;
+            LocalPlayer.hp = playerInfo.Item1.shengMingZhi;
+            LocalPlayer.mp = playerInfo.Item2.nengLiangZhi;
         }
 
         public static void Clear()

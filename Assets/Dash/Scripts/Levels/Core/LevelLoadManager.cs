@@ -112,7 +112,7 @@ namespace Dash.Scripts.Levels.Core
                 data: new object[]
                 {
                     LocalPlayerInfo.playerInfo.Item1.typeId,
-                    LocalPlayerInfo.weaponInfos.First().Item1.typeId
+                    LocalPlayerInfo.weaponInfos.Select(i => i.Item1.typeId).ToArray()
                 }
             );
             var controller = go.GetComponent<PlayerView>();

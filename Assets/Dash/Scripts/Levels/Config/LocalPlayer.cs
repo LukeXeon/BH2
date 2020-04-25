@@ -2,7 +2,7 @@ using Photon.Pun;
 
 namespace Dash.Scripts.Levels.Config
 {
-    public static class LevelLocalPlayer
+    public static class LocalPlayer
     {
         public static int weaponIndex;
 

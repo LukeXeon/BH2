@@ -12,14 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c05adadf0975f004785ae64569ed32a9, type: 3}
   m_Name: "\u52A0\u7279\u6797"
   m_EditorClassIdentifier: 
-  typeId: 1
   displayName: "\u52A0\u7279\u6797"
-  sprite: {fileID: 21300000, guid: ad11fb698dfa4b143bb5a7c53260f7e8, type: 3}
-  xiaoGuo: {fileID: 0}
-  sheShu: 8
+  gongJiLi: 0
+  gongJiLi2: 0
   sheCheng: 100
-  weaponView: {fileID: 1174341628992942720, guid: b3859b8feaa2060408d1cd8b85ed0484,
-    type: 3}
+  sheShu: 8
+  sheSu: 0
+  sheSu2: 0
   slots:
   - name: OWeapon
     attachments:
@@ -27,8 +26,9 @@ MonoBehaviour:
       sprite: {fileID: 21300000, guid: ad11fb698dfa4b143bb5a7c53260f7e8, type: 3}
     - name: jiatelin2
       sprite: {fileID: 21300000, guid: dd88629dcbb73834c943c3f7616a17a4, type: 3}
+  sprite: {fileID: 21300000, guid: ad11fb698dfa4b143bb5a7c53260f7e8, type: 3}
+  typeId: 1
   weaponType: {fileID: 11400000, guid: ba44732947c69ac4284e97b635631cad, type: 2}
-  gongJiLi: 0
-  sheSu: 0
-  gongJiLi2: 0
-  sheSu2: 0
+  weaponView: {fileID: 5220202882795034429, guid: b3859b8feaa2060408d1cd8b85ed0484,
+    type: 3}
+  xiaoGuo: {fileID: 0}

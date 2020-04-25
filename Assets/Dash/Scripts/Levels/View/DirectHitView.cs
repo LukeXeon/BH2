@@ -1,5 +1,4 @@
 using System;
-using Cinemachine;
 using Dash.Scripts.Levels.Config;
 using Photon.Pun;
 using UnityEngine;
@@ -12,65 +11,85 @@ namespace Dash.Scripts.Levels.View
         private const float effectsDisplayTime = 0.2f;
         private static readonly int KAIQIANG = Animator.StringToHash("kaiqiang");
         [Header("Assets")] public AudioClip audioClip;
-        [Header("Com")] public AudioSource audioSource;
         private ParticleSystem[] particleSystems;
         public LineRenderer shootLine;
         public Transform[] shootLocators;
+        private int flipX;
+
 
         private float timer;
 
         private void Awake()
         {
-            audioSource.clip = audioClip;
             particleSystems = GetComponentsInChildren<ParticleSystem>(true);
             foreach (var system in particleSystems) system.Stop();
         }
 
-        public override void OnFire()
+        protected override void OnFire()
         {
             base.OnFire();
-            if (isMine)
+            var locator = shootLocators[Random.Range(0, shootLocators.Length)];
+            var position = locator.position;
+            var index = LocalPlayer.weaponIndex;
+            var (info, data) = LocalPlayerInfo.weaponInfos[index];
+            var range = info.sheCheng;
+            var shootRay = new Ray
             {
-                var locator = shootLocators[Random.Range(0, shootLocators.Length)];
-                var position = locator.position;
-                var index = LevelLocalPlayer.weaponIndex;
-                var (info, data) = LocalPlayerInfo.weaponInfos[index];
-                var range = info.sheCheng;
-                var shootRay = new Ray
+                origin = position,
+                direction = Vector3.right * Mathf.Sign(transform.localScale.x)
+            };
+            if (Physics.Raycast(shootRay, out var shootHit, range, targetMask))
+            {
+                var actorView = shootHit.collider.GetComponent<ActorView>();
+                Debug.Log(actorView.gameObject);
+                if (actorView)
                 {
-                    origin = position,
-                    direction = Vector3.right * Mathf.Sign(transform.localScale.x)
-                };
-                if (Physics.Raycast(shootRay, out var shootHit, range, targetMask))
-                {
-                    var actorView = shootHit.collider.GetComponent<ActorView>();
-                    Debug.Log(actorView.gameObject);
-                    if (actorView)
-                    {
-                        var value = data.gongJiLi;
-                        actorView.photonView.RPC(nameof(actorView.OnDamage), RpcTarget.All, value);
-                        RpcInPlayerView(nameof(OnSync), position, shootHit.point);
-                        return;
-                    }
+                    var value = data.gongJiLi;
+                    actorView.photonView.RPC(nameof(actorView.OnDamage), RpcTarget.All, value);
+                    RpcInPlayerView(nameof(OnSync), position, shootHit.point);
+                    return;
                 }
+            }
 
-                var d = position;
-                d.x += Mathf.Sign(transform.localScale.x) * range;
-                RpcInPlayerView(nameof(OnSync), position, d);
-            }
-            else
-            {
-                Debug.LogError("客户端逻辑有错误");
-            }
+            var d = position;
+            d.x += Mathf.Sign(transform.localScale.x) * range;
+            RpcInPlayerView(nameof(OnSync), position, d);
         }
 
         private void Update()
         {
             timer += Time.deltaTime;
-            var index = LevelLocalPlayer.weaponIndex;
+            var index = LocalPlayer.weaponIndex;
             var info = LocalPlayerInfo.weaponInfos[index];
             var timeBetweenBullets = Mathf.Min(1f / info.Item1.sheShu, 0.15f);
-            if (timer >= timeBetweenBullets * effectsDisplayTime) shootLine.gameObject.SetActive(false);
+            if (timer >= timeBetweenBullets * effectsDisplayTime)
+            {
+                shootLine.gameObject.SetActive(false);
+            }
+        }
+
+        public override void SetFlipX(int x)
+        {
+            var transform1 = transform;
+            var local = transform1.localScale;
+            local.x = x;
+            transform1.localScale = local;
+            if (flipX != x)
+            {
+                shootLine.gameObject.SetActive(false);
+                foreach (var system in particleSystems)
+                {
+                    system.Stop();
+                }
+            }
+
+            flipX = x;
+        }
+
+        private void OnEnable()
+        {
+            foreach (var system in particleSystems) system.Stop();
+            shootLine.gameObject.SetActive(false);
         }
 
         public void OnSync(Vector3 vector1, Vector3 vector2)
@@ -82,6 +101,11 @@ namespace Dash.Scripts.Levels.View
                 system.Simulate(0);
                 system.Play();
             }
+
+            var audioSource = playerView.audioView.GetOrCreateSource();
+            audioSource.clip = audioClip;
+            audioSource.time = 0;
+            audioSource.Play();
 
             shootLine.SetPosition(0, vector1);
             shootLine.SetPosition(1, vector2);

@@ -14391,11 +14391,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed732cc5a4a3423fa413f074ba4d6b80, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  audioClip: {fileID: 0}
-  shootLocators:
-  - {fileID: 8095019967493917500}
+  audioClip: {fileID: 8300000, guid: 0490f1f222cc6fa4ba9f5a02310df2e8, type: 3}
   audioSource: {fileID: -4743240033679440599}
   shootLine: {fileID: 6550454666501049790}
+  shootLocators:
+  - {fileID: 8095019967493917500}
 --- !u!82 &-4743240033679440599
 AudioSource:
   m_ObjectHideFlags: 0

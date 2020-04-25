@@ -29,7 +29,7 @@ namespace Dash.Scripts.Config
 
         public WeaponTypeInfoAsset weaponType;
 
-        public WeaponView weaponView;
+        public GameObject weaponView;
 
         public TextAsset xiaoGuo;
 

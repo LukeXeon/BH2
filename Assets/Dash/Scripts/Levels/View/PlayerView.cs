@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using Dash.Scripts.Config;
 using Photon.Pun;
@@ -28,10 +29,13 @@ namespace Dash.Scripts.Levels.View
         public SkeletonMecanim mecanim;
         [Header("Event")] public OnPlayerLoadedEvent onPlayerLoadedEvent;
         public PoseManager poseManager;
-
+        [HideInInspector]
+        public AudioView audioView;
         private new Rigidbody rigidbody;
         public float speed;
         private WeaponView weaponView;
+        private float timeBetweenBullets;
+        private float lastShoot;
 
         [Serializable]
         public class OnPlayerLoadedEvent : UnityEvent
@@ -39,7 +43,8 @@ namespace Dash.Scripts.Levels.View
         }
 
         //Weapon
-        public WeaponInfoAsset weaponInfoAsset { get; private set; }
+        private WeaponInfoAsset weaponInfoAsset;
+        private Dictionary<int, WeaponView> weaponViews;
 
         public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
         {
@@ -52,31 +57,47 @@ namespace Dash.Scripts.Levels.View
         protected override void Awake()
         {
             base.Awake();
+            weaponViews = new Dictionary<int, WeaponView>();
             rigidbody = GetComponent<Rigidbody>();
             photonView = GetComponent<PhotonView>();
             if (onPlayerLoadedEvent == null)
             {
                 onPlayerLoadedEvent = new OnPlayerLoadedEvent();
             }
+
+            var go = new GameObject("AudioSources");
+            go.transform.SetParent(transform);
+            go.transform.localPosition = Vector3.zero;
+            audioView = go.AddComponent<AudioView>();
         }
 
         private void Start()
         {
             var playerTypeId = (int) photonView.InstantiationData[0];
-            var weaponTypeId = (int) photonView.InstantiationData[1];
+            var weaponTypeIds = (int[]) photonView.InstantiationData[1];
             var info = GameConfigManager.playerTable[playerTypeId];
             mecanim.skeletonDataAsset = info.skel;
             mecanim.Initialize(true);
-            OnWeaponChanged(weaponTypeId);
+            foreach (var weaponTypeId in weaponTypeIds)
+            {
+                weaponInfoAsset = GameConfigManager.weaponTable[weaponTypeId];
+                var go = Instantiate(weaponInfoAsset.weaponView, transform);
+                go.SetActive(false);
+                weaponView = go.GetComponent<WeaponView>();
+                weaponView.OnInitialize(this);
+                weaponViews.Add(weaponTypeId, weaponView);
+            }
+
+            OnWeaponChanged(weaponTypeIds.First());
             onPlayerLoadedEvent.Invoke();
         }
-
+        
         [PunRPC]
         public void OnWeaponChanged(int typeId)
         {
             if (weaponView)
             {
-                Destroy(weaponView.gameObject);
+                weaponView.gameObject.SetActive(false);
             }
 
             weaponInfoAsset = GameConfigManager.weaponTable[typeId];
@@ -85,16 +106,16 @@ namespace Dash.Scripts.Levels.View
             animator.SetBool(LIANSHE, false);
             animator.ResetTrigger(KAIQIANG);
             animator.SetFloat(KAIQIANG_SPEED, poseManager.shootSpeed);
-            var go = Instantiate(weaponInfoAsset.weaponView.gameObject, transform);
-            weaponView = go.GetComponent<WeaponView>();
-            weaponView.OnInitialize(this, weaponInfoAsset);
+            weaponView = weaponViews[typeId];
+            weaponView.gameObject.SetActive(true);
+            timeBetweenBullets = 1f / weaponInfoAsset.sheShu;
         }
 
         public void OnSingleFireAnimationCallback()
         {
             if (photonView.IsMine)
             {
-                weaponView.OnFire();
+                weaponView.Fire();
             }
         }
 
@@ -123,7 +144,10 @@ namespace Dash.Scripts.Levels.View
                     methodInfos[(type, method)] = methodInfo;
                 }
 
-                if (methodInfo != null) methodInfo.Invoke(weaponView, args);
+                if (methodInfo != null)
+                {
+                    methodInfo.Invoke(weaponView, args);
+                }
             }
         }
 
@@ -137,19 +161,21 @@ namespace Dash.Scripts.Levels.View
                 {
                     animator.SetBool(LIANSHE, isKaiQiangPressed);
                 }
-                
-                //如果上次射击时间间隔已过
-                if (weaponView.canFire)
+
+                var time = Time.time;
+                if (time - lastShoot >= timeBetweenBullets)
                 {
                     //如果是连射的且按键按下，则发射一颗子弹
                     if (weaponInfoAsset.weaponType.canLianShe && isKaiQiangPressed)
                     {
-                        weaponView.OnFire();
+                        weaponView.Fire();
+                        lastShoot = time;
                     }
                     //否则，该帧如果按下键才会发射单射武器，需要先同步动画
                     else if (ETCInput.GetButtonDown("kaiqiang"))
                     {
                         photonView.RPC(nameof(OnFireSingle), RpcTarget.All);
+                        lastShoot = time;
                     }
                 }
 
@@ -157,11 +183,6 @@ namespace Dash.Scripts.Levels.View
                 {
                 }
             }
-
-            var transform1 = weaponView.transform;
-            var local = transform1.localScale;
-            local.x = flipX;
-            transform1.localScale = local;
         }
 
         private void FixedUpdate()
@@ -184,13 +205,17 @@ namespace Dash.Scripts.Levels.View
                 }
 
                 if (h > 0)
+                {
                     flipX = 1;
+                }
                 else if (h < 0)
+                {
                     flipX = -1;
+                }
             }
 
-
             mecanim.Skeleton.ScaleX = flipX;
+            weaponView.SetFlipX(flipX);
         }
     }
 }
