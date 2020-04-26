@@ -25,6 +25,7 @@ namespace Dash.Scripts.GamePlay.Levels.Level1
                     var npc = NPCs[Random.Range(0, NPCs.Length)];
                     var v3 = t.position;
                     PhotonNetwork.InstantiateSceneObject(npc.guid, v3, Quaternion.identity);
+                    break;
                 }
 
                 StartCoroutine(LevelLogic());

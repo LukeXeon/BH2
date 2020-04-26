@@ -89,7 +89,7 @@ Animator:
   m_GameObject: {fileID: 1695173911}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: ffa807a1c396e004eb4e2dc1f7527804, type: 2}
+  m_Controller: {fileID: 0}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -114,6 +114,7 @@ GameObject:
   - component: {fileID: 2545382971944027307}
   - component: {fileID: 2545382971944027306}
   - component: {fileID: 11659337111539152}
+  - component: {fileID: 5559700427137677224}
   m_Layer: 13
   m_Name: Spine
   m_TagString: Untagged
@@ -277,6 +278,12 @@ MonoBehaviour:
   - Type: 4
     SynchronizeType: 1
     Name: is_run
+  - Type: 9
+    SynchronizeType: 0
+    Name: attack_lens
+  - Type: 9
+    SynchronizeType: 0
+    Name: hit
   m_SynchronizeLayers:
   - SynchronizeType: 0
     LayerIndex: 0
@@ -291,6 +298,36 @@ SortingGroup:
   m_SortingLayerID: 1895017843
   m_SortingLayer: 8
   m_SortingOrder: 10
+--- !u!114 &5559700427137677224
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2545382971944027309}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 02f8bea56394dab43ac9a0c223694c82, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  events:
+  - name: OnHitFinish
+    id: 846194196
+    action:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1140673426}
+          m_MethodName: OnResetInHit
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  debug: 0
 --- !u!1 &2545382973083229444
 GameObject:
   m_ObjectHideFlags: 0
@@ -313,7 +350,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &2545382973083229447
 Transform:
   m_ObjectHideFlags: 0
@@ -413,17 +450,20 @@ MonoBehaviour:
   onActorDamageEvent:
     m_PersistentCalls:
       m_Calls: []
+  config:
+    findPlayerRange: 999
+    gongJiLi: 10
+    fangYuLi: 10
+    shengMingZhi: 100
+    moveSpeed: 2.5
+  target: {fileID: 0}
+  config1:
+    distance1: 8
+    distance2: 4
+    gongJiJianGe: 5
   agent: {fileID: 1140673427}
   animator: {fileID: 2545382971944027311}
-  config:
-    suoDiBanJing: 10
-    gongJiLi1: 0
-    gongJiLi2: 0
-    fangYuLi: 0
-    yiDongSuDu: 0
-  distance: 10
   mecanim: {fileID: 2545382971944027308}
-  target: {fileID: 0}
 --- !u!195 &1140673427
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -434,11 +474,11 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 1.31
-  m_Speed: 6
+  m_Speed: 3
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 0
-  m_StoppingDistance: 10
+  m_StoppingDistance: 5
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
   m_AutoRepath: 1

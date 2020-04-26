@@ -7,6 +7,7 @@ using Dash.Scripts.GamePlay.Core;
 using Dash.Scripts.GamePlay.View;
 using Michsky.UI.ModernUIPack;
 using Photon.Pun;
+using Photon.Realtime;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
@@ -15,7 +16,7 @@ using UnityEngine.UI;
 
 namespace Dash.Scripts.GamePlay.UIManager
 {
-    public class LevelUIManager : MonoBehaviour
+    public class LevelUIManager : MonoBehaviourPunCallbacks
     {
         private const float qieQiangJianGe = 0.3f;
         public Button back;
@@ -120,6 +121,10 @@ namespace Dash.Scripts.GamePlay.UIManager
             lanText.text = LocalPlayer.mp + "/" + GamePlayConfigManager.playerInfo.Item2.nengLiangZhi;
         }
 
+        public override void OnMasterClientSwitched(Player newMasterClient)
+        {
+            
+        }
 
         [Serializable]
         public class OnWeaponChangedEvent : UnityEvent<WeaponInfoAsset>

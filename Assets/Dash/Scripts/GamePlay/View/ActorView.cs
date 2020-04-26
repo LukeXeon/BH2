@@ -14,13 +14,12 @@ namespace Dash.Scripts.GamePlay.View
         protected virtual void Awake()
         {
             if (onActorDamageEvent == null) onActorDamageEvent = new OnActorDamageEvent();
-
             photonView = GetComponent<PhotonView>();
             onActorDamageEvent.AddListener(FindObjectOfType<LevelUIManager>().OnShowDamage);
         }
 
         [PunRPC]
-        public virtual void OnDamage(int value)
+        public virtual void OnDamage(int viewId, int value)
         {
         }
 

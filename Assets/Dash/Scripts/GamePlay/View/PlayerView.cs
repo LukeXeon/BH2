@@ -29,8 +29,7 @@ namespace Dash.Scripts.GamePlay.View
         public SkeletonMecanim mecanim;
         [Header("Event")] public OnPlayerLoadedEvent onPlayerLoadedEvent;
         public PoseManager poseManager;
-        [HideInInspector]
-        public AudioView audioView;
+        [HideInInspector] public AudioView audioView;
         private new Rigidbody rigidbody;
         public float speed;
         private WeaponView weaponView;
@@ -64,6 +63,7 @@ namespace Dash.Scripts.GamePlay.View
             {
                 onPlayerLoadedEvent = new OnPlayerLoadedEvent();
             }
+
             audioView = AudioView.Create(this.transform);
         }
 
@@ -87,7 +87,7 @@ namespace Dash.Scripts.GamePlay.View
             OnWeaponChanged(weaponTypeIds.First());
             onPlayerLoadedEvent.Invoke();
         }
-        
+
         [PunRPC]
         public void OnWeaponChanged(int typeId)
         {
@@ -122,7 +122,7 @@ namespace Dash.Scripts.GamePlay.View
         }
 
         [PunRPC]
-        public override void OnDamage(int value)
+        public override void OnDamage(int viewId, int value)
         {
             animator.SetTrigger(HIT);
         }

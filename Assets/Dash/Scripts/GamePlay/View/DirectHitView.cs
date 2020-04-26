@@ -45,7 +45,12 @@ namespace Dash.Scripts.GamePlay.View
                 if (actorView)
                 {
                     var value = data.gongJiLi;
-                    actorView.photonView.RPC(nameof(actorView.OnDamage), RpcTarget.All, value);
+                    actorView.photonView.RPC(
+                        nameof(actorView.OnDamage),
+                        RpcTarget.All,
+                        playerView.photonView.ViewID,
+                        value
+                    );
                     RpcInPlayerView(nameof(OnSync), position, shootHit.point);
                     return;
                 }
