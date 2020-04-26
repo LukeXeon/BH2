@@ -1,39 +1,25 @@
 using System.Collections;
+using System.Linq;
 using Dash.Scripts.Core;
-using Dash.Scripts.GamePlay.Core;
 using Photon.Pun;
 using UnityEngine;
 
 namespace Dash.Scripts.GamePlay.Levels.Level1
 {
-    public class L1LevelManager : MonoBehaviour
+    public class L1LevelManager : LevelManager
     {
-        public Transform[] NpcChuShengDian;
         public GuidIndexer[] NPCs;
 
-        private void Awake()
-        {
-            FindObjectOfType<LevelLoadManager>().onLevelLoadedEvent.AddListener(Call);
-        }
+        public Transform[] room1Locators;
 
-        private void Call()
+        protected override IEnumerator LevelLogic()
         {
-            if (PhotonNetwork.IsMasterClient)
-            {
-                foreach (var t in NpcChuShengDian)
-                {
-                    var npc = NPCs[Random.Range(0, NPCs.Length)];
-                    var v3 = t.position;
-                    PhotonNetwork.InstantiateSceneObject(npc.guid, v3, Quaternion.identity);
-                }
-
-                StartCoroutine(LevelLogic());
-            }
-        }
-
-        private IEnumerator LevelLogic()
-        {
-            yield break;
+            var list = (from t in room1Locators
+                    let npc = NPCs[Random.Range(0, NPCs.Length)]
+                    let v3 = t.position
+                    select PhotonNetwork.InstantiateSceneObject(npc.guid, v3, Quaternion.identity))
+                .ToList();
+            yield return new WaitUntil(() => list.All(i => !i));
         }
     }
 }

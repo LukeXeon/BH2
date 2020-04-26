@@ -27,7 +27,6 @@ namespace Dash.Scripts.GamePlay.View
 
         private int flipX = 1;
         public SkeletonMecanim mecanim;
-        [Header("Event")] public OnPlayerLoadedEvent onPlayerLoadedEvent;
         public PoseManager poseManager;
         [HideInInspector] public AudioView audioView;
         private new Rigidbody rigidbody;
@@ -59,10 +58,6 @@ namespace Dash.Scripts.GamePlay.View
             weaponViews = new Dictionary<int, WeaponView>();
             rigidbody = GetComponent<Rigidbody>();
             photonView = GetComponent<PhotonView>();
-            if (onPlayerLoadedEvent == null)
-            {
-                onPlayerLoadedEvent = new OnPlayerLoadedEvent();
-            }
 
             audioView = AudioView.Create(this.transform);
         }
@@ -85,7 +80,6 @@ namespace Dash.Scripts.GamePlay.View
             }
 
             OnWeaponChanged(weaponTypeIds.First());
-            onPlayerLoadedEvent.Invoke();
         }
 
         [PunRPC]

@@ -204,7 +204,6 @@ namespace Dash.Scripts.UIManager
             }
 
             yield return Resources.UnloadUnusedAssets();
-            GC.Collect();
             yield return new WaitForEndOfFrame();
             while (fullMask.alpha > 0f)
             {

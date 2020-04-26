@@ -109,9 +109,6 @@ MonoBehaviour:
   animator: {fileID: 8238277081177272641}
   bulletLocator: {fileID: 0}
   mecanim: {fileID: 8238277081177272654}
-  onPlayerLoadedEvent:
-    m_PersistentCalls:
-      m_Calls: []
   poseManager: {fileID: 8238277081177272655}
   audioView: {fileID: 0}
   speed: 10
