@@ -18,7 +18,9 @@ namespace Dash.Scripts.GamePlay.Core
     {
         public const int OnStartLoad = 1;
         public const int OnSceneLoaded = 2;
-        private readonly HashSet<int> tempTable = new HashSet<int>();
+        public const int OnPlayerLoaded = 3;
+        private readonly HashSet<int> tempTable1 = new HashSet<int>();
+        private readonly HashSet<int> tempTable2 = new HashSet<int>();
         public Image loadingRoot;
         public event Action onNetworkSceneLoaded;
         public GuidIndexer player;
@@ -30,7 +32,13 @@ namespace Dash.Scripts.GamePlay.Core
             if (photonEvent.Code == OnStartLoad)
                 StartCoroutine(DoLoadLevel());
             else if (photonEvent.Code == OnSceneLoaded)
-                tempTable.Add((int) photonEvent.CustomData);
+            {
+                tempTable1.Add((int) photonEvent.CustomData);
+            }
+            else if (photonEvent.Code == OnPlayerLoaded)
+            {
+                tempTable2.Add((int) photonEvent.CustomData);
+            }
         }
 
         private void Awake()
@@ -48,10 +56,20 @@ namespace Dash.Scripts.GamePlay.Core
             );
         }
 
-        private void NotifySceneLoaded()
+        private void NotifySceneLoaded0()
         {
             PhotonNetwork.RaiseEvent(
                 OnSceneLoaded,
+                PhotonNetwork.LocalPlayer.ActorNumber,
+                new RaiseEventOptions {Receivers = ReceiverGroup.All},
+                new SendOptions {Reliability = true}
+            );
+        }
+        
+        private void NotifySceneLoaded1()
+        {
+            PhotonNetwork.RaiseEvent(
+                OnPlayerLoaded,
                 PhotonNetwork.LocalPlayer.ActorNumber,
                 new RaiseEventOptions {Receivers = ReceiverGroup.All},
                 new SendOptions {Reliability = true}
@@ -76,18 +94,17 @@ namespace Dash.Scripts.GamePlay.Core
             text.text = "等待其他玩家";
             yield return op;
             //Send And Wait All Player Scene Loaded
-            NotifySceneLoaded();
+            NotifySceneLoaded0();
             yield return new WaitUntil(() =>
             {
-                return PhotonNetwork.PlayerList.All(i => tempTable.Contains(i.ActorNumber));
+                return PhotonNetwork.PlayerList.All(i => tempTable1.Contains(i.ActorNumber));
             });
-            tempTable.Clear();
             onNetworkSceneLoaded?.Invoke();
-            NotifySceneLoaded();
+            NotifySceneLoaded1();
             //Wait All Player
             yield return new WaitUntil(() =>
             {
-                return PhotonNetwork.PlayerList.All(i => tempTable.Contains(i.ActorNumber));
+                return PhotonNetwork.PlayerList.All(i => tempTable2.Contains(i.ActorNumber));
             });
             yield return Resources.UnloadUnusedAssets();
             yield return new WaitForEndOfFrame();
