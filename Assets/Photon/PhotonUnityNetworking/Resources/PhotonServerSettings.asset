@@ -74,6 +74,8 @@ MonoBehaviour:
   - OnSyncFire1
   - OnSyncBomb
   - OnFireBomb
+  - OnLoadRoomLevel
+  - OnNotifySceneLoaded
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

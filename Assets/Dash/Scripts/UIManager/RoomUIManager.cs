@@ -17,7 +17,7 @@ using UnityEngine.UI;
 
 namespace Dash.Scripts.UIManager
 {
-    public class RoomUIManager : MonoBehaviourPunCallbacks, IOnEventCallback
+    public class RoomUIManager : MonoBehaviourPunCallbacks
     {
         private readonly Dictionary<int, PlayerInRoomItemUIManager> noLocalPlayerItems =
             new Dictionary<int, PlayerInRoomItemUIManager>(3);
@@ -44,13 +44,9 @@ namespace Dash.Scripts.UIManager
         public Button start;
         public Color unReadyColor;
 
-        public void OnEvent(EventData photonEvent)
-        {
-            if (photonEvent.Code == LevelLoadManager.OnStartLoad) ClearRoomPlayers();
-        }
-
         private void Awake()
         {
+            loadManager.onBeginLoadScene += ClearRoomPlayers;
             idBtn.onClick.AddListener(() =>
             {
                 GUIUtility.systemCopyBuffer = idText.text;
@@ -107,6 +103,7 @@ namespace Dash.Scripts.UIManager
             openMaiKeFeng.isOn = false;
         }
 
+
         private void OnError(int error, string msg)
         {
             Debug.Log(msg);
@@ -119,6 +116,7 @@ namespace Dash.Scripts.UIManager
 
         private void OnDestroy()
         {
+            loadManager.onBeginLoadScene -= ClearRoomPlayers;
             var rtcEngine = IRtcEngine.QueryEngine();
             if (rtcEngine != null)
             {

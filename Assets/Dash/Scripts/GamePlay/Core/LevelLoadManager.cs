@@ -4,9 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Dash.Scripts.Config;
 using Dash.Scripts.Core;
-using ExitGames.Client.Photon;
 using Photon.Pun;
-using Photon.Realtime;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -14,73 +12,54 @@ using UnityEngine.UI;
 
 namespace Dash.Scripts.GamePlay.Core
 {
-    public class LevelLoadManager : MonoBehaviourPunCallbacks, IOnEventCallback
+    public class LevelLoadManager : MonoBehaviour
     {
-        public const int OnStartLoad = 1;
-        public const int OnSceneLoaded = 2;
-        public const int OnPlayerLoaded = 3;
         private readonly HashSet<int> tempTable1 = new HashSet<int>();
         private readonly HashSet<int> tempTable2 = new HashSet<int>();
         public Image loadingRoot;
+        public event Action onBeginLoadScene;
         public event Action onNetworkSceneLoaded;
         public GuidIndexer player;
         public Image progress;
         public TextMeshProUGUI text;
-
-        public void OnEvent(EventData photonEvent)
-        {
-            if (photonEvent.Code == OnStartLoad)
-                StartCoroutine(DoLoadLevel());
-            else if (photonEvent.Code == OnSceneLoaded)
-            {
-                tempTable1.Add((int) photonEvent.CustomData);
-            }
-            else if (photonEvent.Code == OnPlayerLoaded)
-            {
-                tempTable2.Add((int) photonEvent.CustomData);
-            }
-        }
+        private PhotonView photonView;
 
         private void Awake()
         {
+            photonView = GetComponent<PhotonView>();
             DontDestroyOnLoad(gameObject);
+        }
+
+        [PunRPC]
+        private void OnLoadRoomLevel()
+        {
+            StartCoroutine(DoLoadLevel());
+            onBeginLoadScene?.Invoke();
         }
 
         public void LoadRoomLevel()
         {
-            PhotonNetwork.RaiseEvent(
-                OnStartLoad,
-                null,
-                new RaiseEventOptions {Receivers = ReceiverGroup.All},
-                new SendOptions {Reliability = true}
-            );
+            photonView.RPC(nameof(OnLoadRoomLevel), RpcTarget.All);
         }
 
-        private void NotifySceneLoaded0()
+        [PunRPC]
+        private void OnNotifySceneLoaded(int step, int id)
         {
-            PhotonNetwork.RaiseEvent(
-                OnSceneLoaded,
-                PhotonNetwork.LocalPlayer.ActorNumber,
-                new RaiseEventOptions {Receivers = ReceiverGroup.All},
-                new SendOptions {Reliability = true}
-            );
-        }
-        
-        private void NotifySceneLoaded1()
-        {
-            PhotonNetwork.RaiseEvent(
-                OnPlayerLoaded,
-                PhotonNetwork.LocalPlayer.ActorNumber,
-                new RaiseEventOptions {Receivers = ReceiverGroup.All},
-                new SendOptions {Reliability = true}
-            );
+            if (step == 0)
+            {
+                tempTable1.Add(id);
+            }
+            else
+            {
+                tempTable2.Add(id);
+            }
         }
 
         private IEnumerator DoLoadLevel()
         {
             text.text = "Loading";
             PhotonNetwork.CurrentRoom.CustomProperties.TryGetValue("typeId", out var typeId);
-            var scene = GameConfigManager.guanQiaInfoTable[(int) typeId];
+            var scene = GameConfigManager.guanQiaInfoTable[typeId as int? ?? 0];
             loadingRoot.gameObject.SetActive(true);
             loadingRoot.sprite = scene.image;
             var op = SceneManager.LoadSceneAsync(scene.sceneName);
@@ -94,13 +73,13 @@ namespace Dash.Scripts.GamePlay.Core
             text.text = "等待其他玩家";
             yield return op;
             //Send And Wait All Player Scene Loaded
-            NotifySceneLoaded0();
+            photonView.RPC(nameof(OnNotifySceneLoaded), RpcTarget.All, 0, PhotonNetwork.LocalPlayer.ActorNumber);
             yield return new WaitUntil(() =>
             {
                 return PhotonNetwork.PlayerList.All(i => tempTable1.Contains(i.ActorNumber));
             });
             onNetworkSceneLoaded?.Invoke();
-            NotifySceneLoaded1();
+            photonView.RPC(nameof(OnNotifySceneLoaded), RpcTarget.All, 1, PhotonNetwork.LocalPlayer.ActorNumber);
             //Wait All Player
             yield return new WaitUntil(() =>
             {
