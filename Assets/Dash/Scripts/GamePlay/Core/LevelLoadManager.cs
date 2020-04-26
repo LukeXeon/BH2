@@ -87,7 +87,10 @@ namespace Dash.Scripts.GamePlay.Core
             });
             yield return Resources.UnloadUnusedAssets();
             yield return new WaitForEndOfFrame();
-            Destroy(gameObject);
+            if (photonView.IsMine)
+            {
+                PhotonNetwork.Destroy(gameObject);
+            }
         }
     }
 }
