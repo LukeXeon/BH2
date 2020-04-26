@@ -125,6 +125,21 @@ namespace Dash.Scripts.GamePlay.View
         public override void OnDamage(int viewId, int value)
         {
             animator.SetTrigger(HIT);
+            var view = PhotonView.Find(viewId);
+            if (view)
+            {
+                var from = view.transform.position;
+                if (from.x > transform.position.x)
+                {
+                    flipX = 1;
+                }
+                else if (from.x < transform.position.x)
+                {
+                    flipX = -1;
+                }
+            }
+
+            onActorDamageEvent.Invoke(this, value);
         }
 
         [PunRPC]

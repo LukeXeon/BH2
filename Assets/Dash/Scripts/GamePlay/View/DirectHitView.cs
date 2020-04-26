@@ -33,12 +33,16 @@ namespace Dash.Scripts.GamePlay.View
             var index = LocalPlayer.weaponIndex;
             var (info, data) = GamePlayConfigManager.weaponInfos[index];
             var range = info.sheCheng;
-            var shootRay = new Ray
-            {
-                origin = position,
-                direction = Vector3.right * Mathf.Sign(transform.localScale.x)
-            };
-            if (Physics.Raycast(shootRay, out var shootHit, range, targetMask))
+
+            if (Physics.BoxCast(
+                position,
+                Vector3.one / 2f,
+                Vector3.right * Mathf.Sign(transform.localScale.x),
+                out var shootHit,
+                Quaternion.identity,
+                range,
+                targetMask
+            ))
             {
                 var actorView = shootHit.collider.GetComponent<ActorView>();
                 Debug.Log(actorView.gameObject);
@@ -51,7 +55,9 @@ namespace Dash.Scripts.GamePlay.View
                         playerView.photonView.ViewID,
                         value
                     );
-                    RpcInPlayerView(nameof(OnSync), position, shootHit.point);
+                    var p = position;
+                    p.x = actorView.transform.position.x;
+                    RpcInPlayerView(nameof(OnSync), position, p);
                     return;
                 }
             }

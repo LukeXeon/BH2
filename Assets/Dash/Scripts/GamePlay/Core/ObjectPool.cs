@@ -90,7 +90,10 @@ namespace Dash.Scripts.GamePlay.Core
                 go.transform.position = position;
                 go.transform.rotation = rotation;
                 ++cache.allocCount;
-                go.GetComponent<IPoolLifecycle>()?.Reusing();
+                foreach (var poolLifecycle in go.GetComponents<IPoolLifecycle>())
+                {
+                    poolLifecycle.Reusing();
+                }
                 return go;
             }
 
@@ -125,7 +128,10 @@ namespace Dash.Scripts.GamePlay.Core
 
             if (cache.cache.Count < cache.prefabItem.maxAmount)
             {
-                go.GetComponent<IPoolLifecycle>()?.Recycle();
+                foreach (var poolLifecycle in go.GetComponents<IPoolLifecycle>())
+                {
+                    poolLifecycle.Recycle();
+                }
                 go.transform.SetParent(inactivePoolRoot);
                 cache.cache.Push(go);
                 return true;

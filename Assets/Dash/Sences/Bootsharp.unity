@@ -2909,6 +2909,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2921987a8ce7b4f4e83d23d71f87d24d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  audioSource: {fileID: 1028354622}
+  background: {fileID: 2100910894}
+  backToLogin: {fileID: 653714398}
+  canvas: {fileID: 612989350}
+  githubLogin: {fileID: 876472901}
+  loadNext: {fileID: 1576359351}
+  login: {fileID: 2017631486}
+  notifyError: {fileID: 960807685}
+  notifySucceed: {fileID: 1476081246}
+  password: {fileID: 1758493241}
+  passwordInSignUp: {fileID: 540145243}
+  passwordInSignUp2: {fileID: 1511477087}
+  progressBar: {fileID: 713481576}
+  progressBarRoot: {fileID: 1919697035}
+  progressBarText: {fileID: 759822679}
+  signUp: {fileID: 1615758433}
   sprites:
   - {fileID: 21300000, guid: 67159e02735b60b41aa81eaded649457, type: 3}
   - {fileID: 21300000, guid: 7e741f0bd26f10a4488f40f5c13b4709, type: 3}
@@ -2919,29 +2935,13 @@ MonoBehaviour:
   - {fileID: 21300000, guid: fc41d05ffd114354fb731e1ce5241b1e, type: 3}
   - {fileID: 21300000, guid: 49da59b2b3e896f4ba7db1e6f5311080, type: 3}
   - {fileID: 21300000, guid: bad245d450875da4bbfb8be479565ed6, type: 3}
-  videoPlayer: {fileID: 1068401674}
   tabs: {fileID: 504393245}
-  notifySucceed: {fileID: 1476081246}
-  notifyError: {fileID: 960807685}
-  canvas: {fileID: 612989350}
-  background: {fileID: 2100910894}
-  progressBarRoot: {fileID: 1919697035}
-  progressBarText: {fileID: 759822679}
-  progressBar: {fileID: 713481576}
+  username: {fileID: 1184413302}
+  usernameInSignUp: {fileID: 977858835}
+  videoPlayer: {fileID: 1068401674}
   waitWindow: {fileID: 1844865812}
   windowManager: {fileID: 1182144370}
-  audioSource: {fileID: 1028354622}
-  username: {fileID: 1184413302}
-  password: {fileID: 1758493241}
-  login: {fileID: 2017631486}
-  usernameInSignUp: {fileID: 977858835}
-  passwordInSignUp: {fileID: 540145243}
-  passwordInSignUp2: {fileID: 1511477087}
-  githubLogin: {fileID: 876472901}
-  signUp: {fileID: 1615758433}
   yiJingDengLuRoot: {fileID: 1576359348}
-  loadNext: {fileID: 1576359351}
-  backToLogin: {fileID: 653714398}
 --- !u!114 &612989348
 MonoBehaviour:
   m_ObjectHideFlags: 0

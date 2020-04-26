@@ -15,13 +15,14 @@ GameObject:
   - component: {fileID: 8238277080845339809}
   - component: {fileID: -4584323755285702024}
   - component: {fileID: -5809969059143972125}
+  - component: {fileID: -4196406118967965609}
   m_Layer: 12
   m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &8238277080845339818
 Transform:
   m_ObjectHideFlags: 0
@@ -112,6 +113,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   poseManager: {fileID: 8238277081177272655}
+  audioView: {fileID: 0}
   speed: 10
 --- !u!114 &-4584323755285702024
 MonoBehaviour:
@@ -142,6 +144,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   guid: 
+--- !u!136 &-4196406118967965609
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8238277080845339819}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  m_Radius: 0.71
+  m_Height: 3.7703276
+  m_Direction: 1
+  m_Center: {x: 0, y: 1.9034224, z: 0}
 --- !u!1 &8238277081177272650
 GameObject:
   m_ObjectHideFlags: 0

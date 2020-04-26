@@ -10,7 +10,6 @@ namespace Dash.Scripts.GamePlay.View
     {
         public OnActorDamageEvent onActorDamageEvent;
         internal PhotonView photonView;
-
         protected virtual void Awake()
         {
             if (onActorDamageEvent == null) onActorDamageEvent = new OnActorDamageEvent();

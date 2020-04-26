@@ -9,14 +9,14 @@ namespace Dash.Scripts.GamePlay.View
     {
         public NpcConfig config;
         private Collider[] targetCollider;
-        private int playerLayerMask;
+        protected int targetLayerMask;
         [HideInInspector]
         public PhotonView target;
 
         protected override void Awake()
         {
             base.Awake();
-            playerLayerMask = LayerMask.GetMask("Player");
+            targetLayerMask = LayerMask.GetMask("Player");
             targetCollider = new Collider[1];
         }
         
@@ -36,7 +36,7 @@ namespace Dash.Scripts.GamePlay.View
                 transform.position,
                 config.findPlayerRange,
                 targetCollider,
-                playerLayerMask
+                targetLayerMask
             );
             var c = targetCollider.FirstOrDefault();
             if (c != null)

@@ -70,6 +70,10 @@ MonoBehaviour:
   - OnChildRpc
   - OnSyncFire
   - OnFireSingle
+  - OnSyncFire0
+  - OnSyncFire1
+  - OnSyncBomb
+  - OnFireBomb
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1
