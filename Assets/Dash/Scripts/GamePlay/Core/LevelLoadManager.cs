@@ -4,7 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using Dash.Scripts.Config;
 using Dash.Scripts.Core;
+using ExitGames.Client.Photon;
 using Photon.Pun;
+using Photon.Realtime;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -12,7 +14,7 @@ using UnityEngine.UI;
 
 namespace Dash.Scripts.GamePlay.Core
 {
-    public class LevelLoadManager : MonoBehaviour
+    public sealed class LevelLoadManager : MonoBehaviour, IOnEventCallback
     {
         private readonly HashSet<int> tempTable1 = new HashSet<int>();
         private readonly HashSet<int> tempTable2 = new HashSet<int>();
@@ -22,37 +24,31 @@ namespace Dash.Scripts.GamePlay.Core
         public GuidIndexer player;
         public Image progress;
         public TextMeshProUGUI text;
-        private PhotonView photonView;
 
+        public void OnEnable()
+        {
+            PhotonNetwork.AddCallbackTarget(this);
+        }
+
+        public void OnDisable()
+        {
+            PhotonNetwork.RemoveCallbackTarget(this);
+        }
+        
         private void Awake()
         {
-            photonView = GetComponent<PhotonView>();
             DontDestroyOnLoad(gameObject);
         }
 
-        [PunRPC]
-        private void OnLoadRoomLevel()
+        private void Send(byte code, int value)
         {
-            StartCoroutine(DoLoadLevel());
-            onBeginLoadScene?.Invoke();
+            PhotonNetwork.RaiseEvent(code, value, new RaiseEventOptions() {Receivers = ReceiverGroup.All},
+                new SendOptions {Reliability = true});
         }
 
         public void LoadRoomLevel()
         {
-            photonView.RPC(nameof(OnLoadRoomLevel), RpcTarget.All);
-        }
-
-        [PunRPC]
-        private void OnNotifySceneLoaded(int step, int id)
-        {
-            if (step == 0)
-            {
-                tempTable1.Add(id);
-            }
-            else
-            {
-                tempTable2.Add(id);
-            }
+            Send(11, 0);
         }
 
         private IEnumerator DoLoadLevel()
@@ -70,16 +66,16 @@ namespace Dash.Scripts.GamePlay.Core
             }
 
             progress.fillAmount = 1;
-            text.text = "等待其他玩家";
+            text.text = "等待游戏开始";
             yield return op;
             //Send And Wait All Player Scene Loaded
-            photonView.RPC(nameof(OnNotifySceneLoaded), RpcTarget.All, 0, PhotonNetwork.LocalPlayer.ActorNumber);
+            Send(12, PhotonNetwork.LocalPlayer.ActorNumber);
             yield return new WaitUntil(() =>
             {
                 return PhotonNetwork.PlayerList.All(i => tempTable1.Contains(i.ActorNumber));
             });
             onNetworkSceneLoaded?.Invoke();
-            photonView.RPC(nameof(OnNotifySceneLoaded), RpcTarget.All, 1, PhotonNetwork.LocalPlayer.ActorNumber);
+            Send(13, PhotonNetwork.LocalPlayer.ActorNumber);
             //Wait All Player
             yield return new WaitUntil(() =>
             {
@@ -87,9 +83,23 @@ namespace Dash.Scripts.GamePlay.Core
             });
             yield return Resources.UnloadUnusedAssets();
             yield return new WaitForEndOfFrame();
-            if (photonView.IsMine)
+            Destroy(gameObject);
+        }
+
+        public void OnEvent(EventData photonEvent)
+        {
+            if (photonEvent.Code == 11)
             {
-                PhotonNetwork.Destroy(gameObject);
+                StartCoroutine(DoLoadLevel());
+                onBeginLoadScene?.Invoke();
+            }
+            else if (photonEvent.Code == 12)
+            {
+                tempTable1.Add((int) photonEvent.CustomData);
+            }
+            else if (photonEvent.Code == 13)
+            {
+                tempTable2.Add((int) photonEvent.CustomData);
             }
         }
     }
