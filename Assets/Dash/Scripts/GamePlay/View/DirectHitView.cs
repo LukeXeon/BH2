@@ -12,6 +12,7 @@ namespace Dash.Scripts.GamePlay.View
         private static readonly int KAIQIANG = Animator.StringToHash("kaiqiang");
         [Header("Assets")] public AudioClip audioClip;
         private ParticleSystem[] particleSystems;
+        public Transform rayBegin;
         public LineRenderer shootLine;
         public Transform[] shootLocators;
         private int flipX;
@@ -33,9 +34,11 @@ namespace Dash.Scripts.GamePlay.View
             var index = LocalPlayer.weaponIndex;
             var (info, data) = PlayerConfigManager.weaponInfos[index];
             var range = info.sheCheng;
+            var from = position;
+            from.x = rayBegin.position.x;
             if (Physics.BoxCast(
-                position,
-                Vector3.one,
+                from,
+                Vector3.one * 1.5f,
                 Vector3.right * Mathf.Sign(transform.localScale.x),
                 out var shootHit,
                 Quaternion.identity,
@@ -53,9 +56,19 @@ namespace Dash.Scripts.GamePlay.View
                         playerView.photonView.ViewID,
                         value
                     );
-                    var p = position;
-                    p.x = actorView.transform.position.x;
-                    RpcInPlayerView(nameof(OnSync), position, p);
+                    Vector3 from1;
+                    var to = position;
+                    to.x = actorView.transform.position.x;
+                    if (actorView.transform.position.x - locator.position.x > 0)
+                    {
+                        from1 = position;
+                    }
+                    else
+                    {
+                        from1 = to;
+                    }
+
+                    RpcInPlayerView(nameof(OnSync), from1, to);
                     return;
                 }
             }

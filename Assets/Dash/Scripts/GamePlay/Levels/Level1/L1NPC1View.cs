@@ -130,7 +130,7 @@ namespace Dash.Scripts.GamePlay.Levels.Level1
                     {
                         if (Physics.BoxCast(
                                 config1.closeRoot.position,
-                                new Vector3(1, 1, 1),
+                                new Vector3(1.5f, 1.5f, 1.5f),
                                 Vector3.right * flipX,
                                 out var hit,
                                 Quaternion.identity,
@@ -148,7 +148,7 @@ namespace Dash.Scripts.GamePlay.Levels.Level1
                     {
                         if (Physics.BoxCast(
                                 config1.bulletRoot.position,
-                                new Vector3(1, 1, 1),
+                                new Vector3(1.5f, 1.5f, 1.5f),
                                 Vector3.right * flipX,
                                 out var hit,
                                 Quaternion.identity,
@@ -231,7 +231,7 @@ namespace Dash.Scripts.GamePlay.Levels.Level1
             audioSourceClose.Play();
             if (Physics.BoxCast(
                     config1.closeRoot.position,
-                    new Vector3(1, 1, 1),
+                    new Vector3(1.5f, 1.5f, 1.5f),
                     Vector3.right * flipX,
                     out var hit,
                     Quaternion.identity,
