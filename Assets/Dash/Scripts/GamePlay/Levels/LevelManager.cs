@@ -4,7 +4,6 @@ using System.Linq;
 using Cinemachine;
 using Dash.Scripts.Core;
 using Dash.Scripts.GamePlay.Config;
-using Dash.Scripts.GamePlay.Core;
 using Dash.Scripts.GamePlay.UIManager;
 using Dash.Scripts.GamePlay.View;
 using Photon.Pun;
@@ -14,14 +13,17 @@ namespace Dash.Scripts.GamePlay.Levels
 {
     public abstract class LevelManager : MonoBehaviour
     {
-
         public Transform[] playerOutLocators;
         public GuidIndexer playerPrefab;
+        [HideInInspector]
+        public CinemachineVirtualCamera mainCamera;
 
-        private void Awake()
+        protected virtual void Awake()
         {
             var loader = FindObjectOfType<LevelLoadManager>();
-            loader.onNetworkSceneLoaded+= LoaderOnOnNetworkSceneLoaded;
+            mainCamera = GameObject.FindWithTag("CameraController")
+                .GetComponent<CinemachineVirtualCamera>();
+            loader.onNetworkSceneLoaded += LoaderOnOnNetworkSceneLoaded;
         }
 
         private void LoaderOnOnNetworkSceneLoaded()
@@ -35,7 +37,7 @@ namespace Dash.Scripts.GamePlay.Levels
 
         private void CreatePlayer()
         {
-            var virtualCamera = FindObjectOfType<CinemachineVirtualCamera>();
+
             var uiManager = FindObjectOfType<LevelUIManager>();
             var pos = playerOutLocators[
                 Array.FindIndex(PhotonNetwork.PlayerList,
@@ -47,8 +49,8 @@ namespace Dash.Scripts.GamePlay.Levels
                 Quaternion.identity,
                 data: new object[]
                 {
-                    GamePlayConfigManager.playerInfo.Item1.typeId,
-                    GamePlayConfigManager.weaponInfos.Select(i => i.Item1.typeId).ToArray()
+                    PlayerConfigManager.playerInfo.Item1.typeId,
+                    PlayerConfigManager.weaponInfos.Select(i => i.Item1.typeId).ToArray()
                 }
             );
             var controller = go.GetComponent<PlayerView>();
@@ -56,7 +58,7 @@ namespace Dash.Scripts.GamePlay.Levels
             {
                 controller.photonView.RPC(nameof(controller.OnWeaponChanged), RpcTarget.All, info.typeId);
             });
-            virtualCamera.Follow = go.transform;
+            mainCamera.Follow = go.transform;
         }
 
         protected abstract IEnumerator LevelLogic();

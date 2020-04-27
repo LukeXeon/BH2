@@ -31,12 +31,12 @@ namespace Dash.Scripts.GamePlay.View
             var locator = shootLocators[Random.Range(0, shootLocators.Length)];
             var position = locator.position;
             var index = LocalPlayer.weaponIndex;
-            var (info, data) = GamePlayConfigManager.weaponInfos[index];
+            var (info, data) = PlayerConfigManager.weaponInfos[index];
             var range = info.sheCheng;
 
             if (Physics.BoxCast(
                 position,
-                Vector3.one / 2f,
+                Vector3.one,
                 Vector3.right * Mathf.Sign(transform.localScale.x),
                 out var shootHit,
                 Quaternion.identity,
@@ -45,7 +45,6 @@ namespace Dash.Scripts.GamePlay.View
             ))
             {
                 var actorView = shootHit.collider.GetComponent<ActorView>();
-                Debug.Log(actorView.gameObject);
                 if (actorView)
                 {
                     var value = data.gongJiLi;
@@ -71,7 +70,7 @@ namespace Dash.Scripts.GamePlay.View
         {
             timer += Time.deltaTime;
             var index = LocalPlayer.weaponIndex;
-            var info = GamePlayConfigManager.weaponInfos[index];
+            var info = PlayerConfigManager.weaponInfos[index];
             var timeBetweenBullets = Mathf.Min(1f / info.Item1.sheShu, 0.15f);
             if (timer >= timeBetweenBullets * effectsDisplayTime)
             {

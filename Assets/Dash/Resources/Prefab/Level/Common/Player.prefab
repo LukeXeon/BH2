@@ -171,7 +171,6 @@ GameObject:
   - component: {fileID: 8238277081177272655}
   - component: {fileID: 8238277081177272652}
   - component: {fileID: 8238277081177272653}
-  - component: {fileID: 4736703732428140848}
   - component: {fileID: 8246092352227616834}
   m_Layer: 12
   m_Name: Skeleton
@@ -381,17 +380,6 @@ MonoBehaviour:
     LayerIndex: 1
   - SynchronizeType: 0
     LayerIndex: 2
---- !u!210 &4736703732428140848
-SortingGroup:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8238277081177272650}
-  m_Enabled: 1
-  m_SortingLayerID: 1895017843
-  m_SortingLayer: 8
-  m_SortingOrder: 10
 --- !u!114 &8246092352227616834
 MonoBehaviour:
   m_ObjectHideFlags: 0

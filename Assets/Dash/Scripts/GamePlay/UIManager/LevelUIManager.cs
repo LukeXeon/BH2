@@ -3,7 +3,7 @@ using System.Linq;
 using Dash.Scripts.Config;
 using Dash.Scripts.Core;
 using Dash.Scripts.GamePlay.Config;
-using Dash.Scripts.GamePlay.Core;
+using Dash.Scripts.GamePlay.Levels;
 using Dash.Scripts.GamePlay.View;
 using Michsky.UI.ModernUIPack;
 using Photon.Pun;
@@ -35,13 +35,21 @@ namespace Dash.Scripts.GamePlay.UIManager
         public OnWeaponChangedEvent weaponChanged;
         public TextMeshProUGUI xueText;
         public Image xueTiao;
+        public Button cancelBack;
+        public ETCJoystick joystick;
+        public ETCButton fire0;
+        public ETCButton fire1;
+        public RectTransform damageTextRoot;
+        private MonoBehaviour[] uiGroup;
+        private bool isLockUI;
 
         private void Awake()
         {
-            var player = GamePlayConfigManager.playerInfo.Item1;
+            uiGroup = new MonoBehaviour[] {joystick, fire0, fire1, leftWeapon, rightWeapon};
+            var player = PlayerConfigManager.playerInfo.Item1;
             icon.sprite = player.icon;
             playerName.text = player.displayName;
-            weapon.sprite = GamePlayConfigManager.weaponInfos.First().Item1.sprite;
+            weapon.sprite = PlayerConfigManager.weaponInfos.First().Item1.sprite;
             if (weaponChanged == null) weaponChanged = new OnWeaponChangedEvent();
 
             leftWeapon.onClick.AddListener(() =>
@@ -50,12 +58,12 @@ namespace Dash.Scripts.GamePlay.UIManager
                 if (time - lastQieQiang < qieQiangJianGe) return;
 
                 var last = LocalPlayer.weaponIndex - 1;
-                if (last < 0) last = GamePlayConfigManager.weaponInfos.Count - 1;
+                if (last < 0) last = PlayerConfigManager.weaponInfos.Count - 1;
 
                 Debug.Log(last);
                 if (last == LocalPlayer.weaponIndex) return;
 
-                var info = GamePlayConfigManager.weaponInfos[last].Item1;
+                var info = PlayerConfigManager.weaponInfos[last].Item1;
                 LocalPlayer.weaponIndex = last;
                 weaponChanged.Invoke(info);
                 lastQieQiang = time;
@@ -66,15 +74,23 @@ namespace Dash.Scripts.GamePlay.UIManager
                 if (time - lastQieQiang < qieQiangJianGe) return;
 
                 var last = LocalPlayer.weaponIndex;
-                LocalPlayer.weaponIndex = (last + 1) % GamePlayConfigManager.weaponInfos.Count;
+                LocalPlayer.weaponIndex = (last + 1) % PlayerConfigManager.weaponInfos.Count;
                 if (last == LocalPlayer.weaponIndex) return;
 
-                var info = GamePlayConfigManager.weaponInfos[LocalPlayer.weaponIndex].Item1;
+                var info = PlayerConfigManager.weaponInfos[LocalPlayer.weaponIndex].Item1;
                 weaponChanged.Invoke(info);
                 lastQieQiang = time;
             });
             weaponChanged.AddListener(info => { weapon.sprite = info.sprite; });
-            back.onClick.AddListener(() => { dialog.OpenWindow(); });
+            back.onClick.AddListener(() =>
+            {
+                LockUI(true);
+                dialog.OpenWindow();
+            });
+            cancelBack.onClick.AddListener(() =>
+            {
+                LockUI(false);
+            });
             submitBack.onClick.AddListener(async () =>
             {
                 mask.SetActive(true);
@@ -89,23 +105,35 @@ namespace Dash.Scripts.GamePlay.UIManager
             RefreshPlayerUI();
         }
 
+        private void LockUI(bool value)
+        {
+            isLockUI = value;
+            foreach (var monoBehaviour in uiGroup)
+            {
+                monoBehaviour.enabled = value;
+            }
+        }
+
         private void Update()
         {
-            if (Input.GetKeyDown(KeyCode.U))
+            if (!isLockUI)
             {
-                leftWeapon.onClick.Invoke();
-            }
+                if (Input.GetKeyDown(KeyCode.U))
+                {
+                    leftWeapon.onClick.Invoke();
+                }
 
-            if (Input.GetKeyDown(KeyCode.I))
-            {
-                rightWeapon.onClick.Invoke();
+                if (Input.GetKeyDown(KeyCode.I))
+                {
+                    rightWeapon.onClick.Invoke();
+                }
             }
         }
 
         public void OnShowDamage(ActorView pos, int value)
         {
             var go = ObjectPool.GlobalObtain(damageText.guid, Vector3.zero, Quaternion.identity, false);
-            go.transform.SetParent(icon.canvas.transform);
+            go.transform.SetParent(damageTextRoot);
             go.GetComponent<DamageTextUIManager>().Initialize(pos.transform, value);
             if (pos.photonView.IsMine)
             {
@@ -115,15 +143,14 @@ namespace Dash.Scripts.GamePlay.UIManager
 
         private void RefreshPlayerUI()
         {
-            lanTiao.fillAmount = (float) LocalPlayer.hp / GamePlayConfigManager.playerInfo.Item2.shengMingZhi;
-            xueTiao.fillAmount = (float) LocalPlayer.mp / GamePlayConfigManager.playerInfo.Item2.nengLiangZhi;
-            xueText.text = LocalPlayer.hp + "/" + GamePlayConfigManager.playerInfo.Item2.shengMingZhi;
-            lanText.text = LocalPlayer.mp + "/" + GamePlayConfigManager.playerInfo.Item2.nengLiangZhi;
+            lanTiao.fillAmount = (float) LocalPlayer.hp / PlayerConfigManager.playerInfo.Item2.shengMingZhi;
+            xueTiao.fillAmount = (float) LocalPlayer.mp / PlayerConfigManager.playerInfo.Item2.nengLiangZhi;
+            xueText.text = LocalPlayer.hp + "/" + PlayerConfigManager.playerInfo.Item2.shengMingZhi;
+            lanText.text = LocalPlayer.mp + "/" + PlayerConfigManager.playerInfo.Item2.nengLiangZhi;
         }
 
         public override void OnMasterClientSwitched(Player newMasterClient)
         {
-            
         }
 
         [Serializable]

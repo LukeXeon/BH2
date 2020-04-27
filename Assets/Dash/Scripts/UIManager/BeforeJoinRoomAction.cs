@@ -26,7 +26,7 @@ namespace Dash.Scripts.UIManager
             try
             {
                 var player = await CloudManager.GetCompletePlayer();
-                GamePlayConfigManager.Prepare(player);
+                PlayerConfigManager.Prepare(player);
             }
             catch (Exception e)
             {

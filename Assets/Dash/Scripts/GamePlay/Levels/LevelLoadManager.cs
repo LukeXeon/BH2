@@ -12,7 +12,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-namespace Dash.Scripts.GamePlay.Core
+namespace Dash.Scripts.GamePlay.Levels
 {
     public sealed class LevelLoadManager : MonoBehaviour, IOnEventCallback
     {

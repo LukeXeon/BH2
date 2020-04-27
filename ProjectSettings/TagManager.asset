@@ -8,6 +8,7 @@ TagManager:
   - Enemies
   - PlayerChuShengDian
   - FX
+  - CameraController
   layers:
   - Default
   - TransparentFX

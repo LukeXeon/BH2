@@ -4,7 +4,7 @@ using System.Linq;
 using agora_gaming_rtc;
 using Dash.Scripts.Cloud;
 using Dash.Scripts.GamePlay.Config;
-using Dash.Scripts.GamePlay.Core;
+using Dash.Scripts.GamePlay.Levels;
 using Dash.Scripts.UI;
 using Dash.Scripts.UIManager.ItemUIManager;
 using ExitGames.Client.Photon;
@@ -140,8 +140,8 @@ namespace Dash.Scripts.UIManager
             var table = new Hashtable
             {
                 ["displayName"] = CloudManager.GetNameInGame(),
-                ["playerTypeId"] = GamePlayConfigManager.playerInfo.Item1.typeId,
-                ["weaponTypeId"] = GamePlayConfigManager.weaponInfos.First().Item1.typeId,
+                ["playerTypeId"] = PlayerConfigManager.playerInfo.Item1.typeId,
+                ["weaponTypeId"] = PlayerConfigManager.weaponInfos.First().Item1.typeId,
                 ["isReady"] = PhotonNetwork.IsMasterClient
             };
             PhotonNetwork.LocalPlayer.SetCustomProperties(table);
@@ -150,14 +150,14 @@ namespace Dash.Scripts.UIManager
             Debug.Log(index + "playerTypeId");
             table = new Hashtable
             {
-                [index + "playerTypeId"] = GamePlayConfigManager.playerInfo.Item1.typeId
+                [index + "playerTypeId"] = PlayerConfigManager.playerInfo.Item1.typeId
             };
             PhotonNetwork.CurrentRoom.SetCustomProperties(table);
         }
 
         public override void OnLeftRoom()
         {
-            GamePlayConfigManager.Clear();
+            PlayerConfigManager.Clear();
             var rtcEngine = IRtcEngine.QueryEngine();
             rtcEngine?.LeaveChannel();
             if (isOpen)

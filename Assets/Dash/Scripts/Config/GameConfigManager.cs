@@ -79,5 +79,10 @@ namespace Dash.Scripts.Config
                 maxExp = i * levelExp
             };
         }
+
+        public static int GetDamageReduction(int fangYuLi, int maxShengMingZhi)
+        {
+            return (int) (fangYuLi / 10f * maxShengMingZhi * 0.01f);
+        }
     }
 }

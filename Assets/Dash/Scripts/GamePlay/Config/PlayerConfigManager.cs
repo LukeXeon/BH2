@@ -5,7 +5,7 @@ using Dash.Scripts.Config;
 
 namespace Dash.Scripts.GamePlay.Config
 {
-    public static class GamePlayConfigManager
+    public static class PlayerConfigManager
     {
         public static Tuple<PlayerInfoAsset, RuntimePlayerInfo> playerInfo;
 

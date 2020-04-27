@@ -1,6 +1,6 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
+using Dash.Scripts.Config;
 using Dash.Scripts.GamePlay.View;
 using Photon.Pun;
 using Spine.Unity;
@@ -35,12 +35,6 @@ namespace Dash.Scripts.GamePlay.Levels.Level1
         private bool isBusy;
         private bool isBombed;
         private int targetLayer;
-
-        private IEnumerator AutoDestroy()
-        {
-            yield return new WaitForSeconds(3);
-            PhotonNetwork.Destroy(gameObject);
-        }
 
         protected override void Awake()
         {
@@ -130,8 +124,6 @@ namespace Dash.Scripts.GamePlay.Levels.Level1
                         view.RPC(nameof(actor.OnDamage), RpcTarget.All, photonView.ViewID, 1000);
                     }
                 }
-
-                StartCoroutine(AutoDestroy());
             }
         }
 
@@ -177,12 +169,28 @@ namespace Dash.Scripts.GamePlay.Levels.Level1
         [PunRPC]
         public override void OnDamage(int viewId, int value)
         {
-            if (!isBombed)
+            if (isBombed)
             {
-                isBusy = true;
-                animator.SetTrigger(HIT);
-                onActorDamageEvent.Invoke(this, 1000);
+                return;
             }
+            isBusy = true;
+            animator.SetTrigger(HIT);
+
+            var damage = Mathf.Max(0,
+                value - GameConfigManager.GetDamageReduction(config.fangYuLi, config.shengMingZhi));
+            hp -= damage;
+            isBusy = true;
+            if (hp <= 0)
+            {
+                isBombed = true;
+                animator.SetTrigger(BOMB);
+            }
+            else
+            {
+                animator.SetTrigger(HIT);
+            }
+
+            onActorDamageEvent.Invoke(this, damage);
         }
 
         public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
@@ -196,6 +204,14 @@ namespace Dash.Scripts.GamePlay.Levels.Level1
             {
                 lastTargetViewId = (int) stream.ReceiveNext();
                 flipX = (int) stream.ReceiveNext();
+            }
+        }
+        
+        public void OnDieAnimationCallback()
+        {
+            if (photonView.IsMine)
+            {
+                PhotonNetwork.Destroy(gameObject);
             }
         }
     }

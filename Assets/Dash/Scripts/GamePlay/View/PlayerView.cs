@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Dash.Scripts.Config;
+using Dash.Scripts.GamePlay.Config;
 using Photon.Pun;
 using Spine.Unity;
 using UnityEngine;
@@ -133,6 +134,18 @@ namespace Dash.Scripts.GamePlay.View
                 }
             }
 
+            if (photonView.IsMine)
+            {
+                var damage = Mathf.Max(0,
+                    value - GameConfigManager.GetDamageReduction(PlayerConfigManager.playerInfo.Item2.fangYuLi,
+                        PlayerConfigManager.playerInfo.Item2.shengMingZhi));
+                photonView.RPC(nameof(OnSyncDamageText), RpcTarget.All, damage);
+            }
+        }
+
+        [PunRPC]
+        private void OnSyncDamageText(int value)
+        {
             onActorDamageEvent.Invoke(this, value);
         }
 

@@ -1,5 +1,5 @@
 using System.Collections;
-using Dash.Scripts.GamePlay.Core;
+using Dash.Scripts.GamePlay.Levels;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,6 +10,12 @@ namespace Dash.Scripts.GamePlay.UIManager
         private Transform follow;
         private CanvasScaler scaler;
         public Text text;
+        private Camera camera1;
+
+        private void Awake()
+        {
+            camera1 = Camera.main;
+        }
 
         public void Reusing()
         {
@@ -42,9 +48,10 @@ namespace Dash.Scripts.GamePlay.UIManager
 
         private Vector3 WorldToUI(Vector3 pos)
         {
-            var resolutionX = scaler.referenceResolution.x;
-            var resolutionY = scaler.referenceResolution.y;
-            var viewportPos = Camera.main.WorldToViewportPoint(pos);
+            var referenceResolution = scaler.referenceResolution;
+            var resolutionX = referenceResolution.x;
+            var resolutionY = referenceResolution.y;
+            var viewportPos = camera1.WorldToViewportPoint(pos);
             var uiPos = new Vector3(viewportPos.x * resolutionX - resolutionX * 0.5f,
                 viewportPos.y * resolutionY - resolutionY * 0.5f, 0);
             return uiPos;

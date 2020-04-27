@@ -1,7 +1,7 @@
 using Photon.Pun;
 using UnityEngine;
 
-namespace Dash.Scripts.GamePlay.Core
+namespace Dash.Scripts.GamePlay.Levels
 {
     public class PunPool : IPunPrefabPool
     {

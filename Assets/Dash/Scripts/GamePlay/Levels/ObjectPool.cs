@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Dash.Scripts.Core;
 using UnityEngine;
 
-namespace Dash.Scripts.GamePlay.Core
+namespace Dash.Scripts.GamePlay.Levels
 {
     public sealed class ObjectPool : MonoBehaviour
     {

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Dash.Scripts.Config;
 using Dash.Scripts.Core;
 using Dash.Scripts.GamePlay.View;
 using Photon.Pun;
@@ -16,6 +17,7 @@ namespace Dash.Scripts.GamePlay.Levels.Level1
         private static readonly int IS_RUN = Animator.StringToHash("is_run");
         private static readonly int HIT = Animator.StringToHash("hit");
         private static readonly int ATTACK = Animator.StringToHash("attack");
+        private static readonly int DIE = Animator.StringToHash("die");
 
         [Serializable]
         public struct L1N1Config
@@ -25,8 +27,9 @@ namespace Dash.Scripts.GamePlay.Levels.Level1
             [Header("近战攻击间隔")] public float closeTime;
             [Header("发射子弹的预制体")] public GuidIndexer bullet;
             [Header("子弹发射位置")] public Transform[] locators;
-            public Transform bulletLocatorRoot;
-            public Transform center;
+            public Transform locatorRoot;
+            public Transform bulletRoot;
+            public Transform closeRoot;
         }
 
         public L1N1Config config1;
@@ -43,10 +46,10 @@ namespace Dash.Scripts.GamePlay.Levels.Level1
         private int lastTargetViewId = int.MinValue;
         private float lastCloseAttackTime;
         private float lastRemoteAttackTime;
-        private Collider[] colliders;
 
         //使能开关
         private bool isBusy;
+        private bool isDie;
 
         protected override void Awake()
         {
@@ -57,8 +60,6 @@ namespace Dash.Scripts.GamePlay.Levels.Level1
             {
                 system.Stop();
             }
-
-            colliders = new Collider[1];
         }
 
         public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
@@ -81,7 +82,7 @@ namespace Dash.Scripts.GamePlay.Levels.Level1
 
         private void UpdateMovement()
         {
-            if (isBusy)
+            if (isBusy || isDie)
             {
                 agent.enabled = false;
             }
@@ -103,8 +104,8 @@ namespace Dash.Scripts.GamePlay.Levels.Level1
                     if (target != null)
                     {
                         lastTargetViewId = target.ViewID;
-                        var position = target.transform.position;
-                        agent.stoppingDistance = 1;
+                        var position1 = target.transform.position;
+                        var position = position1;
                         agent.SetDestination(position);
                     }
                     else
@@ -113,6 +114,7 @@ namespace Dash.Scripts.GamePlay.Levels.Level1
                     }
 
                     animator.SetBool(IS_RUN, agent.velocity != Vector3.zero);
+
                     if (agent.velocity.x > 0)
                     {
                         flipX = 1;
@@ -120,6 +122,11 @@ namespace Dash.Scripts.GamePlay.Levels.Level1
                     else if (agent.velocity.x < 0)
                     {
                         flipX = -1;
+                    }
+
+                    if (target && agent.velocity == Vector3.zero)
+                    {
+                        flipX = (int) Mathf.Sign(target.transform.position.x - transform.position.x);
                     }
                 }
                 else
@@ -131,69 +138,39 @@ namespace Dash.Scripts.GamePlay.Levels.Level1
 
         private void UpdateAttack()
         {
-            if (!isBusy && photonView.IsMine)
+            if (!isDie && !isBusy && photonView.IsMine)
             {
-                float distance = float.MaxValue;
                 if (target)
                 {
-                    var hasHit = Physics.BoxCast(
-                        config1.center.position,
-                        Vector3.one,
-                        Vector3.right * flipX,
-                        out var hit,
-                        Quaternion.identity,
-                        config.findPlayerRange,
-                        targetLayerMask
-                    );
-                    if (hasHit)
+                    if (PhotonNetwork.Time - lastCloseAttackTime >= config1.closeTime)
                     {
-                        distance = hit.distance;
-                    }
-
-                    if (agent.velocity == Vector3.zero)
-                    {
-                        if (!hasHit)
-                        {
-                            hasHit = Physics.BoxCast(
-                                config1.center.position,
-                                Vector3.one,
-                                Vector3.right * -flipX,
-                                out hit,
+                        if (Physics.BoxCast(
+                                config1.closeRoot.position,
+                                new Vector3(1, 1, 1),
+                                Vector3.right * flipX,
+                                out var hit,
                                 Quaternion.identity,
                                 config.findPlayerRange,
                                 targetLayerMask
-                            );
-                            if (hasHit)
-                            {
-                                distance = hit.distance;
-                                flipX = -flipX;
-                            }
-                            else
-                            {
-                                colliders[0] = null;
-                                Physics.OverlapSphereNonAlloc(config1.center.position, config1.distance, colliders,
-                                    targetLayerMask);
-                                if (colliders[0] != null)
-                                {
-                                    hasHit = true;
-                                    distance = Vector3.Distance(config1.center.position,
-                                        colliders[0].transform.position);
-                                    colliders[0] = null;
-                                }
-                            }
-                        }
-                    }
-
-
-                    if (hasHit)
-                    {
-                        if (distance <= config1.distance &&
-                            PhotonNetwork.Time - lastCloseAttackTime >= config1.closeTime)
+                            ) && hit.distance <= config1.distance)
                         {
                             lastCloseAttackTime = (float) PhotonNetwork.Time;
                             photonView.RPC(nameof(OnSyncFire1), RpcTarget.All);
                         }
-                        else if (PhotonNetwork.Time - lastRemoteAttackTime >= config1.remoteTime)
+                    }
+
+                    if (PhotonNetwork.Time - lastRemoteAttackTime >= config1.remoteTime +
+                        Random.Range(-config1.remoteTime / 4, config1.remoteTime / 4))
+                    {
+                        if (Physics.BoxCast(
+                                config1.bulletRoot.position,
+                                new Vector3(1, 1, 1),
+                                Vector3.right * flipX,
+                                out var hit,
+                                Quaternion.identity,
+                                config.findPlayerRange,
+                                targetLayerMask
+                            ) && config1.bulletRoot.position.x - hit.collider.transform.position.x > 0)
                         {
                             lastRemoteAttackTime = (float) PhotonNetwork.Time;
                             photonView.RPC(nameof(OnSyncFire0), RpcTarget.All);
@@ -206,9 +183,9 @@ namespace Dash.Scripts.GamePlay.Levels.Level1
         private void UpdateFlipX()
         {
             mecanim.Skeleton.ScaleX = flipX;
-            var scale = config1.bulletLocatorRoot.localScale;
+            var scale = config1.locatorRoot.localScale;
             scale.x = flipX;
-            config1.bulletLocatorRoot.localScale = scale;
+            config1.locatorRoot.localScale = scale;
         }
 
         private void Update()
@@ -256,7 +233,7 @@ namespace Dash.Scripts.GamePlay.Levels.Level1
                         var view = go.GetComponent<BulletView>();
                         view.RunTheBullet(
                             this,
-                            -flipX * 2000 * Vector3.left,
+                            -flipX * Random.Range(2000, 3000) * Vector3.left,
                             LayerMask.NameToLayer("Player")
                         );
                     }
@@ -268,25 +245,26 @@ namespace Dash.Scripts.GamePlay.Levels.Level1
         {
             audioSourceClose.time = 0;
             audioSourceClose.Play();
-            if (photonView.IsMine)
+            if (Physics.BoxCast(
+                    config1.closeRoot.position,
+                    new Vector3(1, 1, 1),
+                    Vector3.right * flipX,
+                    out var hit,
+                    Quaternion.identity,
+                    config.findPlayerRange,
+                    targetLayerMask
+                ) && hit.distance <= config1.distance)
             {
-                colliders[0] = null;
-                Physics.OverlapSphereNonAlloc(config1.center.position, config1.distance, colliders, targetLayerMask);
-                if (colliders[0] != null)
+                var view = hit.collider.GetComponent<ActorView>();
+                if (view)
                 {
-                    var view = colliders[0].GetComponent<ActorView>();
-                    if (view)
-                    {
-                        view.photonView.RPC(
-                            nameof(view.OnDamage),
-                            RpcTarget.All,
-                            photonView.ViewID,
-                            1000
-                        );
-                    }
+                    view.photonView.RPC(
+                        nameof(view.OnDamage),
+                        RpcTarget.All,
+                        photonView.ViewID,
+                        1000
+                    );
                 }
-
-                colliders[0] = null;
             }
         }
 
@@ -298,6 +276,10 @@ namespace Dash.Scripts.GamePlay.Levels.Level1
         [PunRPC]
         public override void OnDamage(int viewId, int value)
         {
+            if (isDie)
+            {
+                return;
+            }
             var view = PhotonView.Find(viewId);
             if (view)
             {
@@ -312,9 +294,29 @@ namespace Dash.Scripts.GamePlay.Levels.Level1
                 }
             }
 
-            animator.SetTrigger(HIT);
-            onActorDamageEvent.Invoke(this, value);
+            var damage = Mathf.Max(0,
+                value - GameConfigManager.GetDamageReduction(config.fangYuLi, config.shengMingZhi));
+            hp -= damage;
             isBusy = true;
+            if (hp <= 0)
+            {
+                isDie = true;
+                animator.SetTrigger(DIE);
+            }
+            else
+            {
+                animator.SetTrigger(HIT);
+            }
+
+            onActorDamageEvent.Invoke(this, damage);
+        }
+
+        public void OnDieAnimationCallback()
+        {
+            if (photonView.IsMine)
+            {
+                PhotonNetwork.Destroy(gameObject);
+            }
         }
     }
 }

@@ -13,12 +13,12 @@ MonoBehaviour:
   m_Name: "\u52A0\u7279\u6797"
   m_EditorClassIdentifier: 
   displayName: "\u52A0\u7279\u6797"
-  gongJiLi: 0
-  gongJiLi2: 0
+  gongJiLi: 100
+  gongJiLi2: 100
   sheCheng: 100
   sheShu: 8
-  sheSu: 0
-  sheSu2: 0
+  sheSu: 1
+  sheSu2: 1
   slots:
   - name: OWeapon
     attachments:

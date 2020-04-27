@@ -9510,36 +9510,6 @@ ParticleSystemRenderer:
   m_Mesh2: {fileID: 0}
   m_Mesh3: {fileID: 0}
   m_MaskInteraction: 0
---- !u!1 &2207276651068374981
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 4383785138379150539}
-  m_Layer: 13
-  m_Name: Center
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &4383785138379150539
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2207276651068374981}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.22, y: 2.81, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 2545382973083229447}
-  m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2319034887440289490
 GameObject:
   m_ObjectHideFlags: 0
@@ -14422,7 +14392,6 @@ GameObject:
   - component: {fileID: 2545382971944027308}
   - component: {fileID: 2545382971944027307}
   - component: {fileID: 2545382971944027306}
-  - component: {fileID: 11659337111539152}
   - component: {fileID: 5559700427137677224}
   m_Layer: 13
   m_Name: Spine
@@ -14596,20 +14565,12 @@ MonoBehaviour:
   - Type: 9
     SynchronizeType: 0
     Name: attack1
+  - Type: 9
+    SynchronizeType: 0
+    Name: die
   m_SynchronizeLayers:
   - SynchronizeType: 0
     LayerIndex: 0
---- !u!210 &11659337111539152
-SortingGroup:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2545382971944027309}
-  m_Enabled: 1
-  m_SortingLayerID: 1895017843
-  m_SortingLayer: 8
-  m_SortingOrder: 10
 --- !u!114 &5559700427137677224
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14671,6 +14632,22 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
+  - name: OnDie
+    id: 196273447
+    action:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1140673426}
+          m_MethodName: OnDieAnimationCallback
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
   debug: 0
 --- !u!1 &2545382973083229444
 GameObject:
@@ -14709,7 +14686,6 @@ Transform:
   m_Children:
   - {fileID: 2545382971944027304}
   - {fileID: 8985721959251482455}
-  - {fileID: 4383785138379150539}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -14780,7 +14756,9 @@ MonoBehaviour:
   onActorDamageEvent:
     m_PersistentCalls:
       m_Calls: []
+  hp: 0
   config:
+    level: 0
     findPlayerRange: 999
     gongJiLi: 10
     fangYuLi: 10
@@ -14789,15 +14767,16 @@ MonoBehaviour:
   target: {fileID: 0}
   config1:
     distance: 3
-    remoteTime: 5
-    closeTime: 2
+    remoteTime: 3
+    closeTime: 1
     bullet: {fileID: 1604533757453098696, guid: f3f858992e1929141a62cca77568f81d,
       type: 3}
     locators:
     - {fileID: 7025019103021766520}
     - {fileID: 2414958418033196413}
-    bulletLocatorRoot: {fileID: 8985721959251482455}
-    center: {fileID: 4383785138379150539}
+    locatorRoot: {fileID: 8985721959251482455}
+    bulletRoot: {fileID: 138135787347194651}
+    closeRoot: {fileID: 8683266818973053555}
   agent: {fileID: 1140673427}
   audioSourceRemote: {fileID: 1681245116714102698}
   audioSourceClose: {fileID: 2810770173413313683}
@@ -14817,7 +14796,7 @@ NavMeshAgent:
   m_Acceleration: 999
   avoidancePriority: 50
   m_AngularSpeed: 0
-  m_StoppingDistance: 3
+  m_StoppingDistance: 1
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
   m_AutoRepath: 1
@@ -15030,6 +15009,36 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!1 &3085956810126021520
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8683266818973053555}
+  m_Layer: 13
+  m_Name: CLose
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8683266818973053555
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3085956810126021520}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -1.89, y: 2.38, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 8985721959251482455}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4640837487404650108
 GameObject:
   m_ObjectHideFlags: 0
@@ -24598,6 +24607,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 138135787347194651}
+  - {fileID: 8683266818973053555}
   m_Father: {fileID: 2545382973083229447}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
