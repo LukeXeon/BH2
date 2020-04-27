@@ -43,13 +43,13 @@ namespace Dash.Scripts.GamePlay.Levels.Level1
 
         private ParticleSystem[] particleSystems;
         [Header("Sync")] private int flipX = -1;
-        private int lastTargetViewId = int.MinValue;
-        private float lastCloseAttackTime;
-        private float lastRemoteAttackTime;
 
         //使能开关
         private bool isBusy;
         private bool isDie;
+        private float lastCloseAttackTime;
+        private float lastRemoteAttackTime;
+        
 
         protected override void Awake()
         {
@@ -66,17 +66,11 @@ namespace Dash.Scripts.GamePlay.Levels.Level1
         {
             if (stream.IsWriting)
             {
-                stream.SendNext(target == null ? int.MinValue : target.ViewID);
                 stream.SendNext(flipX);
-                stream.SendNext(lastRemoteAttackTime);
-                stream.SendNext(lastCloseAttackTime);
             }
             else
             {
-                lastTargetViewId = (int) stream.ReceiveNext();
                 flipX = (int) stream.ReceiveNext();
-                lastRemoteAttackTime = (float) stream.ReceiveNext();
-                lastCloseAttackTime = (float) stream.ReceiveNext();
             }
         }
 
@@ -90,11 +84,7 @@ namespace Dash.Scripts.GamePlay.Levels.Level1
             {
                 if (photonView.IsMine)
                 {
-                    if (target == null && lastTargetViewId != int.MinValue)
-                    {
-                        target = PhotonView.Find(lastTargetViewId);
-                    }
-                    else if (target == null)
+                    if (target == null)
                     {
                         RequestTargetView();
                     }
@@ -103,16 +93,10 @@ namespace Dash.Scripts.GamePlay.Levels.Level1
                     agent.speed = config.moveSpeed;
                     if (target != null)
                     {
-                        lastTargetViewId = target.ViewID;
                         var position1 = target.transform.position;
                         var position = position1;
                         agent.SetDestination(position);
                     }
-                    else
-                    {
-                        lastTargetViewId = int.MinValue;
-                    }
-
                     animator.SetBool(IS_RUN, agent.velocity != Vector3.zero);
 
                     if (agent.velocity.x > 0)

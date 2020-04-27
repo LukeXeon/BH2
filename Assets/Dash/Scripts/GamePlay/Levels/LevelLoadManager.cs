@@ -21,6 +21,7 @@ namespace Dash.Scripts.GamePlay.Levels
         public Image loadingRoot;
         public event Action onBeginLoadScene;
         public event Action onNetworkSceneLoaded;
+        public event Action onLevelStart;
         public GuidIndexer player;
         public Image progress;
         public TextMeshProUGUI text;
@@ -84,6 +85,7 @@ namespace Dash.Scripts.GamePlay.Levels
             yield return Resources.UnloadUnusedAssets();
             yield return new WaitForEndOfFrame();
             Destroy(gameObject);
+            onLevelStart?.Invoke();
         }
 
         public void OnEvent(EventData photonEvent)

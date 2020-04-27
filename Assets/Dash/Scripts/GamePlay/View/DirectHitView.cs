@@ -33,7 +33,6 @@ namespace Dash.Scripts.GamePlay.View
             var index = LocalPlayer.weaponIndex;
             var (info, data) = PlayerConfigManager.weaponInfos[index];
             var range = info.sheCheng;
-
             if (Physics.BoxCast(
                 position,
                 Vector3.one,

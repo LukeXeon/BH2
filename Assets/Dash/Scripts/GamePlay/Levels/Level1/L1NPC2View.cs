@@ -11,7 +11,6 @@ namespace Dash.Scripts.GamePlay.Levels.Level1
 {
     public class L1NPC2View : NpcView, IPunObservable
     {
-        private const int MAX_SPEED = 4;
         private static readonly int BOMB = Animator.StringToHash("bomb");
         private static readonly int IS_RUN = Animator.StringToHash("is_run");
         private static readonly int HIT = Animator.StringToHash("hit");
@@ -27,8 +26,6 @@ namespace Dash.Scripts.GamePlay.Levels.Level1
 
         public NPC2Config config1;
         [Header("Sync")] private int flipX = -1;
-
-        private int lastTargetViewId = int.MinValue;
 
         //
         private HashSet<int> viewIds;
@@ -53,11 +50,7 @@ namespace Dash.Scripts.GamePlay.Levels.Level1
             {
                 if (photonView.IsMine)
                 {
-                    if (target == null && lastTargetViewId != int.MinValue)
-                    {
-                        target = PhotonView.Find(lastTargetViewId);
-                    }
-                    else if (target == null)
+                    if (target == null)
                     {
                         RequestTargetView();
                     }
@@ -66,15 +59,9 @@ namespace Dash.Scripts.GamePlay.Levels.Level1
                     agent.speed = config.moveSpeed;
                     if (target != null)
                     {
-                        lastTargetViewId = target.ViewID;
                         var position = target.transform.position;
                         agent.SetDestination(position);
                     }
-                    else
-                    {
-                        lastTargetViewId = int.MinValue;
-                    }
-
                     animator.SetBool(IS_RUN, agent.velocity != Vector3.zero);
                     if (agent.velocity.x > 0)
                     {
@@ -99,6 +86,7 @@ namespace Dash.Scripts.GamePlay.Levels.Level1
 
         private void Update()
         {
+            animator.speed = Mathf.Max(1 + 1 - (float) hp / config.shengMingZhi * 2, 1);
             UpdateMovement();
             UpdateFlipX();
         }
@@ -173,6 +161,7 @@ namespace Dash.Scripts.GamePlay.Levels.Level1
             {
                 return;
             }
+
             isBusy = true;
             animator.SetTrigger(HIT);
 
@@ -197,16 +186,14 @@ namespace Dash.Scripts.GamePlay.Levels.Level1
         {
             if (stream.IsWriting)
             {
-                stream.SendNext(target == null ? int.MinValue : target.ViewID);
                 stream.SendNext(flipX);
             }
             else
             {
-                lastTargetViewId = (int) stream.ReceiveNext();
                 flipX = (int) stream.ReceiveNext();
             }
         }
-        
+
         public void OnDieAnimationCallback()
         {
             if (photonView.IsMine)

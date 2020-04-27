@@ -116,6 +116,7 @@ namespace Dash.Scripts.GamePlay.View
             animator.SetTrigger(KAIQIANG);
         }
 
+
         [PunRPC]
         public override void OnDamage(int viewId, int value)
         {

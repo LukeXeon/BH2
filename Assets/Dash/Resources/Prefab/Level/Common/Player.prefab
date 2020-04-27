@@ -409,4 +409,9 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
+  - name: OnResetBusy
+    id: 1473586269
+    action:
+      m_PersistentCalls:
+        m_Calls: []
   debug: 0

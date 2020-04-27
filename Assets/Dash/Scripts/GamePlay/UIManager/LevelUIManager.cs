@@ -40,8 +40,11 @@ namespace Dash.Scripts.GamePlay.UIManager
         public ETCButton fire0;
         public ETCButton fire1;
         public RectTransform damageTextRoot;
+        public ModalWindowManager stopWindow;
+        public Button stopSubmit;
         private MonoBehaviour[] uiGroup;
-        private bool isLockUI;
+        private bool UIEnable;
+        private bool isStop;
 
         private void Awake()
         {
@@ -84,20 +87,19 @@ namespace Dash.Scripts.GamePlay.UIManager
             weaponChanged.AddListener(info => { weapon.sprite = info.sprite; });
             back.onClick.AddListener(() =>
             {
-                LockUI(true);
+                EnableUI(false);
                 dialog.OpenWindow();
             });
-            cancelBack.onClick.AddListener(() =>
-            {
-                LockUI(false);
-            });
-            submitBack.onClick.AddListener(async () =>
+            cancelBack.onClick.AddListener(() => { EnableUI(true); });
+            var x = new UnityAction(async () =>
             {
                 mask.SetActive(true);
                 PhotonNetwork.LeaveRoom();
                 var op = SceneManager.LoadSceneAsync("Desktop");
                 await op;
             });
+            submitBack.onClick.AddListener(x);
+            stopSubmit.onClick.AddListener(x);
         }
 
         private void Start()
@@ -105,9 +107,9 @@ namespace Dash.Scripts.GamePlay.UIManager
             RefreshPlayerUI();
         }
 
-        private void LockUI(bool value)
+        private void EnableUI(bool value)
         {
-            isLockUI = value;
+            UIEnable = value;
             foreach (var monoBehaviour in uiGroup)
             {
                 monoBehaviour.enabled = value;
@@ -116,7 +118,7 @@ namespace Dash.Scripts.GamePlay.UIManager
 
         private void Update()
         {
-            if (!isLockUI)
+            if (UIEnable)
             {
                 if (Input.GetKeyDown(KeyCode.U))
                 {
@@ -151,6 +153,12 @@ namespace Dash.Scripts.GamePlay.UIManager
 
         public override void OnMasterClientSwitched(Player newMasterClient)
         {
+            if (!isStop)
+            {
+                EnableUI(false);
+                stopWindow.OpenWindow();
+                isStop = true;
+            }
         }
 
         [Serializable]
