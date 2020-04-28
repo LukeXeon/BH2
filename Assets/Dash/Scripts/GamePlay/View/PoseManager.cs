@@ -78,7 +78,7 @@ namespace Dash.Scripts.GamePlay.View
             }
             else
             {
-                var time = 1f / weaponInfoAsset.sheShu;
+                var time = 1f / weaponInfoAsset.sheSu;
                 shootSpeed = kaiQiangClip.length / time;
             }
 

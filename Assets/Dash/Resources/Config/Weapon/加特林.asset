@@ -16,9 +16,7 @@ MonoBehaviour:
   gongJiLi: 100
   gongJiLi2: 5
   sheCheng: 100
-  sheShu: 8
-  sheSu: 1
-  sheSu2: 1
+  sheSu: 8
   slots:
   - name: OWeapon
     attachments:

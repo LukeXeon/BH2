@@ -49,7 +49,7 @@ namespace Dash.Scripts.UIManager
             displayName.text = info.displayName;
             var runtime = RuntimeWeaponInfo.Build(weapon);
             gongJiLi.text = runtime.gongJiLi.ToString();
-            sheSu.text = runtime.sheSu.ToString(CultureInfo.InvariantCulture);
+            sheSu.text = info.sheSu.ToString();
             if (info.xiaoGuo != null)
                 xiaoGuo.text = info.xiaoGuo.text;
             else

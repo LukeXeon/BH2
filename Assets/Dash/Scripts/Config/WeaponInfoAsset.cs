@@ -1,5 +1,6 @@
 ﻿using System;
 using Dash.Scripts.GamePlay.View;
+using UnityEditor;
 using UnityEngine;
 
 namespace Dash.Scripts.Config
@@ -16,10 +17,8 @@ namespace Dash.Scripts.Config
 
         [Header("射程")] public float sheCheng;
 
-        [Header("每秒发射子弹数量")] public float sheShu;
-
-        public int sheSu;
-        public int sheSu2;
+        [Header("每秒发射子弹数量")]
+        public float sheSu;
 
         //替换列表
         public SlotItem[] slots;
@@ -46,5 +45,6 @@ namespace Dash.Scripts.Config
             public string name;
             public Sprite sprite;
         }
+        
     }
 }

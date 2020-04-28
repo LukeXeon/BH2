@@ -49,7 +49,6 @@ namespace Dash.Scripts.GamePlay.View
                 var actorView = shootHit.collider.GetComponent<ActorView>();
                 if (actorView)
                 {
-                    
                     var value = LocalPlayer.gongJiLi;
                     actorView.photonView.RPC(
                         nameof(actorView.OnDamage),
@@ -86,7 +85,7 @@ namespace Dash.Scripts.GamePlay.View
             timer += Time.deltaTime;
             var index = LocalPlayer.weaponIndex;
             var info = PlayerConfigManager.weaponInfos[index];
-            var timeBetweenBullets = Mathf.Min(1f / info.Item1.sheShu, 0.15f);
+            var timeBetweenBullets = Mathf.Min(1f / info.Item1.sheSu, 0.15f);
             if (timer >= timeBetweenBullets * effectsDisplayTime)
             {
                 shootLine.gameObject.SetActive(false);
@@ -95,10 +94,7 @@ namespace Dash.Scripts.GamePlay.View
 
         public override void SetFlipX(int x)
         {
-            var transform1 = transform;
-            var local = transform1.localScale;
-            local.x = x;
-            transform1.localScale = local;
+            base.SetFlipX(x);
             if (flipX != x)
             {
                 shootLine.gameObject.SetActive(false);

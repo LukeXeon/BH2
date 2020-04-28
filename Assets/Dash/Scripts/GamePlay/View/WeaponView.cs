@@ -13,6 +13,10 @@ namespace Dash.Scripts.GamePlay.View
 
         public virtual void SetFlipX(int x)
         {
+            var transform1 = transform;
+            var local = transform1.localScale;
+            local.x = x;
+            transform1.localScale = local;
         }
 
         public void OnInitialize(PlayerView view)

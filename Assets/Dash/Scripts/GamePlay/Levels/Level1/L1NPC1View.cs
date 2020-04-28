@@ -163,8 +163,8 @@ namespace Dash.Scripts.GamePlay.Levels.Level1
                             var transform1 = hit.collider.transform;
                             var targetPosition = transform1.position;
                             var locatorPosition1 = config1.bulletRoot.position;
-                            var bb = (flipX == -1 && locatorPosition1.x - targetPosition.x > 0) ||
-                                     (flipX == 1 && locatorPosition1.x - targetPosition.x < 0);
+                            var bb = flipX == -1 && locatorPosition1.x - targetPosition.x > 0 ||
+                                     flipX == 1 && locatorPosition1.x - targetPosition.x < 0;
                             if (bb)
                             {
                                 lastRemoteAttackTime = (float) PhotonNetwork.Time;
@@ -231,7 +231,7 @@ namespace Dash.Scripts.GamePlay.Levels.Level1
                             photonView.ViewID,
                             -flipX * Random.Range(2000, 3000) * Vector3.left,
                             LayerMask.NameToLayer("Player"),
-                            config.gongJiLi
+                            config.gongJiLi / config1.locators.Length
                         );
                     }
                 }

@@ -701,15 +701,15 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
-    - target: {fileID: 8238277080845339819, guid: 2fc60b7b40514494b8532d3e5ca2c4ba,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 8238277080845339823, guid: 2fc60b7b40514494b8532d3e5ca2c4ba,
         type: 3}
       propertyPath: viewIdField
       value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8238277081177272642, guid: 2fc60b7b40514494b8532d3e5ca2c4ba,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.8
       objectReference: {fileID: 0}
     - target: {fileID: 8238277081177272643, guid: 2fc60b7b40514494b8532d3e5ca2c4ba,
         type: 3}

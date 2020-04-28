@@ -14766,7 +14766,7 @@ MonoBehaviour:
     findPlayerRange: 999
     gongJiLi: 80
     fangYuLi: 80
-    shengMingZhi: 3000
+    shengMingZhi: 2000
     moveSpeed: 3
   target: {fileID: 0}
   targetActor: {fileID: 0}

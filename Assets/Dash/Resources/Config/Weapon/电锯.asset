@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c05adadf0975f004785ae64569ed32a9, type: 3}
+  m_Name: "\u7535\u952F"
+  m_EditorClassIdentifier: 
+  displayName: "\u7535\u952F"
+  gongJiLi: 80
+  gongJiLi2: 10
+  sheCheng: 1
+  sheSu: 15
+  slots: []
+  sprite: {fileID: 0}
+  typeId: 3
+  weaponType: {fileID: 11400000, guid: 73a18f88f2bcc3f4188eb26dd02df27a, type: 2}
+  weaponView: {fileID: 0}
+  xiaoGuo: {fileID: 0}

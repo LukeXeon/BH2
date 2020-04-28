@@ -14,8 +14,8 @@ namespace Dash.Scripts.GamePlay.View
     {
         private static readonly int IS_RUN = Animator.StringToHash("is_run");
         private static readonly int TAOQIANG = Animator.StringToHash("taoqiang");
-        private static readonly int KAIQIANG = Animator.StringToHash("kaiqiang");
-        private static readonly int LIANSHE = Animator.StringToHash("lianshe");
+        private static readonly int SINGLE = Animator.StringToHash("kaiqiang_single");
+        private static readonly int LIANSHE = Animator.StringToHash("kaiqiang_lianshe");
         private static readonly int DIE = Animator.StringToHash("die");
         private static readonly int KAIQIANG_SPEED = Animator.StringToHash("kaiqiang_speed");
         private static readonly int HIT = Animator.StringToHash("hit");
@@ -97,11 +97,11 @@ namespace Dash.Scripts.GamePlay.View
             poseManager.SetPose(weaponInfoAsset);
             animator.SetTrigger(TAOQIANG);
             animator.SetBool(LIANSHE, false);
-            animator.ResetTrigger(KAIQIANG);
+            animator.ResetTrigger(SINGLE);
             animator.SetFloat(KAIQIANG_SPEED, poseManager.shootSpeed);
             weaponView = weaponViews[typeId];
             weaponView.gameObject.SetActive(true);
-            timeBetweenBullets = 1f / weaponInfoAsset.sheShu;
+            timeBetweenBullets = 1f / weaponInfoAsset.sheSu;
         }
 
         public void OnSingleFireAnimationCallback()
@@ -115,7 +115,7 @@ namespace Dash.Scripts.GamePlay.View
         [PunRPC]
         private void OnFireSingle()
         {
-            animator.SetTrigger(KAIQIANG);
+            animator.SetBool(SINGLE, true);
         }
 
         [PunRPC]
@@ -162,7 +162,7 @@ namespace Dash.Scripts.GamePlay.View
             isDie = true;
             animator.ResetTrigger(TAOQIANG);
             animator.SetBool(IS_RUN, false);
-            animator.ResetTrigger(KAIQIANG);
+            animator.SetBool(SINGLE, false);
             animator.SetBool(LIANSHE, false);
             animator.ResetTrigger(HIT);
             animator.SetTrigger(DIE);
@@ -228,6 +228,7 @@ namespace Dash.Scripts.GamePlay.View
                 }
             }
         }
+
 
         private void FixedUpdate()
         {
