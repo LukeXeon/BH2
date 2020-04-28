@@ -59,13 +59,15 @@ namespace Dash.Scripts.GamePlay.View
                     Vector3 from1;
                     var to = position;
                     to.x = actorView.transform.position.x;
-                    if (actorView.transform.position.x - locator.position.x > 0)
+                    switch (flipX)
                     {
-                        from1 = position;
-                    }
-                    else
-                    {
-                        from1 = to;
+                        case 1 when actorView.transform.position.x - locator.position.x > 0:
+                        case -1 when actorView.transform.position.x - locator.position.x < 0:
+                            from1 = position;
+                            break;
+                        default:
+                            from1 = to;
+                            break;
                     }
 
                     RpcInPlayerView(nameof(OnSync), from1, to);

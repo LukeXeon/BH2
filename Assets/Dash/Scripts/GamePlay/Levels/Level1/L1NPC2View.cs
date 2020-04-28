@@ -18,6 +18,8 @@ namespace Dash.Scripts.GamePlay.Levels.Level1
         public NavMeshAgent agent;
         public SkeletonMecanim mecanim;
         public AudioSource bombSource;
+        public GameObject bombParticle;
+
 
         [Serializable]
         public struct NPC2Config
@@ -25,20 +27,28 @@ namespace Dash.Scripts.GamePlay.Levels.Level1
         }
 
         public NPC2Config config1;
-        [Header("Sync")] private int flipX = -1;
+        [Header("Sync")]
 
         //
         private HashSet<int> viewIds;
         private bool isBusy;
         private bool isBombed;
         private int targetLayer;
+        private ParticleSystem[] particleSystems;
 
         protected override void Awake()
         {
             base.Awake();
             viewIds = new HashSet<int>();
             targetLayer = LayerMask.NameToLayer("Player");
+            bombParticle.SetActive(false);
+            particleSystems = bombParticle.GetComponentsInChildren<ParticleSystem>(true);
+            foreach (var system in particleSystems)
+            {
+                system.Stop();
+            }
         }
+        
 
         private void UpdateMovement()
         {
@@ -62,6 +72,7 @@ namespace Dash.Scripts.GamePlay.Levels.Level1
                         var position = target.transform.position;
                         agent.SetDestination(position);
                     }
+
                     animator.SetBool(IS_RUN, agent.velocity != Vector3.zero);
                     if (agent.velocity.x > 0)
                     {
@@ -101,6 +112,13 @@ namespace Dash.Scripts.GamePlay.Levels.Level1
 
         public void OnBombAnimationCallback()
         {
+            bombParticle.SetActive(true);
+            foreach (var system in particleSystems)
+            {
+                system.Simulate(0);
+                system.Play();
+            }
+
             if (photonView.IsMine)
             {
                 foreach (var id in viewIds)
@@ -161,8 +179,7 @@ namespace Dash.Scripts.GamePlay.Levels.Level1
             {
                 return;
             }
-
-            isBusy = true;
+            
             animator.SetTrigger(HIT);
 
             var damage = Mathf.Max(0,

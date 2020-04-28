@@ -106,9 +106,9 @@ MonoBehaviour:
   onActorDamageEvent:
     m_PersistentCalls:
       m_Calls: []
+  flipX: 1
   animator: {fileID: 8238277081177272641}
   bulletLocator: {fileID: 0}
-  flipX: 1
   mecanim: {fileID: 8238277081177272654}
   poseManager: {fileID: 8238277081177272655}
   audioView: {fileID: 0}

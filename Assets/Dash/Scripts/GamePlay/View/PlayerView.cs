@@ -25,8 +25,7 @@ namespace Dash.Scripts.GamePlay.View
         private static readonly int HIT = Animator.StringToHash("hit");
         public Animator animator;
         public Transform bulletLocator;
-
-        private int flipX = 1;
+        
         public SkeletonMecanim mecanim;
         public PoseManager poseManager;
         [HideInInspector] public AudioView audioView;
@@ -59,7 +58,7 @@ namespace Dash.Scripts.GamePlay.View
             weaponViews = new Dictionary<int, WeaponView>();
             rigidbody = GetComponent<Rigidbody>();
             photonView = GetComponent<PhotonView>();
-
+            flipX = 1;
             audioView = AudioView.Create(this.transform);
         }
 

@@ -42,7 +42,7 @@ namespace Dash.Scripts.GamePlay.Levels.Level1
         //
 
         private ParticleSystem[] particleSystems;
-        [Header("Sync")] private int flipX = -1;
+        [Header("Sync")]
 
         //使能开关
         private bool isBusy;

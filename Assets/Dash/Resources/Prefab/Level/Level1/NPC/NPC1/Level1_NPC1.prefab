@@ -14756,6 +14756,7 @@ MonoBehaviour:
   onActorDamageEvent:
     m_PersistentCalls:
       m_Calls: []
+  flipX: 0
   hp: 0
   config:
     level: 0

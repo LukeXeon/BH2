@@ -9,6 +9,7 @@ TagManager:
   - PlayerChuShengDian
   - FX
   - CameraController
+  - FxTemporaire
   layers:
   - Default
   - TransparentFX
@@ -61,12 +62,12 @@ TagManager:
   - name: SolidsFront
     uniqueID: 2198852021
     locked: 0
-  - name: FX
-    uniqueID: 1900314263
-    locked: 0
   - name: UI
     uniqueID: 1768579969
     locked: 0
   - name: Entity
     uniqueID: 1895017843
+    locked: 0
+  - name: FX
+    uniqueID: 1900314263
     locked: 0

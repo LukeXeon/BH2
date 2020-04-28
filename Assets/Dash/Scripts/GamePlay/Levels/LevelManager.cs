@@ -23,18 +23,12 @@ namespace Dash.Scripts.GamePlay.Levels
             var loader = FindObjectOfType<LevelLoadManager>();
             mainCamera = GameObject.FindWithTag("CameraController")
                 .GetComponent<CinemachineVirtualCamera>();
-            loader.onNetworkSceneLoaded += LoaderOnNetworkSceneLoaded;
+            loader.onNetworkSceneLoaded += CreatePlayer;
             loader.onLevelStart+=OnLevelStart;
         }
 
         protected virtual void OnLevelStart()
         {
-            
-        }
-
-        private void LoaderOnNetworkSceneLoaded()
-        {
-            CreatePlayer();
             if (PhotonNetwork.IsMasterClient)
             {
                 StartCoroutine(LevelLogic());

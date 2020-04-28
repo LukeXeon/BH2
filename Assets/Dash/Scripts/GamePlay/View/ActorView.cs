@@ -10,8 +10,11 @@ namespace Dash.Scripts.GamePlay.View
     {
         public OnActorDamageEvent onActorDamageEvent;
         internal PhotonView photonView;
+        public int flipX;
+        
         protected virtual void Awake()
         {
+            flipX = -1;
             if (onActorDamageEvent == null) onActorDamageEvent = new OnActorDamageEvent();
             photonView = GetComponent<PhotonView>();
             onActorDamageEvent.AddListener(FindObjectOfType<LevelUIManager>().OnShowDamage);

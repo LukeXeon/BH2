@@ -9550,6 +9550,7 @@ GameObject:
   - component: {fileID: 4522998590673606949}
   - component: {fileID: 4522998590673606948}
   - component: {fileID: 4522998590673606947}
+  - component: {fileID: 8182911696121898572}
   m_Layer: 0
   m_Name: MuzzleFlare
   m_TagString: FX
@@ -14405,6 +14406,17 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
     vectorLabel1_3: W
+--- !u!210 &8182911696121898572
+SortingGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4522998590673606946}
+  m_Enabled: 1
+  m_SortingLayerID: 1900314263
+  m_SortingLayer: 8
+  m_SortingOrder: 0
 --- !u!1 &5220202882230919845
 GameObject:
   m_ObjectHideFlags: 0
