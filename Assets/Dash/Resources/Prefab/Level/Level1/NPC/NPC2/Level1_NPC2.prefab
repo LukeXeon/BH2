@@ -54,16 +54,20 @@ MonoBehaviour:
   onActorDamageEvent:
     m_PersistentCalls:
       m_Calls: []
+  onActorDie:
+    m_PersistentCalls:
+      m_Calls: []
   flipX: -1
+  isDie: 0
   hp: 0
   config:
-    level: 0
-    findPlayerRange: 9999
-    gongJiLi: 0
-    fangYuLi: 0
-    shengMingZhi: 0
+    findPlayerRange: 999
+    gongJiLi: 120
+    fangYuLi: 20
+    shengMingZhi: 600
     moveSpeed: 12
   target: {fileID: 0}
+  targetActor: {fileID: 0}
   animator: {fileID: 7971353818313129878}
   agent: {fileID: 141271806}
   mecanim: {fileID: 7971353818313129881}
@@ -282,7 +286,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7971353818313129880}
   m_LocalRotation: {x: 0.17364816, y: 0, z: 0, w: 0.9848078}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: -0.9}
   m_LocalScale: {x: 0.15, y: 0.15, z: 0.15}
   m_Children: []
   m_Father: {fileID: 7971353818047748908}

@@ -10,13 +10,15 @@ namespace Dash.Scripts.GamePlay.View
         public PhotonView photonView;
         public new Rigidbody rigidbody;
         public new BoxCollider collider;
-        private ActorView form;
         private Coroutine coroutine;
         private int targetLayer;
+        private int viewId;
+        private int damage;
 
-        public void RunTheBullet(ActorView f, Vector3 speed, int layer)
+        public void RunTheBullet(int id, Vector3 speed, int layer, int damage)
         {
-            form = f;
+            viewId = id;
+            this.damage = damage;
             rigidbody.AddForce(speed);
             targetLayer = layer;
             if (photonView.IsMine)
@@ -48,7 +50,7 @@ namespace Dash.Scripts.GamePlay.View
                 var view = other.GetComponent<ActorView>();
                 if (view)
                 {
-                    view.photonView.RPC(nameof(view.OnDamage), RpcTarget.All, form.photonView.ViewID, 0);
+                    view.photonView.RPC(nameof(view.OnDamage), RpcTarget.All, viewId, damage);
                 }
 
                 StopCoroutine(coroutine);
@@ -64,7 +66,6 @@ namespace Dash.Scripts.GamePlay.View
 
         public void Recycle()
         {
-            form = null;
             if (coroutine != null)
             {
                 StopCoroutine(coroutine);

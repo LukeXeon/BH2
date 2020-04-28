@@ -10,7 +10,6 @@ namespace Dash.Scripts.GamePlay.Levels.Level1
 {
     public class L1LevelManager : LevelManager
     {
-        public PhotonView photonView;
         public GuidIndexer[] NpcList;
         public Transform[] room1Locators;
         [Header("Room1")] public Animator root1ShipAnimator;
@@ -18,18 +17,21 @@ namespace Dash.Scripts.GamePlay.Levels.Level1
         public Transform[] room1Locators2;
         public Transform[] room1Locators3;
         public TriggerEvent[] room1TriggerEvents;
-        [Header("Room2")] public Transform[] room2Locators;
-        private LevelUIManager uiManager;
-        private HashSet<int> room2Players = new HashSet<int>();
         private HashSet<int>[] room1NodeTriggers;
+        [Header("Room2")] public Transform[] room2Locators;
+        public GameObject room2DoorWall;
+        public TriggerEvent room2DoorTrigger;
+        private HashSet<int> room2Players = new HashSet<int>();
 
-        private void OnPlayerEnterRoom2(int value)
+
+        [PunRPC]
+        public void OnPlayerEnterRoom2(int value)
         {
             room2Players.Add(value);
         }
 
         [PunRPC]
-        private void SetRoom1Trigger(int index, int playerId, bool isAdd)
+        public void SetRoom1Trigger(int index, int playerId, bool isAdd)
         {
             if (isAdd)
             {
@@ -71,6 +73,18 @@ namespace Dash.Scripts.GamePlay.Levels.Level1
                     }
                 });
             }
+
+            room2DoorTrigger.onTriggerEnter.AddListener(o =>
+            {
+                if (o.gameObject.layer == LayerMask.NameToLayer("Player"))
+                {
+                    room2DoorWall.SetActive(true);
+                    photonView.RPC(nameof(OnPlayerEnterRoom2),
+                        RpcTarget.MasterClient,
+                        PhotonNetwork.LocalPlayer.ActorNumber
+                    );
+                }
+            });
         }
 
         public void OnShipFinish()
@@ -79,14 +93,26 @@ namespace Dash.Scripts.GamePlay.Levels.Level1
             root1ShipAnimator = null;
         }
 
-
         protected override void OnLevelStart()
         {
             base.OnLevelStart();
             root1ShipAnimator.Play("Fade-in");
         }
 
-        protected override IEnumerator LevelLogic()
+        [PunRPC]
+        public void SetRoom1Door(bool value)
+        {
+            if (value)
+            {
+                room1Door.Open();
+            }
+            else
+            {
+                room1Door.Close();
+            }
+        }
+
+        protected override IEnumerator MasterLevelLogic()
         {
             yield return new WaitUntil(() =>
                 PhotonNetwork.PlayerList.Any(i => room1NodeTriggers[0].Contains(i.ActorNumber)));
@@ -99,23 +125,21 @@ namespace Dash.Scripts.GamePlay.Levels.Level1
             list.Clear();
             yield return new WaitUntil(() =>
                 PhotonNetwork.PlayerList.Any(i => room1NodeTriggers[1].Contains(i.ActorNumber)));
-            var npc1 = 2;
-            foreach (var t in room1Locators2)
+            for (var i = 0; i < room1Locators2.Length; i++)
             {
                 GameObject go;
-                if (Random.Range(0, 2) == 1 && npc1 > 0)
+                if (i > 2)
                 {
-                    --npc1;
                     go = PhotonNetwork.InstantiateSceneObject(
                         NpcList[1].guid,
-                        t.position,
+                        room1Locators2[i].position,
                         Quaternion.identity);
                 }
                 else
                 {
                     go = PhotonNetwork.InstantiateSceneObject(
                         NpcList[0].guid,
-                        t.position,
+                        room1Locators2[i].position,
                         Quaternion.identity
                     );
                 }
@@ -132,12 +156,12 @@ namespace Dash.Scripts.GamePlay.Levels.Level1
                 .Select(go => go.GetComponent<PhotonView>().ViewID));
             yield return new WaitUntil(() => list.All(i => PhotonView.Find(i) == null));
             list.Clear();
-   
-            room1Door.Open();
+            photonView.RPC(nameof(SetRoom1Door), RpcTarget.All, true);
             yield return new WaitUntil(() =>
             {
                 return PhotonNetwork.PlayerList.All(i => room2Players.Contains(i.ActorNumber));
             });
+            photonView.RPC(nameof(SetRoom1Door), RpcTarget.All, false);
         }
     }
 }

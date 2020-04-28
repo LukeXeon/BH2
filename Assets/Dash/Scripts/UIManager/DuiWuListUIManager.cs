@@ -56,9 +56,7 @@ namespace Dash.Scripts.UIManager
 
             back.onClick.AddListener(() =>
             {
-                ;
                 if (PhotonNetwork.InLobby) PhotonNetwork.LeaveLobby();
-
                 animator.Play("Fade-out");
             });
             randomJoin.onClick.AddListener(async () =>
@@ -163,8 +161,25 @@ namespace Dash.Scripts.UIManager
 
         public override void OnJoinRandomFailed(short returnCode, string message)
         {
-            EndWaitNetWork();
-            notifyError.Show("匹配失败", "暂时没有可用的队伍");
+            var table = new Hashtable
+            {
+                ["displayName"] = CloudManager.GetNameInGame() + "的房间",
+                ["typeId"] = 0,
+                ["0playerTypeId"] = CloudManager.GetCurrentPlayer().typeId
+            };
+            PhotonNetwork.CreateRoom(null, new RoomOptions
+            {
+                MaxPlayers = 3,
+                CustomRoomProperties = table,
+                CustomRoomPropertiesForLobby = new[]
+                {
+                    "displayName",
+                    "typeId",
+                    "0playerTypeId",
+                    "1playerTypeId",
+                    "2playerTypeId"
+                }
+            });
         }
 
         private void BeginWaitNetwork()

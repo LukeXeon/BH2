@@ -49,7 +49,6 @@ namespace Dash.Scripts.GamePlay.View
             var dieClip = sourceClips["die"];
             temp.Clear();
             temp.Add(new KeyValuePair<AnimationClip, AnimationClip>(controller["temp_die"], dieClip));
-            temp.Add(new KeyValuePair<AnimationClip, AnimationClip>(controller["temp_die"], dieClip));
             temp.Add(new KeyValuePair<AnimationClip, AnimationClip>(controller["temp_hit"], hitClip));
             temp.Add(new KeyValuePair<AnimationClip, AnimationClip>(controller["temp_run_hurt"], runHurtClip));
             temp.Add(new KeyValuePair<AnimationClip, AnimationClip>(controller["temp_hurt"], hurtClip));

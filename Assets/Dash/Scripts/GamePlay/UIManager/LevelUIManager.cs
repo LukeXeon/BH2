@@ -41,6 +41,7 @@ namespace Dash.Scripts.GamePlay.UIManager
         public ETCButton fire1;
         public RectTransform damageTextRoot;
         public ModalWindowManager stopWindow;
+        public TextMeshProUGUI stopContent;
         public Button stopSubmit;
         private MonoBehaviour[] uiGroup;
         private bool UIEnable;
@@ -132,6 +133,24 @@ namespace Dash.Scripts.GamePlay.UIManager
             }
         }
 
+        public void OnAllPlayerDie()
+        {
+            StopThGame("团长，你在干什么啊团长？（指你们都死了）\n\n\n");
+        }
+
+        private void StopThGame(string text)
+        {
+            if (isStop)
+            {
+                return;
+            }
+
+            isStop = true;
+            EnableUI(false);
+            stopContent.text = text;
+            stopWindow.OpenWindow();
+        }
+
         public void OnShowDamage(ActorView pos, int value)
         {
             var go = ObjectPool.GlobalObtain(damageText.guid, Vector3.zero, Quaternion.identity, false);
@@ -145,20 +164,17 @@ namespace Dash.Scripts.GamePlay.UIManager
 
         private void RefreshPlayerUI()
         {
-            lanTiao.fillAmount = (float) LocalPlayer.hp / PlayerConfigManager.playerInfo.Item2.shengMingZhi;
-            xueTiao.fillAmount = (float) LocalPlayer.mp / PlayerConfigManager.playerInfo.Item2.nengLiangZhi;
-            xueText.text = LocalPlayer.hp + "/" + PlayerConfigManager.playerInfo.Item2.shengMingZhi;
-            lanText.text = LocalPlayer.mp + "/" + PlayerConfigManager.playerInfo.Item2.nengLiangZhi;
+            xueTiao.fillAmount =
+                (float) Mathf.Max(LocalPlayer.hp, 0) / PlayerConfigManager.playerInfo.Item2.shengMingZhi;
+            lanTiao.fillAmount =
+                (float) Mathf.Max(LocalPlayer.mp, 0) / PlayerConfigManager.playerInfo.Item2.nengLiangZhi;
+            xueText.text = Mathf.Max(LocalPlayer.hp, 0) + "/" + PlayerConfigManager.playerInfo.Item2.shengMingZhi;
+            lanText.text = Mathf.Max(LocalPlayer.mp, 0) + "/" + PlayerConfigManager.playerInfo.Item2.nengLiangZhi;
         }
 
         public override void OnMasterClientSwitched(Player newMasterClient)
         {
-            if (!isStop)
-            {
-                EnableUI(false);
-                stopWindow.OpenWindow();
-                isStop = true;
-            }
+            StopThGame("由于主客户端玩家失去连接，然后写游戏的程序是屑，懒得写这块的同步代码，所以团长你现在必须要停下来了。\n\n\n");
         }
 
         [Serializable]

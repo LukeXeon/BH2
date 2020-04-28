@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Dash.Scripts.Cloud;
 using Dash.Scripts.Config;
+using UnityEngine;
 
 namespace Dash.Scripts.GamePlay.Config
 {
@@ -17,9 +18,9 @@ namespace Dash.Scripts.GamePlay.Config
 
         public static void Prepare(CompletePlayer current)
         {
-            var completePlayer = current;
             weaponInfos.Clear();
             shengHenInfos.Clear();
+            var completePlayer = current;
             playerInfo = Tuple.Create(GameConfigManager.playerTable[completePlayer.player.typeId],
                 RuntimePlayerInfo.Build(completePlayer.player, completePlayer.shengHens));
             foreach (var eInUseWeapon in completePlayer.weapons)

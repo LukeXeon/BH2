@@ -38,25 +38,27 @@ namespace Dash.Scripts.GamePlay.Levels.Level1
         public AudioSource audioSourceClose;
         public Animator animator;
         public SkeletonMecanim mecanim;
+        public GameObject hitEffect;
 
         //
 
-        private ParticleSystem[] particleSystems;
+        private ParticleSystem[] particleSystems0;
+
         [Header("Sync")]
 
         //使能开关
         private bool isBusy;
-        private bool isDie;
+
         private float lastCloseAttackTime;
         private float lastRemoteAttackTime;
-        
+
 
         protected override void Awake()
         {
             base.Awake();
-            particleSystems = config1.locators.SelectMany(l => l.GetComponentsInChildren<ParticleSystem>(true))
+            particleSystems0 = config1.locators.SelectMany(l => l.GetComponentsInChildren<ParticleSystem>(true))
                 .ToArray();
-            foreach (var system in particleSystems)
+            foreach (var system in particleSystems0)
             {
                 system.Stop();
             }
@@ -84,10 +86,11 @@ namespace Dash.Scripts.GamePlay.Levels.Level1
             {
                 if (photonView.IsMine)
                 {
-                    if (target == null)
+                    if (target == null || targetActor.isDie)
                     {
                         RequestTargetView();
                     }
+
 
                     agent.enabled = true;
                     agent.speed = config.moveSpeed;
@@ -97,6 +100,7 @@ namespace Dash.Scripts.GamePlay.Levels.Level1
                         var position = position1;
                         agent.SetDestination(position);
                     }
+
                     animator.SetBool(IS_RUN, agent.velocity != Vector3.zero);
 
                     if (agent.velocity.x > 0)
@@ -147,17 +151,25 @@ namespace Dash.Scripts.GamePlay.Levels.Level1
                         Random.Range(-config1.remoteTime / 4, config1.remoteTime / 4))
                     {
                         if (Physics.BoxCast(
-                                config1.bulletRoot.position,
-                                new Vector3(1.5f, 1.5f, 1.5f),
-                                Vector3.right * flipX,
-                                out var hit,
-                                Quaternion.identity,
-                                config.findPlayerRange,
-                                targetLayerMask
-                            ) && config1.bulletRoot.position.x - hit.collider.transform.position.x > 0)
+                            config1.bulletRoot.position,
+                            new Vector3(1.5f, 1.5f, 1.5f),
+                            Vector3.right * flipX,
+                            out var hit,
+                            Quaternion.identity,
+                            config.findPlayerRange,
+                            targetLayerMask
+                        ))
                         {
-                            lastRemoteAttackTime = (float) PhotonNetwork.Time;
-                            photonView.RPC(nameof(OnSyncFire0), RpcTarget.All);
+                            var transform1 = hit.collider.transform;
+                            var targetPosition = transform1.position;
+                            var locatorPosition1 = config1.bulletRoot.position;
+                            var bb = (flipX == -1 && locatorPosition1.x - targetPosition.x > 0) ||
+                                     (flipX == 1 && locatorPosition1.x - targetPosition.x < 0);
+                            if (bb)
+                            {
+                                lastRemoteAttackTime = (float) PhotonNetwork.Time;
+                                photonView.RPC(nameof(OnSyncFire0), RpcTarget.All);
+                            }
                         }
                     }
                 }
@@ -197,7 +209,7 @@ namespace Dash.Scripts.GamePlay.Levels.Level1
         {
             audioSourceRemote.time = 0;
             audioSourceRemote.Play();
-            foreach (var system in particleSystems)
+            foreach (var system in particleSystems0)
             {
                 system.Simulate(0);
                 system.Play();
@@ -216,9 +228,10 @@ namespace Dash.Scripts.GamePlay.Levels.Level1
                     {
                         var view = go.GetComponent<BulletView>();
                         view.RunTheBullet(
-                            this,
+                            photonView.ViewID,
                             -flipX * Random.Range(2000, 3000) * Vector3.left,
-                            LayerMask.NameToLayer("Player")
+                            LayerMask.NameToLayer("Player"),
+                            config.gongJiLi
                         );
                     }
                 }
@@ -246,7 +259,7 @@ namespace Dash.Scripts.GamePlay.Levels.Level1
                         nameof(view.OnDamage),
                         RpcTarget.All,
                         photonView.ViewID,
-                        1000
+                        config.gongJiLi
                     );
                 }
             }
@@ -264,6 +277,7 @@ namespace Dash.Scripts.GamePlay.Levels.Level1
             {
                 return;
             }
+
             var view = PhotonView.Find(viewId);
             if (view)
             {
@@ -279,7 +293,7 @@ namespace Dash.Scripts.GamePlay.Levels.Level1
             }
 
             var damage = Mathf.Max(0,
-                value - GameConfigManager.GetDamageReduction(config.fangYuLi, config.shengMingZhi));
+                value - GameConfigManager.GetDamageReduction(config.fangYuLi));
             hp -= damage;
             isBusy = true;
             if (hp <= 0)

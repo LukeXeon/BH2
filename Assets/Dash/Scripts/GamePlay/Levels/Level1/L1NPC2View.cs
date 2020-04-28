@@ -32,7 +32,6 @@ namespace Dash.Scripts.GamePlay.Levels.Level1
         //
         private HashSet<int> viewIds;
         private bool isBusy;
-        private bool isBombed;
         private int targetLayer;
         private ParticleSystem[] particleSystems;
 
@@ -52,7 +51,7 @@ namespace Dash.Scripts.GamePlay.Levels.Level1
 
         private void UpdateMovement()
         {
-            if (isBusy || isBombed)
+            if (isBusy || isDie)
             {
                 agent.enabled = false;
             }
@@ -60,7 +59,7 @@ namespace Dash.Scripts.GamePlay.Levels.Level1
             {
                 if (photonView.IsMine)
                 {
-                    if (target == null)
+                    if (target == null || targetActor.isDie)
                     {
                         RequestTargetView();
                     }
@@ -104,7 +103,7 @@ namespace Dash.Scripts.GamePlay.Levels.Level1
 
         public void OnResetBusy()
         {
-            if (!isBombed)
+            if (!isDie)
             {
                 isBusy = false;
             }
@@ -127,7 +126,7 @@ namespace Dash.Scripts.GamePlay.Levels.Level1
                     var actor = view.GetComponent<ActorView>();
                     if (actor)
                     {
-                        view.RPC(nameof(actor.OnDamage), RpcTarget.All, photonView.ViewID, 1000);
+                        view.RPC(nameof(actor.OnDamage), RpcTarget.All, photonView.ViewID, config.gongJiLi);
                     }
                 }
             }
@@ -149,9 +148,9 @@ namespace Dash.Scripts.GamePlay.Levels.Level1
         {
             if (photonView.IsMine && other.gameObject.layer == targetLayer)
             {
-                if (!isBombed)
+                if (!isDie)
                 {
-                    isBombed = true;
+                    isDie = true;
                     photonView.RPC(nameof(OnSyncBomb), RpcTarget.All);
                 }
 
@@ -175,7 +174,7 @@ namespace Dash.Scripts.GamePlay.Levels.Level1
         [PunRPC]
         public override void OnDamage(int viewId, int value)
         {
-            if (isBombed)
+            if (isDie)
             {
                 return;
             }
@@ -183,12 +182,12 @@ namespace Dash.Scripts.GamePlay.Levels.Level1
             animator.SetTrigger(HIT);
 
             var damage = Mathf.Max(0,
-                value - GameConfigManager.GetDamageReduction(config.fangYuLi, config.shengMingZhi));
+                value - GameConfigManager.GetDamageReduction(config.fangYuLi));
             hp -= damage;
             isBusy = true;
             if (hp <= 0)
             {
-                isBombed = true;
+                isDie = true;
                 animator.SetTrigger(BOMB);
             }
             else

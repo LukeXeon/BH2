@@ -15,13 +15,13 @@ MonoBehaviour:
   displayName: "\u82BD\u8863"
   jieShao: {fileID: 0}
   skel: {fileID: 11400000, guid: 90ebaa51e51404f4c83558c5287e2ffc, type: 2}
-  gongJiLi: 30
-  fangYuLi: 10
+  gongJiLi: 100
+  fangYuLi: 50
   nengLiangZhi: 80
   shengMingZhi: 100
-  gongJiLi2: 11
-  fangYuLi2: 11
-  nengLiangZhi2: 11
-  shengMingZhi2: 11
+  gongJiLi2: 10
+  fangYuLi2: 10
+  nengLiangZhi2: 5
+  shengMingZhi2: 100
   icon: {fileID: 21300000, guid: b2c1623b1b2b4714d945de5eda05f894, type: 3}
   typeId: 1

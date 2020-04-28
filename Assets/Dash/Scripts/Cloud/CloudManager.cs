@@ -103,6 +103,17 @@ namespace Dash.Scripts.Cloud
 
         public static async Task<LuckDrawResult> LuckDraw()
         {
+            if (!Application.isEditor)
+            {
+                if (localUserMate.shuiJing < 100)
+                {
+                    throw new UnityException("水晶不足");
+                }
+
+                localUserMate.shuiJing -= 100;
+                await localUserMate.SaveAsync();
+            }
+
             var type = Random.Range(0, 3);
             switch (type)
             {
@@ -275,9 +286,12 @@ namespace Dash.Scripts.Cloud
                 userMate = new EUserMate
                 {
                     user = AVUser.CurrentUser,
-                    nameInGame = "玩家" + count
+                    nameInGame = "玩家" + count,
+                    shuiJing = 1000,
+                    tiLi = 100
                 };
             }
+
             localUserMate = userMate;
             var playerCount = await t2;
             if (playerCount == 0)

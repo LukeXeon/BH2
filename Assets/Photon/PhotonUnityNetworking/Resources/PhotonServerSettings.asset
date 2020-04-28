@@ -78,6 +78,12 @@ MonoBehaviour:
   - OnNotifySceneLoaded
   - OnSyncDamageText
   - SetRoom1Trigger
+  - ToDie
+  - SendLocalPlayerLiveEvent
+  - OnAllPlayerDie
+  - SendStopTheGame
+  - SetRoom1Door
+  - OnPlayerEnterRoom2
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

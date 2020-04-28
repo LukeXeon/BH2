@@ -7,7 +7,6 @@ using Dash.Scripts.GamePlay.Config;
 using Photon.Pun;
 using Spine.Unity;
 using UnityEngine;
-using UnityEngine.Events;
 
 namespace Dash.Scripts.GamePlay.View
 {
@@ -17,17 +16,20 @@ namespace Dash.Scripts.GamePlay.View
         private static readonly int TAOQIANG = Animator.StringToHash("taoqiang");
         private static readonly int KAIQIANG = Animator.StringToHash("kaiqiang");
         private static readonly int LIANSHE = Animator.StringToHash("lianshe");
+        private static readonly int DIE = Animator.StringToHash("die");
+        private static readonly int KAIQIANG_SPEED = Animator.StringToHash("kaiqiang_speed");
+        private static readonly int HIT = Animator.StringToHash("hit");
 
         private static readonly Dictionary<(Type, string), MethodInfo> methodInfos =
             new Dictionary<(Type, string), MethodInfo>();
 
-        private static readonly int KAIQIANG_SPEED = Animator.StringToHash("kaiqiang_speed");
-        private static readonly int HIT = Animator.StringToHash("hit");
+
         public Animator animator;
         public Transform bulletLocator;
-        
+
         public SkeletonMecanim mecanim;
         public PoseManager poseManager;
+        public ActorEvent onPlayerRelive;
         [HideInInspector] public AudioView audioView;
         private new Rigidbody rigidbody;
         public float speed;
@@ -35,10 +37,6 @@ namespace Dash.Scripts.GamePlay.View
         private float timeBetweenBullets;
         private float lastShoot;
 
-        [Serializable]
-        public class OnPlayerLoadedEvent : UnityEvent
-        {
-        }
 
         //Weapon
         private WeaponInfoAsset weaponInfoAsset;
@@ -55,6 +53,11 @@ namespace Dash.Scripts.GamePlay.View
         protected override void Awake()
         {
             base.Awake();
+            if (onPlayerRelive == null)
+            {
+                onPlayerRelive = new ActorEvent();
+            }
+
             weaponViews = new Dictionary<int, WeaponView>();
             rigidbody = GetComponent<Rigidbody>();
             photonView = GetComponent<PhotonView>();
@@ -115,10 +118,14 @@ namespace Dash.Scripts.GamePlay.View
             animator.SetTrigger(KAIQIANG);
         }
 
-
         [PunRPC]
         public override void OnDamage(int viewId, int value)
         {
+            if (isDie)
+            {
+                return;
+            }
+
             animator.SetTrigger(HIT);
             var view = PhotonView.Find(viewId);
             if (view)
@@ -136,11 +143,30 @@ namespace Dash.Scripts.GamePlay.View
 
             if (photonView.IsMine)
             {
-                var damage = Mathf.Max(0,
-                    value - GameConfigManager.GetDamageReduction(PlayerConfigManager.playerInfo.Item2.fangYuLi,
-                        PlayerConfigManager.playerInfo.Item2.shengMingZhi));
-                photonView.RPC(nameof(OnSyncDamageText), RpcTarget.All, damage);
+                var damage2 = Mathf.Max(0, value - GameConfigManager.GetDamageReduction(
+                                               PlayerConfigManager.playerInfo.Item2.fangYuLi));
+                LocalPlayer.hp -= damage2;
+                if (LocalPlayer.hp <= 0)
+                {
+                    photonView.RPC(nameof(ToDie), RpcTarget.All);
+                }
+
+                photonView.RPC(nameof(OnSyncDamageText), RpcTarget.All, value);
             }
+        }
+
+
+        [PunRPC]
+        private void ToDie()
+        {
+            isDie = true;
+            animator.ResetTrigger(TAOQIANG);
+            animator.SetBool(IS_RUN, false);
+            animator.ResetTrigger(KAIQIANG);
+            animator.SetBool(LIANSHE, false);
+            animator.ResetTrigger(HIT);
+            animator.SetTrigger(DIE);
+            onActorDie.Invoke();
         }
 
         [PunRPC]
@@ -171,7 +197,7 @@ namespace Dash.Scripts.GamePlay.View
 
         private void Update()
         {
-            if (photonView.IsMine)
+            if (!isDie && photonView.IsMine)
             {
                 var isKaiQiangPressed = ETCInput.GetButton("kaiqiang");
                 //先更新动画，如果能够连射确保动画状态同步
@@ -205,7 +231,7 @@ namespace Dash.Scripts.GamePlay.View
 
         private void FixedUpdate()
         {
-            if (photonView.IsMine)
+            if (!isDie && photonView.IsMine)
             {
                 var h = ETCInput.GetAxis("Horizontal");
                 var v = ETCInput.GetAxis("Vertical");

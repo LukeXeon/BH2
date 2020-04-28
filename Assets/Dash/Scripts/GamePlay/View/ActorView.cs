@@ -8,14 +8,22 @@ namespace Dash.Scripts.GamePlay.View
 {
     public abstract class ActorView : MonoBehaviour
     {
-        public OnActorDamageEvent onActorDamageEvent;
+        public ActorDamageEvent onActorDamageEvent;
+        public ActorEvent onActorDie;
         internal PhotonView photonView;
         public int flipX;
-        
+        public bool isDie;
+
+        [Serializable]
+        public class ActorEvent : UnityEvent
+        {
+        }
+
         protected virtual void Awake()
         {
             flipX = -1;
-            if (onActorDamageEvent == null) onActorDamageEvent = new OnActorDamageEvent();
+            if (onActorDie == null) onActorDie = new ActorEvent();
+            if (onActorDamageEvent == null) onActorDamageEvent = new ActorDamageEvent();
             photonView = GetComponent<PhotonView>();
             onActorDamageEvent.AddListener(FindObjectOfType<LevelUIManager>().OnShowDamage);
         }
@@ -30,7 +38,7 @@ namespace Dash.Scripts.GamePlay.View
         }
 
         [Serializable]
-        public class OnActorDamageEvent : UnityEvent<ActorView, int>
+        public class ActorDamageEvent : UnityEvent<ActorView, int>
         {
         }
     }

@@ -80,9 +80,9 @@ namespace Dash.Scripts.Config
             };
         }
 
-        public static int GetDamageReduction(int fangYuLi, int maxShengMingZhi)
+        public static int GetDamageReduction(int fangYuLi)
         {
-            return (int) (fangYuLi / 10f * maxShengMingZhi * 0.01f);
+            return (int) Mathf.Log(fangYuLi);
         }
     }
 }

@@ -13,6 +13,8 @@ namespace Dash.Scripts.GamePlay.View
         protected int targetLayerMask;
         [HideInInspector] public PhotonView target;
 
+        public ActorView targetActor;
+
         protected override void Awake()
         {
             base.Awake();
@@ -24,7 +26,6 @@ namespace Dash.Scripts.GamePlay.View
         [Serializable]
         public struct NpcConfig
         {
-            public int level;
             public float findPlayerRange;
             public int gongJiLi;
             public int fangYuLi;
@@ -43,12 +44,17 @@ namespace Dash.Scripts.GamePlay.View
             var c = targetCollider.FirstOrDefault();
             if (c != null)
             {
-                target = c.GetComponent<PhotonView>();
+                var Actor = c.GetComponent<ActorView>();
+                if (Actor && !Actor.isDie)
+                {
+                    target = Actor.photonView;
+                    targetActor = Actor;
+                    return;
+                }
             }
-            else
-            {
-                target = null;
-            }
+
+            targetActor = null;
+            target = null;
         }
     }
 }

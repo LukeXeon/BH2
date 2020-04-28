@@ -106,11 +106,18 @@ MonoBehaviour:
   onActorDamageEvent:
     m_PersistentCalls:
       m_Calls: []
+  onActorDie:
+    m_PersistentCalls:
+      m_Calls: []
   flipX: 1
+  isDie: 0
   animator: {fileID: 8238277081177272641}
   bulletLocator: {fileID: 0}
   mecanim: {fileID: 8238277081177272654}
   poseManager: {fileID: 8238277081177272655}
+  onPlayerRelive:
+    m_PersistentCalls:
+      m_Calls: []
   audioView: {fileID: 0}
   speed: 10
 --- !u!114 &-4584323755285702024
@@ -188,7 +195,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8238277081177272650}
   m_LocalRotation: {x: 0.17364816, y: -0, z: -0, w: 0.9848078}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: -0.9}
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_Children: []
   m_Father: {fileID: 8238277080845339818}

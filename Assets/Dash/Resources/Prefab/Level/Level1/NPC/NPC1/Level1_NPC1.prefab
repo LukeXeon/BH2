@@ -14408,7 +14408,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2545382971944027309}
   m_LocalRotation: {x: 0.17364816, y: 0, z: 0, w: 0.9848078}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: -0.9}
   m_LocalScale: {x: 0.25, y: 0.25, z: 0.25}
   m_Children: []
   m_Father: {fileID: 2545382973083229447}
@@ -14756,16 +14756,20 @@ MonoBehaviour:
   onActorDamageEvent:
     m_PersistentCalls:
       m_Calls: []
+  onActorDie:
+    m_PersistentCalls:
+      m_Calls: []
   flipX: 0
+  isDie: 0
   hp: 0
   config:
-    level: 0
     findPlayerRange: 999
-    gongJiLi: 10
-    fangYuLi: 10
-    shengMingZhi: 100
+    gongJiLi: 80
+    fangYuLi: 80
+    shengMingZhi: 3000
     moveSpeed: 3
   target: {fileID: 0}
+  targetActor: {fileID: 0}
   config1:
     distance: 3
     remoteTime: 3
@@ -14783,6 +14787,7 @@ MonoBehaviour:
   audioSourceClose: {fileID: 2810770173413313683}
   animator: {fileID: 2545382971944027311}
   mecanim: {fileID: 2545382971944027308}
+  hitEffect: {fileID: 0}
 --- !u!195 &1140673427
 NavMeshAgent:
   m_ObjectHideFlags: 0

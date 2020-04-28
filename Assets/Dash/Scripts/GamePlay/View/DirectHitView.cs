@@ -49,7 +49,8 @@ namespace Dash.Scripts.GamePlay.View
                 var actorView = shootHit.collider.GetComponent<ActorView>();
                 if (actorView)
                 {
-                    var value = data.gongJiLi;
+                    
+                    var value = LocalPlayer.gongJiLi;
                     actorView.photonView.RPC(
                         nameof(actorView.OnDamage),
                         RpcTarget.All,

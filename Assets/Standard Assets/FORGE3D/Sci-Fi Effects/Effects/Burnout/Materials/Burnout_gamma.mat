@@ -1,0 +1,102 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Burnout_gamma
+  m_Shader: {fileID: 4800000, guid: 230dcf32a0184ed409b21e674d1f35b4, type: 3}
+  m_ShaderKeywords: 
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _BumpMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _BurnoutMask:
+        m_Texture: {fileID: 2800000, guid: 25030d03ae26bb24c9125f5439aac693, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Cubemap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Damage:
+        m_Texture: {fileID: 2800000, guid: ddbaefd8f70b0f14d9a9cc658b7724a2, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Diffuse:
+        m_Texture: {fileID: 2800000, guid: ddbaefd8f70b0f14d9a9cc658b7724a2, type: 3}
+        m_Scale: {x: 2, y: 2}
+        m_Offset: {x: 0, y: 0}
+    - _Glow:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _LoopTex:
+        m_Texture: {fileID: 2800000, guid: 766951da0ad9ae64c92c708fb761e594, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex:
+        m_Texture: {fileID: 2800000, guid: 3f1398d58d9771f41bc59080e2e75a47, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MaskTex:
+        m_Texture: {fileID: 2800000, guid: 552f0d6a3d8716244857aed1d8e0823a, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Normal:
+        m_Texture: {fileID: 2800000, guid: 4316d53818a14334b954fa305b364f1c, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _PGS:
+        m_Texture: {fileID: 2800000, guid: 3f1398d58d9771f41bc59080e2e75a47, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _WipeEm:
+        m_Texture: {fileID: 2800000, guid: 26751794c16add349bfcfe13bfdc4c51, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _WipeOp:
+        m_Texture: {fileID: 2800000, guid: 312e6973e5c47604b84b19a9931ad2f2, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats:
+    - _BurnOut: 0
+    - _BurnUVOffset: 0.15
+    - _Cut: 0.09
+    - _Cutoff: 0
+    - _DiffusePower: 0.54
+    - _FresnelExp: 0.03
+    - _FresnelMult: 0.1
+    - _FresnelPower: 2.16
+    - _GlowMult: 0
+    - _ReflectionDesaturation: 0
+    - _ReflectionMult: -0.12
+    - _ShadowIntensity: 0.6357143
+    - _Shininess: 1
+    - _SpecularA: 156.5
+    - _SpecularAdd: 0.2
+    - _SpecularB: 44.5
+    - _SpecularFactor: 9.77
+    - _SpecularMult: 3.75
+    - _SpecularPower: 46.1
+    - _SpecularRatio: 0.69
+    - _UVPan: 0
+    m_Colors:
+    - _AmbientColor: {r: 1, g: 0.44852942, b: 0.44852942, a: 1}
+    - _BurnColor: {r: 1, g: 0.31036434, b: 0, a: 1}
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _FresnelColor: {r: 1, g: 0.4852941, b: 0.4852941, a: 1}
+    - _SpecColor: {r: 1, g: 0.5441177, b: 0.5441177, a: 0}
+    - _SpecularColor: {r: 1, g: 0.33088237, b: 0.33088237, a: 1}

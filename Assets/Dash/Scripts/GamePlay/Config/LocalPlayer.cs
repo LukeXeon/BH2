@@ -1,4 +1,5 @@
 using Photon.Pun;
+using UnityEngine;
 
 namespace Dash.Scripts.GamePlay.Config
 {
@@ -9,13 +10,13 @@ namespace Dash.Scripts.GamePlay.Config
         public static int hp
         {
             get => GetLocalPlayerValue(nameof(hp), 0);
-            set => SetLocalPlayerValue(nameof(hp), value);
+            set => SetLocalPlayerValue(nameof(hp), Mathf.Max(0, value));
         }
 
         public static int mp
         {
             get => GetLocalPlayerValue(nameof(mp), 0);
-            set => SetLocalPlayerValue(nameof(mp), value);
+            set => SetLocalPlayerValue(nameof(mp), Mathf.Max(0, value));
         }
 
         private static T GetLocalPlayerValue<T>(string name, T def)
@@ -28,5 +29,8 @@ namespace Dash.Scripts.GamePlay.Config
         {
             PhotonNetwork.LocalPlayer.CustomProperties[name] = value;
         }
+
+        public static int gongJiLi => PlayerConfigManager.weaponInfos[weaponIndex].Item2.gongJiLi +
+                                      PlayerConfigManager.playerInfo.Item2.gongJiLi;
     }
 }
