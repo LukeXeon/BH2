@@ -12,11 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 68b704edf390406fafd57ef210ad1589, type: 3}
   m_Name: SDKInfo
   m_EditorClassIdentifier: 
-  leanCloudId: izXlGHtnzLtWAETsnWAGluja-gzGzoHsz
-  leanCloudKey: niSw4kj0SQHEUeevj4H25wF5
-  leanCloudUrl: https://izxlghtn.lc-cn-n1-shared.com
   agoraAppId: 28bfa92e02b44954a76c40f7b256dd76
-  onErrorShow: {fileID: 1282393376341110, guid: 5b3d91300597e6f4f9d52b593ad52fb5,
-    type: 3}
   githubClientId: 92162561b648041eaf15
   githubClientSecret: ecfe2fd95dc2ccfb32d199648c280de9648a9156
+  cloudId: dae5020c8c7711eaa57502fcdc4e7412
+  cloudKey: e51518ca8c7711ea9afe02fcdc4e7412
+  cloudUrl: http://175.24.83.68:1337/parse/

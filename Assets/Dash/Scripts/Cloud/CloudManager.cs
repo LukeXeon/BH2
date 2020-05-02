@@ -26,25 +26,11 @@ namespace Dash.Scripts.Cloud
         private const string errorMessageInternal = "游戏内部错误";
 
         private static GameUserEntity localUserEntity;
-
-        public static string GetLogInUrl()
-        {
-            var info = GameBootManager.info;
-            var login = new Url("https://github.com/login/oauth/authorize");
-            login.SetQueryParam("client_id", info.githubClientId);
-            login.SetQueryParam("redirect_uri", GetCallbackUrl());
-            return login.ToString();
-        }
-
+        
         public static event Action<PlayerEntity> playerChanged;
 
         public static event Action<GameUserEntity> userInfoChanged;
-
-        private static string GetCallbackUrl()
-        {
-            return @"http://localhost:10086/oauth/redirect/";
-        }
-
+        
         private static WeaponEntity NewWeapon(int typeId)
         {
             var weapon = new WeaponEntity {user = ParseUser.CurrentUser, typeId = typeId, exp = 0};
@@ -199,6 +185,7 @@ namespace Dash.Scripts.Cloud
                 .Include("weapon")
                 .WhereEqualTo("user", ParseUser.CurrentUser)
                 .FindAsync();
+
             foreach (var item in await t2)
             {
                 Equipments.Player inUse;
@@ -254,6 +241,7 @@ namespace Dash.Scripts.Cloud
             {
                 throw new ArgumentException("两次输入的密码不一致");
             }
+
             var myUser = new ParseUser
             {
                 Password = password, Username = username
@@ -309,68 +297,11 @@ namespace Dash.Scripts.Cloud
             await HandleLogin();
         }
 
-        private static UnityWebRequestAwaitable GetAwaiter(this UnityWebRequestAsyncOperation operation)
-        {
-            return new UnityWebRequestAwaitable(operation);
-        }
-
-        public static async Task LogInWithGithub(CancellationToken cancellationToken)
-        {
-            var info = GameBootManager.info;
-            var http = new HttpListener {AuthenticationSchemes = AuthenticationSchemes.Anonymous};
-            http.Prefixes.Add(GetCallbackUrl());
-            http.Start();
-            var ctxTask = http.GetContextAsync();
-            var cancelTask = Task.Run(async () =>
-                {
-                    while (!cancellationToken.IsCancellationRequested && !ctxTask.IsCompleted) await Task.Yield();
-                }
-                , cancellationToken);
-            await Task.WhenAny(cancelTask, ctxTask);
-            if (cancellationToken.IsCancellationRequested)
-            {
-                http.Abort();
-                throw new TimeoutException("");
-            }
-
-            var code = (await ctxTask).Request.QueryString["code"];
-            http.Abort();
-            Debug.Log(code);
-            var u = new Url("https://github.com/login/oauth/access_token");
-            u.SetQueryParam("client_id", info.githubClientId);
-            u.SetQueryParam("client_secret", info.githubClientSecret);
-            u.SetQueryParam("code", code);
-            var wr = UnityWebRequest.Post(u, new Dictionary<string, string>());
-            wr.SetRequestHeader("Accept", "application/json");
-            await wr.SendWebRequest();
-            var token =
-                JsonConvert.DeserializeObject<Dictionary<string, string>>(wr.downloadHandler.text)["access_token"];
-            var request = UnityWebRequest.Get("https://api.github.com/user");
-            request.SetRequestHeader("Authorization", "token " + token);
-            request.SetRequestHeader("Accept", "application/json");
-            await request.SendWebRequest();
-            if (request.responseCode == 200)
-            {
-                var userInfo = JsonConvert.DeserializeObject<Dictionary<string, string>>(request.downloadHandler.text);
-                throw new UnityException();
-                //                await ParseUser.LogInWithAuthDataAsync(new Dictionary<string, object>
-//                {
-//                    {"access_token", token},
-//                    {"expires_in", 7200},
-//                    {"uid", userInfo["id"]}
-//                }, "github");
-                await HandleLogin();
-            }
-            else
-            {
-                throw new IOException("http错误码" + request.responseCode);
-            }
-        }
 
         //callback（降下的，换上去的，错误信息）
-        public static async Task<SealEntity[]> ReplaceShengHen(
+        public static async Task<SealEntity[]> ReplaceSeal(
             InUseSealEntity index,
-            SealEntity shengHen
+            SealEntity seal
         )
         {
             var toUpdate = new List<ParseObject> {index};
@@ -382,15 +313,15 @@ namespace Dash.Scripts.Cloud
                 toUpdate.Add(old);
             }
 
-            if (shengHen != null)
+            if (seal != null)
             {
-                shengHen.player = player;
-                toUpdate.Add(shengHen);
+                seal.player = player;
+                toUpdate.Add(seal);
             }
 
-            index.seal = shengHen;
+            index.seal = seal;
             await ParseObject.SaveAllAsync(toUpdate);
-            return new[] {old, shengHen};
+            return new[] {old, seal};
         }
 
         //callback（降下的，换上去的，错误信息）
@@ -475,28 +406,6 @@ namespace Dash.Scripts.Cloud
             localUserEntity.nameInGame = name;
             await localUserEntity.SaveAsync();
             userInfoChanged?.Invoke(localUserEntity);
-        }
-
-        private struct UnityWebRequestAwaitable : INotifyCompletion
-        {
-            private readonly UnityWebRequestAsyncOperation operation;
-
-            public UnityWebRequestAwaitable(UnityWebRequestAsyncOperation operation)
-            {
-                this.operation = operation;
-            }
-
-            public void OnCompleted(Action continuation)
-            {
-                operation.completed += o => continuation();
-            }
-
-            public bool IsCompleted => operation.isDone;
-
-            public UnityWebRequest GetResult()
-            {
-                return operation.webRequest;
-            }
         }
     }
 }

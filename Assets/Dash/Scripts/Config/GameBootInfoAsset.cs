@@ -10,10 +10,10 @@ namespace Dash.Scripts.Config
         [Header("Github")] public string githubClientId;
 
         public string githubClientSecret;
-        [Header("LeanCloud")] public string leanCloudId;
+        [Header("Cloud")] public string cloudId;
 
-        public string leanCloudKey;
+        public string cloudKey;
 
-        public string leanCloudUrl;
+        public string cloudUrl;
     }
 }

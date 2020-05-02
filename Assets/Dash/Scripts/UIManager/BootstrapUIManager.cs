@@ -158,7 +158,7 @@ namespace Dash.Scripts.UIManager
                 go.transform.SetSiblingIndex(waitWindow.transform.GetSiblingIndex());
                 var b = go.GetComponent<IWebUIManager>();
                 var cancelSource = new CancellationTokenSource();
-                b.Init(CloudManager.GetLogInUrl(), () =>
+                b.Init(GithubClient.LogInUrl, () =>
                 {
                     cancelSource.Cancel();
                     Debug.Log("waiter abort");
@@ -166,7 +166,7 @@ namespace Dash.Scripts.UIManager
                 });
                 try
                 {
-                    await CloudManager.LogInWithGithub(cancelSource.Token);
+                    await GithubClient.LogInAsync(cancelSource.Token);
                     notifySucceed.Show("登录成功", "您已成功登录");
                     windowManager.CloseWindow();
                     yiJingDengLuRoot.SetActive(true);
@@ -179,6 +179,7 @@ namespace Dash.Scripts.UIManager
                 }
                 catch (Exception e)
                 {
+                    Debug.Log(e);
                     notifyError.Show("登录失败", e.Message);
                 }
                 finally

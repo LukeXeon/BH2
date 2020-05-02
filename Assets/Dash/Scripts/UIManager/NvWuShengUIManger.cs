@@ -303,7 +303,7 @@ namespace Dash.Scripts.UIManager
                     BeginWaitNetwork();
                     try
                     {
-                        var result = await CloudManager.ReplaceShengHen(inUseshengHen, o);
+                        var result = await CloudManager.ReplaceSeal(inUseshengHen, o);
                         var unload = result[0];
                         var upload = result[1];
                         if (unload != null) equipments.seals[unload.ObjectId] = unload;

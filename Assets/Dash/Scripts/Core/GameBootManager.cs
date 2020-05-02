@@ -18,17 +18,17 @@ namespace Dash.Scripts.Core
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         private static void Initialize()
         {
+            Application.targetFrameRate = 60;
+            info = Resources.LoadAll<GameBootInfoAsset>("Config/Game").Single();
             ParseClient.Initialize(new ParseClient.Configuration
             {
-                ApplicationID = "dae5020c8c7711eaa57502fcdc4e7412",
-                ServerURI = "http://175.24.83.68:1337/parse/",
-                MasterKey = "e51518ca8c7711ea9afe02fcdc4e7412"
-             });
-            Debug.Log("Boot Loaded");
-            Application.targetFrameRate = 60;
+                ApplicationID = info.cloudId,
+                ServerURI = info.cloudUrl,
+                MasterKey = info.cloudKey
+            });
+            GithubClient.Initialize(info.githubClientId, info.githubClientSecret);
             PhotonNetwork.PrefabPool = new PunPool();
-            info = Resources.LoadAll<GameBootInfoAsset>("Config/Game").Single();
-            //AVClient.Initialize(info.leanCloudId, info.leanCloudKey, info.leanCloudUrl);
+
             ParseObject.RegisterSubclass<InUseWeaponEntity>();
             ParseObject.RegisterSubclass<InUseSealEntity>();
             ParseObject.RegisterSubclass<GameUserEntity>();
