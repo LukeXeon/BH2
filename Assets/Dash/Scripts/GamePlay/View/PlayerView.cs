@@ -57,7 +57,7 @@ namespace Dash.Scripts.GamePlay.View
             {
                 onPlayerRelive = new ActorEvent();
             }
-
+            
             weaponViews = new Dictionary<int, WeaponView>();
             rigidbody = GetComponent<Rigidbody>();
             photonView = GetComponent<PhotonView>();
@@ -81,7 +81,6 @@ namespace Dash.Scripts.GamePlay.View
                 weaponView.OnInitialize(this);
                 weaponViews.Add(weaponTypeId, weaponView);
             }
-
             OnWeaponChanged(weaponTypeIds.First());
         }
 
@@ -236,12 +235,12 @@ namespace Dash.Scripts.GamePlay.View
             {
                 var h = ETCInput.GetAxis("Horizontal");
                 var v = ETCInput.GetAxis("Vertical");
-                var move = speed * Time.fixedDeltaTime * new Vector3(Mathf.Abs(h) > 0 ? 1 * Mathf.Sign(h) : 0, 0,
-                               Mathf.Abs(v) > 0 ? Mathf.Sign(v) : 0);
-                if (move != Vector3.zero)
+                h = h == 0 ? 0 : Mathf.Sign(h);
+                v = v == 0 ? 0 : Mathf.Sign(v);
+                if (new Vector2(h, v) != Vector2.zero)
                 {
                     animator.SetBool(IS_RUN, true);
-                    rigidbody.MovePosition(rigidbody.position += move);
+                    rigidbody.velocity = new Vector3(1 * h * speed, 0, 1 * v * speed);
                 }
                 else
                 {
