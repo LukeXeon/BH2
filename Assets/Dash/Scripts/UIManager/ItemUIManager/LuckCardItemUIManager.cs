@@ -40,7 +40,7 @@ namespace Dash.Scripts.UIManager.ItemUIManager
                     content.text = "武器已获得";
                 }
                     break;
-                case LuckDrawResult.Type.ShengHen:
+                case LuckDrawResult.Type.Seal:
                 {
                     var info = GameConfigManager.shengHenTable[result.typeId];
                     image.sprite = info.image;

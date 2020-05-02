@@ -1,19 +1,19 @@
-using LeanCloud;
+using Parse;
 
 namespace Dash.Scripts.Cloud
 {
-    [AVClassName("UserMate")]
-    public class EUserMate : AVObject
+    [ParseClassName("GameUser")]
+    public class GameUserEntity : ParseObject
     {
-        [AVFieldName(nameof(user))]
-        public AVUser user
+        [ParseFieldName(nameof(user))]
+        public ParseUser user
         {
-            get => GetProperty<AVUser>(nameof(user));
+            get => GetProperty<ParseUser>(nameof(user));
             set => SetProperty(value, nameof(user));
         }
 
 
-        [AVFieldName(nameof(exp))]
+        [ParseFieldName(nameof(exp))]
         public int exp
         {
             get => GetProperty<int>(nameof(exp));
@@ -21,28 +21,21 @@ namespace Dash.Scripts.Cloud
         }
 
 
-        [AVFieldName(nameof(player))]
-        public EPlayer player
+        [ParseFieldName(nameof(player))]
+        public PlayerEntity player
         {
-            get => GetProperty<EPlayer>(nameof(player));
+            get => GetProperty<PlayerEntity>(nameof(player));
             set => SetProperty(value, nameof(player));
         }
 
-        [AVFieldName(nameof(shuiJing))]
+        [ParseFieldName(nameof(shuiJing))]
         public int shuiJing
         {
             get => GetProperty<int>(nameof(shuiJing));
             set => SetProperty(value, nameof(shuiJing));
         }
 
-        [AVFieldName(nameof(tiLi))]
-        public int tiLi
-        {
-            get => GetProperty<int>(nameof(tiLi));
-            set => SetProperty(value, nameof(tiLi));
-        }
-
-        [AVFieldName(nameof(nameInGame))]
+        [ParseFieldName(nameof(nameInGame))]
         public string nameInGame
         {
             get => GetProperty<string>(nameof(nameInGame));

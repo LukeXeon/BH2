@@ -25,7 +25,7 @@ namespace Dash.Scripts.UIManager
         public TextMeshProUGUI shengMingZhi;
         public TextMeshProUGUI xiaoGuo;
 
-        public void Open(string btnTextValue, EShengHen shengHen, Action<EShengHen> callback, Action onClose)
+        public void Open(string btnTextValue, SealEntity shengHen, Action<SealEntity> callback, Action onClose)
         {
             animator.Play("Fade-in");
             if (btnTextValue != null)

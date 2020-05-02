@@ -25,7 +25,7 @@ namespace Dash.Scripts.UIManager
         public TextMeshProUGUI sheSu;
         public TextMeshProUGUI xiaoGuo;
 
-        public void Open(string btnTextValue, EWeapon weapon, Action<EWeapon> callback, Action onClose)
+        public void Open(string btnTextValue, WeaponEntity weapon, Action<WeaponEntity> callback, Action onClose)
         {
             animator.Play("Fade-in");
             root.SetActive(true);

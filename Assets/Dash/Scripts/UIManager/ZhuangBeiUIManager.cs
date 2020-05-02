@@ -33,7 +33,7 @@ namespace Dash.Scripts.UIManager
         public ShengHenInfoUIManager shengHenInfo;
         public GameObject shengHenPanel;
         public GameObject shengHenPrefab;
-        private Dictionary<string, EShengHen> shengHens;
+        private Dictionary<string, SealEntity> shengHens;
         public GameObject typeList;
         public GameObject unLoadShengHenPrefab;
         public GameObject unLoadWeaponPrefab;
@@ -42,7 +42,7 @@ namespace Dash.Scripts.UIManager
         public WeaponInfoUIManager weaponInfo;
         public GameObject weaponPanel;
         public GameObject weaponPrefab;
-        private Dictionary<string, EWeapon> weapons;
+        private Dictionary<string, WeaponEntity> weapons;
 
         private void Awake()
         {
@@ -81,7 +81,7 @@ namespace Dash.Scripts.UIManager
                     try
                     {
                         SelectButton(openShengHen);
-                        shengHens = await CloudManager.GetUserShengHen();
+                        shengHens = await CloudManager.GetUserSeals();
                         LoadShengHens(shengHens.Values, o => { shengHenInfo.Open("强化", o, o1 => { }, null); });
                     }
                     catch (Exception e)
@@ -106,12 +106,12 @@ namespace Dash.Scripts.UIManager
             });
         }
 
-        private void LoadWeapons(ICollection<EWeapon> ws, Action<EWeapon> callback)
+        private void LoadWeapons(ICollection<WeaponEntity> ws, Action<WeaponEntity> callback)
         {
             StartCoroutine(LoadWeapons0(ws, callback));
         }
 
-        private IEnumerator LoadWeapons0(ICollection<EWeapon> ws, Action<EWeapon> callback)
+        private IEnumerator LoadWeapons0(ICollection<WeaponEntity> ws, Action<WeaponEntity> callback)
         {
             yield return null;
             foreach (var item in ws)
@@ -123,12 +123,12 @@ namespace Dash.Scripts.UIManager
             }
         }
 
-        private void LoadShengHens(ICollection<EShengHen> ss, Action<EShengHen> callback)
+        private void LoadShengHens(ICollection<SealEntity> ss, Action<SealEntity> callback)
         {
             StartCoroutine(LoadShengHens0(ss, callback));
         }
 
-        private IEnumerator LoadShengHens0(ICollection<EShengHen> ss, Action<EShengHen> callback)
+        private IEnumerator LoadShengHens0(ICollection<SealEntity> ss, Action<SealEntity> callback)
         {
             yield return null;
             foreach (var item in ss)
@@ -154,7 +154,7 @@ namespace Dash.Scripts.UIManager
             button.GetComponent<Image>().sprite = selectSprite;
         }
 
-        public void OpenToSelectWeapon(List<EWeapon> weapons, Action onUnload, Action<EWeapon> callback)
+        public void OpenToSelectWeapon(List<WeaponEntity> weapons, Action onUnload, Action<WeaponEntity> callback)
         {
             typeList.SetActive(false);
             backOnly.gameObject.SetActive(true);
@@ -170,7 +170,7 @@ namespace Dash.Scripts.UIManager
             LoadWeapons(weapons, callback);
         }
 
-        public void OpenToSelectShengHen(List<EShengHen> shengHens, Action onUnload, Action<EShengHen> callback)
+        public void OpenToSelectShengHen(List<SealEntity> shengHens, Action onUnload, Action<SealEntity> callback)
         {
             typeList.SetActive(false);
             backOnly.gameObject.SetActive(true);

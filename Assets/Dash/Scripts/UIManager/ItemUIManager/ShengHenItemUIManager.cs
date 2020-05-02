@@ -22,7 +22,7 @@ namespace Dash.Scripts.UIManager.ItemUIManager
             Clear();
         }
 
-        public void Apply(EShengHen shengHen, Action onShow, Action onTiHuan)
+        public void Apply(SealEntity shengHen, Action onShow, Action onTiHuan)
         {
             if (shengHen != null)
             {

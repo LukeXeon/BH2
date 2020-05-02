@@ -15,7 +15,7 @@ namespace Dash.Scripts.UIManager
         public TextMeshProUGUI level;
         public GameObject markInUse;
 
-        public void Apply(EShengHen shengHen, Action<EShengHen> callack)
+        public void Apply(SealEntity shengHen, Action<SealEntity> callack)
         {
             var info = GameConfigManager.shengHenTable[shengHen.typeId];
             image.sprite = info.image;

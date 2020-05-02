@@ -18,7 +18,7 @@ namespace Dash.Scripts.UIManager
             infoAsset.skel.GetSkeletonData(true);
         }
 
-        public void Apply(EPlayer player, Action onLock, Action onUnLock)
+        public void Apply(PlayerEntity player, Action onLock, Action onUnLock)
         {
             markInLock.SetActive(player == null);
             button.onClick.RemoveAllListeners();

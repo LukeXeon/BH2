@@ -9,7 +9,7 @@ namespace Dash.Scripts.GamePlay.Config
         public int nengLiangZhi;
         public int shengMingZhi;
 
-        public static RuntimeShengHenInfo Build(EShengHen shengHen)
+        public static RuntimeShengHenInfo Build(SealEntity shengHen)
         {
             var info = GameConfigManager.shengHenTable[shengHen.typeId];
             var fangYuLi = info.fangYuLi;

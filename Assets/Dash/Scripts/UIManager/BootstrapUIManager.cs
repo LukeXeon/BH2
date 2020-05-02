@@ -3,8 +3,8 @@ using System.Collections;
 using System.Threading;
 using Dash.Scripts.Cloud;
 using Dash.Scripts.UI;
-using LeanCloud;
 using Michsky.UI.ModernUIPack;
+using Parse;
 using Photon.Pun;
 using Photon.Realtime;
 using TMPro;
@@ -89,6 +89,7 @@ namespace Dash.Scripts.UIManager
                 }
                 catch (Exception e)
                 {
+                    Debug.Log(e);
                     notifyError.Show("注册失败", e.Message);
                 }
                 finally
@@ -107,11 +108,12 @@ namespace Dash.Scripts.UIManager
                     notifySucceed.Show("登录成功", "您已成功登录");
                     windowManager.CloseWindow();
                     yiJingDengLuRoot.SetActive(true);
-                    PlayerPrefs.SetString("token", AVUser.CurrentUser.SessionToken);
+                    PlayerPrefs.SetString("token", ParseUser.CurrentUser.SessionToken);
                     PlayerPrefs.Save();
                 }
                 catch (Exception e)
                 {
+                    Debug.Log(e);
                     notifyError.Show("登录失败", e.Message);
                 }
                 finally
@@ -168,7 +170,7 @@ namespace Dash.Scripts.UIManager
                     notifySucceed.Show("登录成功", "您已成功登录");
                     windowManager.CloseWindow();
                     yiJingDengLuRoot.SetActive(true);
-                    PlayerPrefs.SetString("token", AVUser.CurrentUser.SessionToken);
+                    PlayerPrefs.SetString("token", ParseUser.CurrentUser.SessionToken);
                     PlayerPrefs.Save();
                 }
                 catch (TimeoutException e)
@@ -268,7 +270,7 @@ namespace Dash.Scripts.UIManager
         {
             PhotonNetwork.AuthValues = new AuthenticationValues
             {
-                UserId = AVUser.CurrentUser.ObjectId
+                UserId = ParseUser.CurrentUser.ObjectId
             };
             PhotonNetwork.ConnectUsingSettings();
 

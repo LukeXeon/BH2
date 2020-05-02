@@ -7,7 +7,7 @@ namespace Dash.Scripts.Cloud
             UnLockPlayer,
             AddPlayerExp,
             Weapon,
-            ShengHen,
+            Seal,
             ExpAssets
         }
 

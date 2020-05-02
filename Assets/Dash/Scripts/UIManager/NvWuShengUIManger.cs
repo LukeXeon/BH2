@@ -169,7 +169,7 @@ namespace Dash.Scripts.UIManager
             var inUse = equipments.players.Values.First(o => o.player.typeId == currentIndex);
             var player = inUse.player;
             var playerInfo = RuntimePlayerInfo.Build(player,
-                inUse.shengHens.Where(s => s.shengHen != null).Select(s => s.shengHen).ToList());
+                inUse.seals.Where(s => s.seal != null).Select(s => s.seal).ToList());
             dengji.text = GameConfigManager.GetPlayerLevel(player.exp).count.ToString();
             gongJiLi.text = playerInfo.gongJiLi.ToString();
             fangYuLi.text = playerInfo.fangYuLi.ToString();
@@ -186,7 +186,7 @@ namespace Dash.Scripts.UIManager
             ApplyPlayerWeapon(currentW, withAnim);
         }
 
-        private void ApplyPlayerWeapon(EWeapon weapon, bool withAnim = true)
+        private void ApplyPlayerWeapon(WeaponEntity weapon, bool withAnim = true)
         {
             if (weapon != null)
             {
@@ -207,7 +207,7 @@ namespace Dash.Scripts.UIManager
             }
         }
 
-        private void ApplyWeaponCallbacks(PlayerWithUsing inUse)
+        private void ApplyWeaponCallbacks(Equipments.Player inUse)
         {
             for (var i = 0; i < 3; i++)
             {
@@ -217,7 +217,7 @@ namespace Dash.Scripts.UIManager
                 Action onChaKan = null;
                 Action onUnload = null;
 
-                async void OnSelect(EWeapon o)
+                async void OnSelect(WeaponEntity o)
                 {
                     BeginWaitNetwork();
                     try
@@ -256,7 +256,7 @@ namespace Dash.Scripts.UIManager
                     }
                 }
 
-                void OnOpenPanel(EWeapon o)
+                void OnOpenPanel(WeaponEntity o)
                 {
                     zhuangBeiUiManager.weaponInfo.Open("装备", o, OnSelect, null);
                 }
@@ -289,16 +289,16 @@ namespace Dash.Scripts.UIManager
             }
         }
 
-        private void ApplyShengHenCallbacks(PlayerWithUsing inUse)
+        private void ApplyShengHenCallbacks(Equipments.Player inUse)
         {
             for (var i = 0; i < 3; i++)
             {
-                var inUseshengHen = inUse.shengHens[i];
-                var shengHen = inUseshengHen.shengHen;
+                var inUseshengHen = inUse.seals[i];
+                var shengHen = inUseshengHen.seal;
                 Action onShow = null;
                 Action onUnload = null;
-                Action<EShengHen> onOpenPanel;
-                Action<EShengHen> onSelect = async o =>
+                Action<SealEntity> onOpenPanel;
+                Action<SealEntity> onSelect = async o =>
                 {
                     BeginWaitNetwork();
                     try
@@ -306,9 +306,9 @@ namespace Dash.Scripts.UIManager
                         var result = await CloudManager.ReplaceShengHen(inUseshengHen, o);
                         var unload = result[0];
                         var upload = result[1];
-                        if (unload != null) equipments.shengHens[unload.ObjectId] = unload;
+                        if (unload != null) equipments.seals[unload.ObjectId] = unload;
 
-                        if (upload != null) equipments.shengHens[upload.ObjectId] = upload;
+                        if (upload != null) equipments.seals[upload.ObjectId] = upload;
 
                         zhuangBeiUiManager.FastClose();
                         zhuangBeiUiManager.shengHenInfo.Close();
@@ -332,7 +332,7 @@ namespace Dash.Scripts.UIManager
 
                 Action onTihuan = () =>
                 {
-                    var toSelect = equipments.shengHens.Values.Where(www => www.player == null).ToList();
+                    var toSelect = equipments.seals.Values.Where(www => www.player == null).ToList();
                     zhuangBeiUiManager.OpenToSelectShengHen(toSelect, onUnload, onOpenPanel);
                 };
                 shengHens[i].Apply(shengHen, onShow, onTihuan);

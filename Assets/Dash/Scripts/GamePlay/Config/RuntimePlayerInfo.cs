@@ -13,7 +13,7 @@ namespace Dash.Scripts.GamePlay.Config
         public int nengLiangZhi;
         public int shengMingZhi;
 
-        public static RuntimePlayerInfo Build(EPlayer player, List<EShengHen> shengHens)
+        public static RuntimePlayerInfo Build(PlayerEntity player, List<SealEntity> shengHens)
         {
             var gongJiLi = 0;
             var fangYuLi = 0;

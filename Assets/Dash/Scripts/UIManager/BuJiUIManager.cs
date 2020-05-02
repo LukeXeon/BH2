@@ -62,7 +62,7 @@ namespace Dash.Scripts.UIManager
                                 .GetComponent<LuckCardItemUIManager>();
                         }
                             break;
-                        case LuckDrawResult.Type.ShengHen:
+                        case LuckDrawResult.Type.Seal:
                         {
                             luckCardUiManager = Instantiate(shengHenPrefab, content.transform)
                                 .GetComponent<LuckCardItemUIManager>();

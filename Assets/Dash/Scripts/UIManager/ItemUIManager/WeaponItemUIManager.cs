@@ -21,7 +21,7 @@ namespace Dash.Scripts.UIManager.ItemUIManager
             Clear();
         }
 
-        public void Apply(EWeapon weapon, Action onShow, Action onChaKan, Action onTihuan)
+        public void Apply(WeaponEntity weapon, Action onShow, Action onChaKan, Action onTihuan)
         {
             if (weapon != null)
             {

@@ -1,25 +1,25 @@
-using LeanCloud;
+using Parse;
 
 namespace Dash.Scripts.Cloud
 {
-    [AVClassName("Player")]
-    public class EPlayer : AVObject
+    [ParseClassName("Player")]
+    public class PlayerEntity : ParseObject
     {
-        [AVFieldName(nameof(user))]
-        public AVUser user
+        [ParseFieldName(nameof(user))]
+        public ParseUser user
         {
-            get => GetProperty<AVUser>(nameof(user));
+            get => GetProperty<ParseUser>(nameof(user));
             set => SetProperty(value, nameof(user));
         }
 
-        [AVFieldName(nameof(typeId))]
+        [ParseFieldName(nameof(typeId))]
         public int typeId
         {
             get => GetProperty<int>(nameof(typeId));
             set => SetProperty(value, nameof(typeId));
         }
 
-        [AVFieldName(nameof(exp))]
+        [ParseFieldName(nameof(exp))]
         public int exp
         {
             get => GetProperty<int>(nameof(exp));

@@ -113,6 +113,7 @@ namespace Dash.Scripts.UIManager
                 catch (Exception exception)
                 {
                     notifyError.Show("网络异常", exception.Message);
+                    Debug.Log(exception);
                     throw;
                 }
                 finally
@@ -164,18 +165,18 @@ namespace Dash.Scripts.UIManager
             });
         }
 
-        private void CloudManagerOnUserInfoChanged(EUserMate obj)
+        private void CloudManagerOnUserInfoChanged(GameUserEntity obj)
         {
             var level = GameConfigManager.GetUserLevel(obj.exp);
             displayName.text = obj.nameInGame;
-            tiLiText.text = obj.tiLi.ToString();
+            tiLiText.text = 9999.ToString();
             shuiJingText.text = obj.shuiJing.ToString();
             expText.text = "经验值：" + level.currentExp;
             levelText.text = "等级：" + level.count;
             expBar.fillAmount = (float) level.currentExp / level.maxExp;
         }
 
-        private void CloudManagerOnPlayerChanged(EPlayer obj)
+        private void CloudManagerOnPlayerChanged(PlayerEntity obj)
         {
             var info = GameConfigManager.playerTable[obj.typeId];
             icon.sprite = info.icon;

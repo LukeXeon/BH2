@@ -3,7 +3,7 @@ using agora_gaming_rtc;
 using Dash.Scripts.Cloud;
 using Dash.Scripts.Config;
 using Dash.Scripts.GamePlay.Levels;
-using LeanCloud;
+using Parse;
 using Photon.Pun;
 using TMPro;
 using UnityEngine;
@@ -18,17 +18,23 @@ namespace Dash.Scripts.Core
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         private static void Initialize()
         {
+            ParseClient.Initialize(new ParseClient.Configuration
+            {
+                ApplicationID = "dae5020c8c7711eaa57502fcdc4e7412",
+                ServerURI = "http://175.24.83.68:1337/parse/",
+                MasterKey = "e51518ca8c7711ea9afe02fcdc4e7412"
+             });
             Debug.Log("Boot Loaded");
             Application.targetFrameRate = 60;
             PhotonNetwork.PrefabPool = new PunPool();
             info = Resources.LoadAll<GameBootInfoAsset>("Config/Game").Single();
-            AVClient.Initialize(info.leanCloudId, info.leanCloudKey, info.leanCloudUrl);
-            AVObject.RegisterSubclass<EInUseWeapon>();
-            AVObject.RegisterSubclass<EInUseShengHen>();
-            AVObject.RegisterSubclass<EUserMate>();
-            AVObject.RegisterSubclass<EPlayer>();
-            AVObject.RegisterSubclass<EShengHen>();
-            AVObject.RegisterSubclass<EWeapon>();
+            //AVClient.Initialize(info.leanCloudId, info.leanCloudKey, info.leanCloudUrl);
+            ParseObject.RegisterSubclass<InUseWeaponEntity>();
+            ParseObject.RegisterSubclass<InUseSealEntity>();
+            ParseObject.RegisterSubclass<GameUserEntity>();
+            ParseObject.RegisterSubclass<PlayerEntity>();
+            ParseObject.RegisterSubclass<SealEntity>();
+            ParseObject.RegisterSubclass<WeaponEntity>();
             foreach (var permission in new[] {Permission.Microphone, Permission.Camera})
                 if (!Permission.HasUserAuthorizedPermission(permission))
                     Permission.RequestUserPermission(permission);

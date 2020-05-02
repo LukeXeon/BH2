@@ -15,7 +15,7 @@ namespace Dash.Scripts.UIManager
         public TextMeshProUGUI level;
         public GameObject markInUse;
 
-        public void Apply(EWeapon weapon, Action<EWeapon> callback)
+        public void Apply(WeaponEntity weapon, Action<WeaponEntity> callback)
         {
             var info = GameConfigManager.weaponTable[weapon.typeId];
             image.sprite = info.sprite;

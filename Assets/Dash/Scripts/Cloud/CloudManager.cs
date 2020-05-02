@@ -9,8 +9,8 @@ using System.Threading.Tasks;
 using Dash.Scripts.Config;
 using Dash.Scripts.Core;
 using Flurl;
-using LeanCloud;
 using Newtonsoft.Json;
+using Parse;
 using UnityEngine;
 using UnityEngine.Networking;
 using Random = UnityEngine.Random;
@@ -25,7 +25,7 @@ namespace Dash.Scripts.Cloud
 
         private const string errorMessageInternal = "游戏内部错误";
 
-        private static EUserMate localUserMate;
+        private static GameUserEntity localUserEntity;
 
         public static string GetLogInUrl()
         {
@@ -36,58 +36,48 @@ namespace Dash.Scripts.Cloud
             return login.ToString();
         }
 
-        public static event Action<EPlayer> playerChanged;
+        public static event Action<PlayerEntity> playerChanged;
 
-        public static event Action<EUserMate> userInfoChanged;
+        public static event Action<GameUserEntity> userInfoChanged;
 
         private static string GetCallbackUrl()
         {
             return @"http://localhost:10086/oauth/redirect/";
         }
 
-        private static EWeapon NewWeapon(int typeId)
+        private static WeaponEntity NewWeapon(int typeId)
         {
-            var weapon = new EWeapon();
-            weapon.user = AVUser.CurrentUser;
-            weapon.typeId = typeId;
-            weapon.exp = 0;
+            var weapon = new WeaponEntity {user = ParseUser.CurrentUser, typeId = typeId, exp = 0};
             return weapon;
         }
 
-        private static EShengHen NewShengHen(this EPlayer player, int typeId)
+        private static SealEntity NewSeal(this PlayerEntity player, int typeId)
         {
-            var shengHen = new EShengHen();
-            shengHen.player = player;
-            shengHen.user = AVUser.CurrentUser;
-            shengHen.typeId = typeId;
-            shengHen.exp = 0;
-            return shengHen;
+            var seal = new SealEntity {player = player, user = ParseUser.CurrentUser, typeId = typeId, exp = 0};
+            return seal;
         }
 
-        private static List<AVObject> NewPlayer(int typeId)
+        private static List<ParseObject> NewPlayer(int typeId)
         {
-            var list = new List<AVObject>();
-            var player = new EPlayer();
-            player.user = AVUser.CurrentUser;
-            player.typeId = typeId;
-            player.exp = 0;
-            var inUseWeapon = new List<EInUseWeapon>();
-            var inUseShengHen = new List<EInUseShengHen>();
+            var list = new List<ParseObject>();
+            var player = new PlayerEntity {user = ParseUser.CurrentUser, typeId = typeId, exp = 0};
+            var inUseWeapon = new List<InUseWeaponEntity>();
+            var inUseSeal = new List<InUseSealEntity>();
             for (var i = 0; i < 3; i++)
             {
-                inUseWeapon.Add(new EInUseWeapon
+                inUseWeapon.Add(new InUseWeaponEntity
                 {
-                    user = AVUser.CurrentUser,
+                    user = ParseUser.CurrentUser,
                     player = player,
                     index = i,
                     weapon = null
                 });
-                inUseShengHen.Add(new EInUseShengHen
+                inUseSeal.Add(new InUseSealEntity
                 {
-                    user = AVUser.CurrentUser,
+                    user = ParseUser.CurrentUser,
                     player = player,
                     index = i,
-                    shengHen = null
+                    seal = null
                 });
             }
 
@@ -97,7 +87,7 @@ namespace Dash.Scripts.Cloud
             list.Add(player);
             list.Add(w);
             list.AddRange(inUseWeapon);
-            list.AddRange(inUseShengHen);
+            list.AddRange(inUseSeal);
             return list;
         }
 
@@ -105,13 +95,13 @@ namespace Dash.Scripts.Cloud
         {
             if (!Application.isEditor)
             {
-                if (localUserMate.shuiJing < 100)
+                if (localUserEntity.shuiJing < 100)
                 {
                     throw new UnityException("水晶不足");
                 }
 
-                localUserMate.shuiJing -= 100;
-                await localUserMate.SaveAsync();
+                localUserEntity.shuiJing -= 100;
+                await localUserEntity.SaveAsync();
             }
 
             var type = Random.Range(0, 3);
@@ -120,14 +110,14 @@ namespace Dash.Scripts.Cloud
                 case 0:
                 {
                     var playerTypeId = Random.Range(0, GameConfigManager.maxWeaponId + 1);
-                    var player = (await new AVQuery<EPlayer>()
-                        .WhereEqualTo("user", AVUser.CurrentUser)
+                    var player = (await new ParseQuery<PlayerEntity>()
+                        .WhereEqualTo("user", ParseUser.CurrentUser)
                         .WhereEqualTo("typeId", playerTypeId)
                         .FindAsync()).ToArray();
                     if (player.Length == 0)
                     {
                         var p = NewPlayer(playerTypeId);
-                        await AVObject.SaveAllAsync(p);
+                        await ParseObject.SaveAllAsync(p);
                         return new LuckDrawResult
                         {
                             typeId = playerTypeId,
@@ -138,7 +128,7 @@ namespace Dash.Scripts.Cloud
                     {
                         var p = player.First();
                         p.exp += GameConfigManager.levelInfo.playerLuckDrawExpAddOnce;
-                        await AVObject.SaveAllAsync(new AVObject[] {p});
+                        await ParseObject.SaveAllAsync(new ParseObject[] {p});
                         return new LuckDrawResult
                         {
                             typeId = playerTypeId,
@@ -161,61 +151,61 @@ namespace Dash.Scripts.Cloud
 
                 default:
                 {
-                    var shengHenTypeId = Random.Range(0, GameConfigManager.maxShengHeId + 1);
-                    await NewShengHen(null, shengHenTypeId)
+                    var sealTypeId = Random.Range(0, GameConfigManager.maxShengHeId + 1);
+                    await NewSeal(null, sealTypeId)
                         .SaveAsync();
                     return new LuckDrawResult
                     {
-                        typeId = shengHenTypeId,
-                        resultType = LuckDrawResult.Type.ShengHen
+                        typeId = sealTypeId,
+                        resultType = LuckDrawResult.Type.Seal
                     };
                 }
             }
         }
 
-        public static async Task<Dictionary<string, EShengHen>> GetUserShengHen()
+        public static async Task<Dictionary<string, SealEntity>> GetUserSeals()
         {
-            return (await new AVQuery<EShengHen>()
+            return (await new ParseQuery<SealEntity>()
                 .Include("player")
-                .WhereEqualTo("user", AVUser.CurrentUser)
+                .WhereEqualTo("user", ParseUser.CurrentUser)
                 .FindAsync()).ToDictionary(o => o.ObjectId, o => o);
         }
 
-        public static async Task<Dictionary<string, EWeapon>> GetUserWeapons()
+        public static async Task<Dictionary<string, WeaponEntity>> GetUserWeapons()
         {
-            return (await new AVQuery<EWeapon>()
+            return (await new ParseQuery<WeaponEntity>()
                 .Include("player")
-                .WhereEqualTo("user", AVUser.CurrentUser)
+                .WhereEqualTo("user", ParseUser.CurrentUser)
                 .FindAsync()).ToDictionary(o => o.ObjectId, o => o);
         }
 
         public static async Task<Equipments> GetEquipments()
         {
             var e = new Equipments();
-            var t0 = new AVQuery<EWeapon>()
+            var t0 = new ParseQuery<WeaponEntity>()
                 .Include("player")
-                .WhereEqualTo("user", AVUser.CurrentUser)
+                .WhereEqualTo("user", ParseUser.CurrentUser)
                 .FindAsync();
             foreach (var item in await t0) e.weapons.Add(item.ObjectId, item);
 
-            var t1 = new AVQuery<EShengHen>()
+            var t1 = new ParseQuery<SealEntity>()
                 .Include("player")
-                .WhereEqualTo("user", AVUser.CurrentUser)
+                .WhereEqualTo("user", ParseUser.CurrentUser)
                 .FindAsync();
-            foreach (var item in await t1) e.shengHens.Add(item.ObjectId, item);
+            foreach (var item in await t1) e.seals.Add(item.ObjectId, item);
 
-            var t2 = new AVQuery<EInUseWeapon>()
+            var t2 = new ParseQuery<InUseWeaponEntity>()
                 .Include("player")
                 .Include("weapon")
-                .WhereEqualTo("user", AVUser.CurrentUser)
+                .WhereEqualTo("user", ParseUser.CurrentUser)
                 .FindAsync();
             foreach (var item in await t2)
             {
-                PlayerWithUsing inUse;
+                Equipments.Player inUse;
                 e.players.TryGetValue(item.player.ObjectId, out inUse);
                 if (inUse == null)
                 {
-                    inUse = new PlayerWithUsing
+                    inUse = new Equipments.Player
                     {
                         player = item.player
                     };
@@ -225,30 +215,30 @@ namespace Dash.Scripts.Cloud
                 inUse.weapons.Add(item);
             }
 
-            var t3 = new AVQuery<EInUseShengHen>()
+            var t3 = new ParseQuery<InUseSealEntity>()
                 .Include("player")
-                .Include("shengHen")
-                .WhereEqualTo("user", AVUser.CurrentUser)
+                .Include("seal")
+                .WhereEqualTo("user", ParseUser.CurrentUser)
                 .FindAsync();
             foreach (var item in await t3)
             {
-                PlayerWithUsing inUse;
+                Equipments.Player inUse;
                 e.players.TryGetValue(item.player.ObjectId, out inUse);
                 if (inUse == null)
                 {
-                    inUse = new PlayerWithUsing
+                    inUse = new Equipments.Player
                     {
                         player = item.player
                     };
                     e.players.Add(item.player.ObjectId, inUse);
                 }
 
-                inUse.shengHens.Add(item);
+                inUse.seals.Add(item);
             }
 
             foreach (var inUse in e.players.Values)
             {
-                inUse.shengHens.Sort((o1, o2) => o1.index.CompareTo(o2.index));
+                inUse.seals.Sort((o1, o2) => o1.index.CompareTo(o2.index));
                 inUse.weapons.Sort((o1, o2) => o1.index.CompareTo(o2.index));
             }
 
@@ -260,9 +250,11 @@ namespace Dash.Scripts.Cloud
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password) || string.IsNullOrEmpty(password2))
                 throw new ArgumentException("用户名和密码不能为空");
 
-            if (password != password2) throw new ArgumentException("两次输入的密码不一致");
-
-            var myUser = new AVUser
+            if (password != password2)
+            {
+                throw new ArgumentException("两次输入的密码不一致");
+            }
+            var myUser = new ParseUser
             {
                 Password = password, Username = username
             };
@@ -271,41 +263,40 @@ namespace Dash.Scripts.Cloud
 
         private static async Task HandleLogin()
         {
-            var t1 = new AVQuery<EUserMate>()
+            var t1 = new ParseQuery<GameUserEntity>()
                 .Include("player")
-                .WhereEqualTo("user", AVUser.CurrentUser)
+                .WhereEqualTo("user", ParseUser.CurrentUser)
                 .FindAsync();
-            var t2 = new AVQuery<EPlayer>()
-                .WhereEqualTo("user", AVUser.CurrentUser)
+            var t2 = new ParseQuery<PlayerEntity>()
+                .WhereEqualTo("user", ParseUser.CurrentUser)
                 .CountAsync();
             var userMate = (await t1).FirstOrDefault();
             if (userMate == null)
             {
-                var count = await new AVQuery<AVUser>()
+                var count = await new ParseQuery<ParseUser>()
                     .CountAsync();
-                userMate = new EUserMate
+                userMate = new GameUserEntity
                 {
-                    user = AVUser.CurrentUser,
+                    user = ParseUser.CurrentUser,
                     nameInGame = "玩家" + count,
                     shuiJing = 1000,
-                    tiLi = 100
                 };
             }
 
-            localUserMate = userMate;
+            localUserEntity = userMate;
             var playerCount = await t2;
             if (playerCount == 0)
             {
                 var p = NewPlayer(0);
-                userMate.player = (EPlayer) p[0];
+                userMate.player = (PlayerEntity) p[0];
                 p.Add(userMate);
-                await AVObject.SaveAllAsync(p);
+                await ParseObject.SaveAllAsync(p);
             }
         }
 
         public static async Task LogInWithToken(string token)
         {
-            await AVUser.BecomeAsync(token);
+            await ParseUser.BecomeAsync(token);
             await HandleLogin();
         }
 
@@ -314,7 +305,7 @@ namespace Dash.Scripts.Cloud
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
                 throw new ArgumentException("用户名和密码不能为空");
 
-            await AVUser.LogInAsync(username, password);
+            await ParseUser.LogInAsync(username, password);
             await HandleLogin();
         }
 
@@ -361,12 +352,13 @@ namespace Dash.Scripts.Cloud
             if (request.responseCode == 200)
             {
                 var userInfo = JsonConvert.DeserializeObject<Dictionary<string, string>>(request.downloadHandler.text);
-                await AVUser.LogInWithAuthDataAsync(new Dictionary<string, object>
-                {
-                    {"access_token", token},
-                    {"expires_in", 7200},
-                    {"uid", userInfo["id"]}
-                }, "github");
+                throw new UnityException();
+                //                await ParseUser.LogInWithAuthDataAsync(new Dictionary<string, object>
+//                {
+//                    {"access_token", token},
+//                    {"expires_in", 7200},
+//                    {"uid", userInfo["id"]}
+//                }, "github");
                 await HandleLogin();
             }
             else
@@ -376,14 +368,14 @@ namespace Dash.Scripts.Cloud
         }
 
         //callback（降下的，换上去的，错误信息）
-        public static async Task<EShengHen[]> ReplaceShengHen(
-            EInUseShengHen index,
-            EShengHen shengHen
+        public static async Task<SealEntity[]> ReplaceShengHen(
+            InUseSealEntity index,
+            SealEntity shengHen
         )
         {
-            var toUpdate = new List<AVObject> {index};
+            var toUpdate = new List<ParseObject> {index};
             var player = index.player;
-            var old = index.shengHen;
+            var old = index.seal;
             if (old != null)
             {
                 old.player = null;
@@ -396,18 +388,18 @@ namespace Dash.Scripts.Cloud
                 toUpdate.Add(shengHen);
             }
 
-            index.shengHen = shengHen;
-            await AVObject.SaveAllAsync(toUpdate);
+            index.seal = shengHen;
+            await ParseObject.SaveAllAsync(toUpdate);
             return new[] {old, shengHen};
         }
 
         //callback（降下的，换上去的，错误信息）
-        public static async Task<EWeapon[]> ReplaceWeapon(
-            EInUseWeapon index,
-            EWeapon weapon
+        public static async Task<WeaponEntity[]> ReplaceWeapon(
+            InUseWeaponEntity index,
+            WeaponEntity weapon
         )
         {
-            var toUpdate = new List<AVObject> {index};
+            var toUpdate = new List<ParseObject> {index};
             var player = index.player;
             var old = index.weapon;
             if (old != null)
@@ -424,17 +416,17 @@ namespace Dash.Scripts.Cloud
 
             index.weapon = weapon;
 
-            await AVObject.SaveAllAsync(toUpdate);
+            await ParseObject.SaveAllAsync(toUpdate);
             return new[] {old, weapon};
         }
 
         public static async Task<CompletePlayer> GetCompletePlayer()
         {
-            var player = localUserMate.player;
-            var task1 = new AVQuery<EInUseWeapon>().WhereEqualTo("player", player)
+            var player = localUserEntity.player;
+            var task1 = new ParseQuery<InUseWeaponEntity>().WhereEqualTo("player", player)
                 .Include("weapon")
                 .FindAsync();
-            var task2 = new AVQuery<EInUseShengHen>().WhereEqualTo("player", player)
+            var task2 = new ParseQuery<InUseSealEntity>().WhereEqualTo("player", player)
                 .Include("shengHen")
                 .FindAsync();
 
@@ -446,43 +438,43 @@ namespace Dash.Scripts.Cloud
             {
                 player = player,
                 weapons = w.Where(i => i.weapon != null).Select(i => i.weapon).ToList(),
-                shengHens = s.Where(i => i.shengHen != null).Select(i => i.shengHen).ToList()
+                shengHens = s.Where(i => i.seal != null).Select(i => i.seal).ToList()
             };
         }
 
-        public static async Task UpdateCurrentPlayer(EPlayer player)
+        public static async Task UpdateCurrentPlayer(PlayerEntity player)
         {
-            localUserMate.player = player;
-            await localUserMate.SaveAsync();
+            localUserEntity.player = player;
+            await localUserEntity.SaveAsync();
             playerChanged?.Invoke(player);
         }
 
 
         public static async Task LogOut()
         {
-            await AVUser.LogOutAsync();
+            await ParseUser.LogOutAsync();
         }
 
-        public static EPlayer GetCurrentPlayer()
+        public static PlayerEntity GetCurrentPlayer()
         {
-            return localUserMate.player;
+            return localUserEntity.player;
         }
 
         public static string GetNameInGame()
         {
-            return localUserMate.nameInGame;
+            return localUserEntity.nameInGame;
         }
 
-        public static EUserMate GetUserInfo()
+        public static GameUserEntity GetUserInfo()
         {
-            return localUserMate;
+            return localUserEntity;
         }
 
         public static async Task SetNameInGame(string name)
         {
-            localUserMate.nameInGame = name;
-            await localUserMate.SaveAsync();
-            userInfoChanged?.Invoke(localUserMate);
+            localUserEntity.nameInGame = name;
+            await localUserEntity.SaveAsync();
+            userInfoChanged?.Invoke(localUserEntity);
         }
 
         private struct UnityWebRequestAwaitable : INotifyCompletion

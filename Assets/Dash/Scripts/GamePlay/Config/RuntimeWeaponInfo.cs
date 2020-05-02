@@ -7,7 +7,7 @@ namespace Dash.Scripts.GamePlay.Config
     {
         public int gongJiLi;
 
-        public static RuntimeWeaponInfo Build(EWeapon weapon)
+        public static RuntimeWeaponInfo Build(WeaponEntity weapon)
         {
             var info = GameConfigManager.weaponTable[weapon.typeId];
             var gongJiLi = info.gongJiLi;
