@@ -180,8 +180,7 @@ namespace Dash.Scripts.Cloud
 
             foreach (var item in await t2)
             {
-                Equipments.Player inUse;
-                e.players.TryGetValue(item.player.ObjectId, out inUse);
+                e.players.TryGetValue(item.player.ObjectId, out var inUse);
                 if (inUse == null)
                 {
                     inUse = new Equipments.Player
@@ -201,8 +200,7 @@ namespace Dash.Scripts.Cloud
                 .FindAsync();
             foreach (var item in await t3)
             {
-                Equipments.Player inUse;
-                e.players.TryGetValue(item.player.ObjectId, out inUse);
+                e.players.TryGetValue(item.player.ObjectId, out var inUse);
                 if (inUse == null)
                 {
                     inUse = new Equipments.Player
@@ -224,16 +222,8 @@ namespace Dash.Scripts.Cloud
             return e;
         }
 
-        public static async Task SignUp(string username, string password, string password2)
+        public static async Task SignUp(string username, string password)
         {
-            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password) || string.IsNullOrEmpty(password2))
-                throw new ArgumentException("用户名和密码不能为空");
-
-            if (password != password2)
-            {
-                throw new ArgumentException("两次输入的密码不一致");
-            }
-
             var myUser = new ParseUser
             {
                 Password = password, Username = username
@@ -350,7 +340,7 @@ namespace Dash.Scripts.Cloud
                 .Include("weapon")
                 .FindAsync();
             var task2 = new ParseQuery<InUseSealEntity>().WhereEqualTo("player", player)
-                .Include("shengHen")
+                .Include("seal")
                 .FindAsync();
 
             var w = (await task1).ToList();

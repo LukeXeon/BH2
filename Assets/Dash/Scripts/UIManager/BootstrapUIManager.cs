@@ -81,7 +81,17 @@ namespace Dash.Scripts.UIManager
                 OpenWaitWindow();
                 try
                 {
-                    await CloudManager.SignUp(u, p, p2);
+                    if (string.IsNullOrEmpty(u) || string.IsNullOrEmpty(p) || string.IsNullOrEmpty(p2))
+                    {
+                        throw new ArgumentException("用户名和密码不能为空");
+                    }
+
+                    if (p != p2)
+                    {
+                        throw new ArgumentException("两次输入的密码不一致");
+                    }
+
+                    await CloudManager.SignUp(u, p);
                     notifySucceed.Show("注册成功", "您的账号已成功注册");
                     username.text = u;
                     password.text = p;
