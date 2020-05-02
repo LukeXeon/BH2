@@ -1,18 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Net;
-using System.Runtime.CompilerServices;
-using System.Threading;
 using System.Threading.Tasks;
 using Dash.Scripts.Config;
-using Dash.Scripts.Core;
-using Flurl;
-using Newtonsoft.Json;
 using Parse;
 using UnityEngine;
-using UnityEngine.Networking;
 using Random = UnityEngine.Random;
 
 namespace Dash.Scripts.Cloud
@@ -369,7 +361,7 @@ namespace Dash.Scripts.Cloud
             {
                 player = player,
                 weapons = w.Where(i => i.weapon != null).Select(i => i.weapon).ToList(),
-                shengHens = s.Where(i => i.seal != null).Select(i => i.seal).ToList()
+                seals = s.Where(i => i.seal != null).Select(i => i.seal).ToList()
             };
         }
 

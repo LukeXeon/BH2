@@ -22,7 +22,7 @@ namespace Dash.Scripts.GamePlay.Config
             shengHenInfos.Clear();
             var completePlayer = current;
             playerInfo = Tuple.Create(GameConfigManager.playerTable[completePlayer.player.typeId],
-                RuntimePlayerInfo.Build(completePlayer.player, completePlayer.shengHens));
+                RuntimePlayerInfo.Build(completePlayer.player, completePlayer.seals));
             foreach (var eInUseWeapon in completePlayer.weapons)
             {
                 var info = GameConfigManager.weaponTable[eInUseWeapon.typeId];
@@ -30,7 +30,7 @@ namespace Dash.Scripts.GamePlay.Config
                 weaponInfos.Add(Tuple.Create(info, runtimeInfo));
             }
 
-            foreach (var eInUseShengHen in completePlayer.shengHens)
+            foreach (var eInUseShengHen in completePlayer.seals)
             {
                 var info = GameConfigManager.shengHenTable[eInUseShengHen.typeId];
                 var runtimeInfo = RuntimeShengHenInfo.Build(eInUseShengHen);
