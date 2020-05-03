@@ -168,9 +168,9 @@ namespace Dash.Scripts.UIManager
         private void CloudManagerOnUserInfoChanged(GameUserEntity obj)
         {
             var level = GameConfigManager.GetUserLevel(obj.exp);
-            displayName.text = obj.nameInGame;
+            displayName.text = obj.name;
             tiLiText.text = 9999.ToString();
-            shuiJingText.text = obj.shuiJing.ToString();
+            shuiJingText.text = obj.crystal.ToString();
             expText.text = "经验值：" + level.currentExp;
             levelText.text = "等级：" + level.count;
             expBar.fillAmount = (float) level.currentExp / level.maxExp;

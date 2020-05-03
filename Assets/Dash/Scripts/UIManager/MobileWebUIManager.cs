@@ -10,14 +10,15 @@ namespace Dash.Scripts.UIManager
         public Button button;
         public UniWebView webView;
 
-        public void Init(string url, Action back)
+        public void Initialize(string url, Action back)
         {
             IEnumerator Wait()
             {
                 yield return new WaitForEndOfFrame();
                 webView.SetBackButtonEnabled(false);
-                webView.UpdateFrame();
+                webView.Show();
                 webView.Load(url);
+                webView.UpdateFrame();
             }
             StartCoroutine(Wait());
             button.onClick.AddListener(() => back());

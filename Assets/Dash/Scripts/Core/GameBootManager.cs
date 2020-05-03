@@ -52,15 +52,20 @@ namespace Dash.Scripts.Core
                     if (c == LogType.Exception)
                     {
                         Application.logMessageReceived -= Callback;
-                        var go = Object.Instantiate(Resources.Load<GameObject>("Prefab/UI/Error/Error Canvas"));
-                        go.GetComponentInChildren<TextMeshProUGUI>()
-                                .text = a + " " + b;
-                        Object.DontDestroyOnLoad(go);
+                        CreateErrorPanel(a + " " + b);
                     }
                 }
 
                 Application.logMessageReceived += Callback;
             }
+        }
+
+        public static void CreateErrorPanel(string text)
+        {
+            var go = Object.Instantiate(Resources.Load<GameObject>("Prefab/UI/Error/Error Canvas"));
+            go.GetComponentInChildren<TextMeshProUGUI>()
+                .text = text;
+            Object.DontDestroyOnLoad(go);
         }
     }
 }

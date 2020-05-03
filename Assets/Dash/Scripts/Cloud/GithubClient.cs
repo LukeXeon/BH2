@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
+using System.Net;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,13 +11,12 @@ using Parse;
 using Parse.Core.Internal;
 using UnityEngine;
 using UnityEngine.Networking;
-using WebSocketSharp.Net;
 
 namespace Dash.Scripts.Cloud
 {
     public static class GithubClient
     {
-        private const string CallbackUrl = @"http://localhost:10086/oauth/redirect/";
+        private const string CallbackUrl = "http://127.0.0.1:8080/oauth/redirect/";
 
         private const string GetUserUrl = @"https://api.github.com/user";
 
@@ -52,22 +52,23 @@ namespace Dash.Scripts.Cloud
             }
         }
 
-        public static Task<ParseUser> LogInAsync(CancellationToken cancellationToken)
+        public static async Task<ParseUser> LogInAsync(CancellationToken cancellationToken)
         {
-            return ParseUserExtensions.LogInWithAsync("github", cancellationToken);
+            var user = await ParseUserExtensions.LogInWithAsync("github", cancellationToken);
+            await CloudManager.HandleLogin();
+            return user;
         }
-        
+
         private class GithubAuthenticationProvider : IParseAuthenticationProvider
         {
             private readonly TaskScheduler taskScheduler = TaskScheduler.FromCurrentSynchronizationContext();
 
             public async Task<IDictionary<string, object>> AuthenticateAsync(CancellationToken cancellationToken)
             {
-                var http = new HttpListener {AuthenticationSchemes = AuthenticationSchemes.Anonymous};
+                var http = new HttpListener {AuthenticationSchemes = AuthenticationSchemes.None};
                 http.Prefixes.Add(CallbackUrl);
                 http.Start();
-                var ctxTask = Task<HttpListenerContext>.Factory
-                    .FromAsync(http.BeginGetContext, http.EndGetContext, null);
+                var ctxTask = http.GetContextAsync();
                 string code;
                 try
                 {
@@ -119,7 +120,7 @@ namespace Dash.Scripts.Cloud
                     return result;
                 }
 
-                throw new IOException("error code" + wr.responseCode);
+                throw new IOException("error code " + wr.responseCode);
             }
 
             public void Deauthenticate()

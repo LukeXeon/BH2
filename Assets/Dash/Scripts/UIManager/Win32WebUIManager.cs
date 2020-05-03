@@ -10,7 +10,7 @@ namespace Dash.Scripts.UIManager
 {
     public class Win32WebUIManager : MonoBehaviour, IWebUIManager
     {
-        public void Init(string url, Action back)
+        public void Initialize(string url, Action back)
         {
 #if UNITY_STANDALONE_WIN||UNITY_EDITOR_WIN
             browser.LoadURL(url, true);

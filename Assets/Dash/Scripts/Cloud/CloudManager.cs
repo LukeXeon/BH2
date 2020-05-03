@@ -73,12 +73,12 @@ namespace Dash.Scripts.Cloud
         {
             if (!Application.isEditor)
             {
-                if (localUserEntity.shuiJing < 100)
+                if (localUserEntity.crystal < 100)
                 {
                     throw new UnityException("水晶不足");
                 }
 
-                localUserEntity.shuiJing -= 100;
+                localUserEntity.crystal -= 100;
                 await localUserEntity.SaveAsync();
             }
 
@@ -231,7 +231,7 @@ namespace Dash.Scripts.Cloud
             await myUser.SignUpAsync();
         }
 
-        private static async Task HandleLogin()
+        internal static async Task HandleLogin()
         {
             var t1 = new ParseQuery<GameUserEntity>()
                 .Include("player")
@@ -248,8 +248,8 @@ namespace Dash.Scripts.Cloud
                 userMate = new GameUserEntity
                 {
                     user = ParseUser.CurrentUser,
-                    nameInGame = "玩家" + count,
-                    shuiJing = 1000,
+                    name = "玩家" + count,
+                    crystal = 1000,
                 };
             }
 
@@ -361,8 +361,7 @@ namespace Dash.Scripts.Cloud
             await localUserEntity.SaveAsync();
             playerChanged?.Invoke(player);
         }
-
-
+        
         public static async Task LogOut()
         {
             await ParseUser.LogOutAsync();
@@ -373,9 +372,9 @@ namespace Dash.Scripts.Cloud
             return localUserEntity.player;
         }
 
-        public static string GetNameInGame()
+        public static string GetUserName()
         {
-            return localUserEntity.nameInGame;
+            return localUserEntity.name;
         }
 
         public static GameUserEntity GetUserInfo()
@@ -385,7 +384,7 @@ namespace Dash.Scripts.Cloud
 
         public static async Task SetNameInGame(string name)
         {
-            localUserEntity.nameInGame = name;
+            localUserEntity.name = name;
             await localUserEntity.SaveAsync();
             userInfoChanged?.Invoke(localUserEntity);
         }

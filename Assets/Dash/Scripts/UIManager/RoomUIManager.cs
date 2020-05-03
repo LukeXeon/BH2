@@ -139,7 +139,7 @@ namespace Dash.Scripts.UIManager
             rtcEngine.JoinChannel(room.Name, "", 0u);
             var table = new Hashtable
             {
-                ["displayName"] = CloudManager.GetNameInGame(),
+                ["displayName"] = CloudManager.GetUserName(),
                 ["playerTypeId"] = PlayerConfigManager.playerInfo.Item1.typeId,
                 ["weaponTypeId"] = PlayerConfigManager.weaponInfos.First().Item1.typeId,
                 ["isReady"] = PhotonNetwork.IsMasterClient

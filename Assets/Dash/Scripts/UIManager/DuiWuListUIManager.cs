@@ -69,7 +69,7 @@ namespace Dash.Scripts.UIManager
                 await beforeJoinRoomAction.DoPrepare();
                 var table = new Hashtable
                 {
-                    ["displayName"] = CloudManager.GetNameInGame() + "的房间",
+                    ["displayName"] = CloudManager.GetUserName() + "的房间",
                     ["typeId"] = 0,
                     ["0playerTypeId"] = CloudManager.GetCurrentPlayer().typeId
                 };
@@ -163,7 +163,7 @@ namespace Dash.Scripts.UIManager
         {
             var table = new Hashtable
             {
-                ["displayName"] = CloudManager.GetNameInGame() + "的房间",
+                ["displayName"] = CloudManager.GetUserName() + "的房间",
                 ["typeId"] = 0,
                 ["0playerTypeId"] = CloudManager.GetCurrentPlayer().typeId
             };

@@ -442,8 +442,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 598e18fb001004a81960f552978ecf4e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  urlOnStart: https://www.hao123.com
-  showOnStart: 1
+  urlOnStart: 
+  showOnStart: 0
   fullScreen: 0
   useToolbar: 0
   toolbarPosition: 0

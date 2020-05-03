@@ -3,6 +3,7 @@ using System.Collections;
 using System.Threading;
 using System.Threading.Tasks;
 using Dash.Scripts.Cloud;
+using Dash.Scripts.Core;
 using Dash.Scripts.UI;
 using Michsky.UI.ModernUIPack;
 using Parse;
@@ -169,7 +170,7 @@ namespace Dash.Scripts.UIManager
                 go.transform.SetSiblingIndex(waitWindow.transform.GetSiblingIndex());
                 var b = go.GetComponent<IWebUIManager>();
                 var cancelSource = new CancellationTokenSource();
-                b.Init(GithubClient.LogInUrl, () =>
+                b.Initialize(GithubClient.LogInUrl, () =>
                 {
                     cancelSource.Cancel();
                     Debug.Log("waiter abort");

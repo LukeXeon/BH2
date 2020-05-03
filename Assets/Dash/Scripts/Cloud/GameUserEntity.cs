@@ -28,18 +28,25 @@ namespace Dash.Scripts.Cloud
             set => SetProperty(value, nameof(player));
         }
 
-        [ParseFieldName(nameof(shuiJing))]
-        public int shuiJing
+        [ParseFieldName(nameof(gold))]
+        public int gold
         {
-            get => GetProperty<int>(nameof(shuiJing));
-            set => SetProperty(value, nameof(shuiJing));
+            get => GetProperty<int>(nameof(gold));
+            set => SetProperty(value, nameof(gold));
         }
 
-        [ParseFieldName(nameof(nameInGame))]
-        public string nameInGame
+        [ParseFieldName(nameof(crystal))]
+        public int crystal
         {
-            get => GetProperty<string>(nameof(nameInGame));
-            set => SetProperty(value, nameof(nameInGame));
+            get => GetProperty<int>(nameof(crystal));
+            set => SetProperty(value, nameof(crystal));
+        }
+
+        [ParseFieldName(nameof(name))]
+        public string name
+        {
+            get => GetProperty<string>(nameof(name));
+            set => SetProperty(value, nameof(name));
         }
     }
 }
