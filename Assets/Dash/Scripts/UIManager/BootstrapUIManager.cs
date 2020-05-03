@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Threading;
+using System.Threading.Tasks;
 using Dash.Scripts.Cloud;
 using Dash.Scripts.UI;
 using Michsky.UI.ModernUIPack;
@@ -183,7 +184,7 @@ namespace Dash.Scripts.UIManager
                     PlayerPrefs.SetString("token", ParseUser.CurrentUser.SessionToken);
                     PlayerPrefs.Save();
                 }
-                catch (TimeoutException e)
+                catch (TaskCanceledException e)
                 {
                     Debug.Log(e);
                 }

@@ -96,8 +96,7 @@ namespace Dash.Scripts.GamePlay.UIManager
             {
                 mask.SetActive(true);
                 PhotonNetwork.LeaveRoom();
-                var op = SceneManager.LoadSceneAsync("Desktop");
-                await op;
+                SceneManager.LoadSceneAsync("Desktop");
             });
             submitBack.onClick.AddListener(x);
             stopSubmit.onClick.AddListener(x);

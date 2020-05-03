@@ -1,17 +1,16 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Net;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using Dash.Scripts.Core;
 using Flurl;
 using Newtonsoft.Json;
 using Parse;
 using Parse.Core.Internal;
 using UnityEngine;
 using UnityEngine.Networking;
+using WebSocketSharp.Net;
 
 namespace Dash.Scripts.Cloud
 {
@@ -57,33 +56,7 @@ namespace Dash.Scripts.Cloud
         {
             return ParseUserExtensions.LogInWithAsync("github", cancellationToken);
         }
-
-        private struct UnityWebRequestAwaitable : INotifyCompletion
-        {
-            private readonly UnityWebRequestAsyncOperation operation;
-
-            public UnityWebRequestAwaitable(UnityWebRequestAsyncOperation operation)
-            {
-                this.operation = operation;
-            }
-
-            public UnityWebRequestAwaitable GetAwaiter()
-            {
-                return this;
-            }
-
-            public void OnCompleted(Action continuation)
-            {
-                operation.completed += o => continuation();
-            }
-
-            public bool IsCompleted => operation.isDone;
-
-            public void GetResult()
-            {
-            }
-        }
-
+        
         private class GithubAuthenticationProvider : IParseAuthenticationProvider
         {
             private readonly TaskScheduler taskScheduler = TaskScheduler.FromCurrentSynchronizationContext();
@@ -93,19 +66,18 @@ namespace Dash.Scripts.Cloud
                 var http = new HttpListener {AuthenticationSchemes = AuthenticationSchemes.Anonymous};
                 http.Prefixes.Add(CallbackUrl);
                 http.Start();
-                var ctxTask = http.GetContextAsync();
+                var ctxTask = Task<HttpListenerContext>.Factory
+                    .FromAsync(http.BeginGetContext, http.EndGetContext, null);
                 string code;
                 try
                 {
-                    var cancelTask = Task.Run(async () =>
+                    while (!cancellationToken.IsCancellationRequested &&
+                           !(ctxTask.IsCompleted || ctxTask.IsCanceled || ctxTask.IsFaulted))
                     {
-                        while (!cancellationToken.IsCancellationRequested && !ctxTask.IsCompleted)
-                        {
-                            await Task.Yield();
-                        }
-                    }, cancellationToken);
-                    await Task.WhenAny(cancelTask, ctxTask);
-                    if (cancellationToken.IsCancellationRequested)
+                        await Task.Yield();
+                    }
+
+                    if (cancellationToken.IsCancellationRequested || ctxTask.IsCanceled || ctxTask.IsFaulted)
                     {
                         http.Abort();
                         throw new TaskCanceledException();
@@ -126,14 +98,14 @@ namespace Dash.Scripts.Cloud
                 url.SetQueryParam("code", code);
                 var wr = UnityWebRequest.Post(url, string.Empty);
                 wr.SetRequestHeader("Accept", "application/json");
-                await new UnityWebRequestAwaitable(wr.SendWebRequest());
+                await wr.SendWebRequestAsync();
                 var token = JsonConvert.DeserializeObject<Dictionary<string, string>>(
                     wr.downloadHandler.text
                 )["access_token"];
                 wr = UnityWebRequest.Get(GetUserUrl);
                 wr.SetRequestHeader("Authorization", "token " + token);
                 wr.SetRequestHeader("Accept", "application/json");
-                await new UnityWebRequestAwaitable(wr.SendWebRequest());
+                await wr.SendWebRequestAsync();
                 if (wr.responseCode == 200)
                 {
                     var userInfo = JsonConvert.DeserializeObject<Dictionary<string, string>>(wr.downloadHandler.text);
