@@ -11,11 +11,11 @@ GameObject:
   - component: {fileID: 8238277080845339818}
   - component: {fileID: 1492332996}
   - component: {fileID: 2647930910118621134}
+  - component: {fileID: -4196406118967965609}
   - component: {fileID: 8238277080845339823}
   - component: {fileID: 8238277080845339809}
   - component: {fileID: -4584323755285702024}
   - component: {fileID: -5809969059143972125}
-  - component: {fileID: -4196406118967965609}
   m_Layer: 12
   m_Name: Player
   m_TagString: Player
@@ -61,8 +61,22 @@ CapsuleCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8238277080845339819}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: 49514e6193b28bd4bb1f511258db8876, type: 2}
   m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.71
+  m_Height: 3.7703276
+  m_Direction: 1
+  m_Center: {x: 0, y: 1.9034224, z: 0}
+--- !u!136 &-4196406118967965609
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8238277080845339819}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
   m_Enabled: 1
   m_Radius: 0.71
   m_Height: 3.7703276
@@ -149,20 +163,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   guid: 
---- !u!136 &-4196406118967965609
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8238277080845339819}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  m_Radius: 0.71
-  m_Height: 3.7703276
-  m_Direction: 1
-  m_Center: {x: 0, y: 1.9034224, z: 0}
 --- !u!1 &8238277081177272650
 GameObject:
   m_ObjectHideFlags: 0

@@ -32,7 +32,7 @@ namespace Dash.Scripts.GamePlay.View
             var locator = shootLocators[Random.Range(0, shootLocators.Length)];
             var position = locator.position;
             var index = LocalPlayer.weaponIndex;
-            var (info, data) = PlayerConfigManager.weaponInfos[index];
+            var (info, _) = PlayerConfigManager.weaponInfos[index];
             var range = info.sheCheng;
             var from = position;
             from.x = rayBegin.position.x;

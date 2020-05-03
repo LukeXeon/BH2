@@ -28,8 +28,10 @@ namespace Dash.Scripts.Cloud
         private static string ApplicationId;
         private static string ClientSecret;
 
-        static GithubClient()
+        public static void Initialize(string applicationId, string clientSecret)
         {
+            ApplicationId = applicationId;
+            ClientSecret = clientSecret;
             typeof(ParseUser).GetMethod(
                 "RegisterProvider",
                 BindingFlags.NonPublic | BindingFlags.Static,
@@ -37,12 +39,6 @@ namespace Dash.Scripts.Cloud
                 new[] {typeof(IParseAuthenticationProvider)},
                 null
             )?.Invoke(null, new object[] {new GithubAuthenticationProvider()});
-        }
-
-        public static void Initialize(string applicationId, string clientSecret)
-        {
-            ApplicationId = applicationId;
-            ClientSecret = clientSecret;
         }
 
         public static string LogInUrl
@@ -56,9 +52,9 @@ namespace Dash.Scripts.Cloud
             }
         }
 
-        public static async Task<ParseUser> LogInAsync(CancellationToken cancellationToken)
+        public static Task<ParseUser> LogInAsync(CancellationToken cancellationToken)
         {
-            return await ParseUserExtensions.LogInWithAsync("github", cancellationToken);
+            return ParseUserExtensions.LogInWithAsync("github", cancellationToken);
         }
 
         private struct UnityWebRequestAwaitable : INotifyCompletion
@@ -82,9 +78,8 @@ namespace Dash.Scripts.Cloud
 
             public bool IsCompleted => operation.isDone;
 
-            public UnityWebRequest GetResult()
+            public void GetResult()
             {
-                return operation.webRequest;
             }
         }
 
