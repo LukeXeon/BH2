@@ -48,6 +48,7 @@ namespace Dash.Scripts.Cloud
                 var url = new Url(LogInBaseUrl);
                 url.SetQueryParam("client_id", ApplicationId);
                 url.SetQueryParam("redirect_uri", CallbackUrl);
+                Debug.Log(url);
                 return url;
             }
         }
@@ -96,16 +97,17 @@ namespace Dash.Scripts.Cloud
                 string code;
                 try
                 {
-                    var cancelTask = Task.Factory.StartNew(async () =>
+                    var cancelTask = Task.Run(async () =>
                     {
                         while (!cancellationToken.IsCancellationRequested && !ctxTask.IsCompleted)
                         {
                             await Task.Yield();
                         }
-                    }, default, TaskCreationOptions.None, TaskScheduler.FromCurrentSynchronizationContext());
+                    }, cancellationToken);
                     await Task.WhenAny(cancelTask, ctxTask);
                     if (cancellationToken.IsCancellationRequested)
                     {
+                        http.Abort();
                         throw new TaskCanceledException();
                     }
 
@@ -115,6 +117,7 @@ namespace Dash.Scripts.Cloud
                 finally
                 {
                     http.Abort();
+                    Debug.Log("Abort");
                 }
 
                 var url = new Url(AccessTokenUrl);

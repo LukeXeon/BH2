@@ -1131,9 +1131,14 @@ Use SetNewWindowHandler to adjust at runtime.
 			renderData = BrowserNative.zfb_getImage(browserId, forceNextRender);
 			forceNextRender = false;
 
-			if (renderData.pixels == IntPtr.Zero) return;//no changes
+			if (renderData.pixels == IntPtr.Zero)
+			{
+				Profiler.EndSample();
+				return;//no changes
+			}
 
 			if (renderData.w != texture.width || renderData.h != texture.height) {
+				Profiler.EndSample();
 				//Mismatch. Can happen, for example, when we resize but got an "old" image at the old resolution. (IPC is async.)
 				return;
 			}
