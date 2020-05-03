@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,13 +12,15 @@ namespace Dash.Scripts.UIManager
 
         public void Init(string url, Action back)
         {
-            webView.Load(url);
+            IEnumerator Wait()
+            {
+                yield return new WaitForEndOfFrame();
+                webView.SetBackButtonEnabled(false);
+                webView.UpdateFrame();
+                webView.Load(url);
+            }
+            StartCoroutine(Wait());
             button.onClick.AddListener(() => back());
-        }
-
-        private void Start()
-        {
-            webView.SetBackButtonEnabled(false);
         }
     }
 }
