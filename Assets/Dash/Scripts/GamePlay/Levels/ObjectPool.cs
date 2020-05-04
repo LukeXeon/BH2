@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using Dash.Scripts.Config;
 using Dash.Scripts.Core;
 using UnityEngine;
 
@@ -8,6 +10,7 @@ namespace Dash.Scripts.GamePlay.Levels
     public sealed class ObjectPool : MonoBehaviour
     {
         private static readonly LinkedList<ObjectPool> pools = new LinkedList<ObjectPool>();
+        private static Dictionary<string, GuidIndexer> indexers;
 
         private Dictionary<string, CacheItem> caches;
 
@@ -17,12 +20,33 @@ namespace Dash.Scripts.GamePlay.Levels
 
         public PrefabItem[] prefabs;
 
+
         public static GameObject GlobalObtain(string guid, Vector3 position, Quaternion rotation, bool inactive)
         {
             foreach (var objectPool in pools)
             {
                 var go = objectPool.Obtain(guid, position, rotation, inactive);
                 if (go != null) return go;
+            }
+
+            if (indexers == null)
+            {
+                var asset = Resources.Load<GlobalIndexAsset>("GlobalIndexAsset");
+                indexers  = asset.indexers == null ? null : asset.indexers.ToDictionary(i => i.guid, i => i);
+            }
+
+            if (indexers != null)
+            {
+                indexers.TryGetValue(guid, out var indexer);
+                if (indexer)
+                {
+                    var a = indexer.gameObject.activeSelf;
+                    GameObject o;
+                    (o = indexer.gameObject).SetActive(!inactive);
+                    var go = Instantiate(o, position, rotation);
+                    indexer.gameObject.SetActive(a);
+                    return go;
+                }
             }
 
             return null;
@@ -48,7 +72,6 @@ namespace Dash.Scripts.GamePlay.Levels
             if (prefabs != null && prefabs.Length > 0)
                 foreach (var item in prefabs)
                 {
-
                     var guid = item.prefab.guid;
                     var count = item.preloadAmount;
                     if (count <= 0)
@@ -94,6 +117,7 @@ namespace Dash.Scripts.GamePlay.Levels
                 {
                     poolLifecycle.Reusing();
                 }
+
                 return go;
             }
 
@@ -132,6 +156,7 @@ namespace Dash.Scripts.GamePlay.Levels
                 {
                     poolLifecycle.Recycle();
                 }
+
                 go.transform.SetParent(inactivePoolRoot);
                 cache.cache.Push(go);
                 return true;

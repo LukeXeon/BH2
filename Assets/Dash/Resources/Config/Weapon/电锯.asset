@@ -19,7 +19,7 @@ MonoBehaviour:
   sheSu: 15
   slots: []
   sprite: {fileID: 0}
-  typeId: 3
+  typeId: 2
   weaponType: {fileID: 11400000, guid: 73a18f88f2bcc3f4188eb26dd02df27a, type: 2}
   weaponView: {fileID: 0}
   xiaoGuo: {fileID: 0}

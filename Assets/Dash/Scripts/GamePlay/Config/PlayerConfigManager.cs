@@ -13,8 +13,8 @@ namespace Dash.Scripts.GamePlay.Config
         public static readonly List<Tuple<WeaponInfoAsset, RuntimeWeaponInfo>> weaponInfos =
             new List<Tuple<WeaponInfoAsset, RuntimeWeaponInfo>>();
 
-        public static readonly List<Tuple<ShengHenInfoAsset, RuntimeShengHenInfo>> shengHenInfos =
-            new List<Tuple<ShengHenInfoAsset, RuntimeShengHenInfo>>();
+        public static readonly List<Tuple<SealInfoAsset, RuntimeShengHenInfo>> shengHenInfos =
+            new List<Tuple<SealInfoAsset, RuntimeShengHenInfo>>();
 
         public static void Prepare(CompletePlayer current)
         {

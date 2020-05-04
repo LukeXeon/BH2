@@ -16,12 +16,13 @@ namespace Dash.Scripts.GamePlay.View
         public LineRenderer shootLine;
         public Transform[] shootLocators;
         private int flipX;
-
-
+        private AudioView audioView;
+        
         private float timer;
 
         private void Awake()
         {
+            audioView = AudioView.Create(transform);
             particleSystems = GetComponentsInChildren<ParticleSystem>(true);
             foreach (var system in particleSystems) system.Stop();
         }
@@ -53,7 +54,7 @@ namespace Dash.Scripts.GamePlay.View
                     actorView.photonView.RPC(
                         nameof(actorView.OnDamage),
                         RpcTarget.All,
-                        playerView.photonView.ViewID,
+                        playerView.PhotonView.ViewID,
                         value
                     );
                     Vector3 from1;
@@ -70,14 +71,14 @@ namespace Dash.Scripts.GamePlay.View
                             break;
                     }
 
-                    RpcInPlayerView(nameof(OnSync), from1, to);
+                    RpcInHost(nameof(OnSync), from1, to);
                     return;
                 }
             }
 
             var d = position;
             d.x += Mathf.Sign(transform.localScale.x) * range;
-            RpcInPlayerView(nameof(OnSync), position, d);
+            RpcInHost(nameof(OnSync), position, d);
         }
 
         private void Update()
@@ -123,7 +124,7 @@ namespace Dash.Scripts.GamePlay.View
                 system.Play();
             }
 
-            var audioSource = playerView.audioView.GetOrCreateSource();
+            var audioSource = audioView.GetOrCreateSource();
             audioSource.clip = audioClip;
             audioSource.time = 0;
             audioSource.Play();

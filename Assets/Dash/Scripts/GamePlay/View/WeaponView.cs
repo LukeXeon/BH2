@@ -7,7 +7,7 @@ namespace Dash.Scripts.GamePlay.View
     {
         protected PlayerView playerView;
         protected int targetMask;
-        protected bool isMine => playerView.photonView.IsMine;
+        protected bool isMine => playerView.PhotonView.IsMine;
         private Animator cameraAnim;
         private static readonly int CAMERA_SHAKE_TRIGGER = Animator.StringToHash("CameraShakeTrigger");
 
@@ -24,7 +24,7 @@ namespace Dash.Scripts.GamePlay.View
             playerView = view;
             targetMask = LayerMask.GetMask("NPC");
             var cam = Camera.main;
-            if (view.photonView.IsMine && cam != null)
+            if (view.PhotonView.IsMine && cam != null)
             {
                 cameraAnim = cam.GetComponent<Animator>();
             }
@@ -50,9 +50,9 @@ namespace Dash.Scripts.GamePlay.View
             }
         }
         
-        public void RpcInPlayerView(string method, params object[] objects)
+        public void RpcInHost(string method, params object[] objects)
         {
-            playerView.photonView.RPC(
+            playerView.PhotonView.RPC(
                 nameof(playerView.OnChildRpc),
                 RpcTarget.All,
                 method,

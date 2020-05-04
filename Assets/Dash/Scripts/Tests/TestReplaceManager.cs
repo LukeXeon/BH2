@@ -12,19 +12,14 @@ namespace Dash.Scripts.Tests
     {
         public new SkeletonAnimation animation;
         public PlayerEquipsUIManager manager;
-        public WeaponView OnFire;
+        public WeaponInfoAsset weaponInfoAsset;
 
-        private IEnumerator Start()
+        private void Start()
         {
-            var w = GameConfigManager.weaponTable[0];
-            var list = SpineUtils.GenerateSpineReplaceInfo(w, animation.Skeleton);
+            var list = SpineUtils.GenerateSpineReplaceInfo(weaponInfoAsset, animation.Skeleton);
             manager.Equip(list);
             Debug.Log(list.ToStringFull());
-            while (true)
-            {
-                yield return new WaitForSeconds(0.1f);
-                OnFire.Fire();
-            }
+            
         }
     }
 }

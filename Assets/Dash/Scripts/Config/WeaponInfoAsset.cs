@@ -7,7 +7,7 @@ namespace Dash.Scripts.Config
 {
     [CreateAssetMenu(fileName = "Weapon", menuName = "Info/Weapon")]
     [Serializable]
-    public class WeaponInfoAsset : ScriptableObject
+    public class WeaponInfoAsset : ScriptableObject, ITypedAsset
     {
         //显示名称
         public string displayName;
@@ -17,8 +17,7 @@ namespace Dash.Scripts.Config
 
         [Header("射程")] public float sheCheng;
 
-        [Header("每秒发射子弹数量")]
-        public float sheSu;
+        [Header("每秒发射子弹数量")] public float sheSu;
 
         //替换列表
         public SlotItem[] slots;
@@ -31,6 +30,12 @@ namespace Dash.Scripts.Config
         public GameObject weaponView;
 
         public TextAsset xiaoGuo;
+        
+        public int TypeId
+        {
+            get => typeId;
+            set => typeId = value;
+        }
 
         [Serializable]
         public struct SlotItem
@@ -45,6 +50,5 @@ namespace Dash.Scripts.Config
             public string name;
             public Sprite sprite;
         }
-        
     }
 }

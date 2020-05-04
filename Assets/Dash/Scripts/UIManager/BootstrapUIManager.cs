@@ -3,12 +3,10 @@ using System.Collections;
 using System.Threading;
 using System.Threading.Tasks;
 using Dash.Scripts.Cloud;
-using Dash.Scripts.Core;
 using Dash.Scripts.UI;
 using Michsky.UI.ModernUIPack;
 using Parse;
 using Photon.Pun;
-using Photon.Realtime;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -281,12 +279,6 @@ namespace Dash.Scripts.UIManager
 
         public IEnumerator LoadNext()
         {
-            PhotonNetwork.AuthValues = new AuthenticationValues
-            {
-                UserId = ParseUser.CurrentUser.ObjectId
-            };
-            PhotonNetwork.ConnectUsingSettings();
-
             progressBarRoot.SetActive(true);
             loadSceneAsync = SceneManager.LoadSceneAsync("Desktop");
             Debug.Log("Load Desktop");
@@ -302,8 +294,6 @@ namespace Dash.Scripts.UIManager
             progressBar.fillAmount = 1;
             progressBarText.text = 100 + "%";
             yield return new WaitForEndOfFrame();
-            progressBarText.text = "正在连接游戏主服务器";
-            yield return new WaitUntil(() => PhotonNetwork.NetworkClientState == ClientState.ConnectedToMasterServer);
             loadSceneAsync.allowSceneActivation = true;
         }
 

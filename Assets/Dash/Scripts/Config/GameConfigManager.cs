@@ -16,7 +16,7 @@ namespace Dash.Scripts.Config
         public static readonly SortedDictionary<int, PlayerInfoAsset> playerTable;
         public static readonly SortedDictionary<int, WeaponInfoAsset> weaponTable;
         public static readonly SortedDictionary<string, WeaponTypeInfoAsset> weaponTypeTable;
-        public static readonly SortedDictionary<int, ShengHenInfoAsset> shengHenTable;
+        public static readonly SortedDictionary<int, SealInfoAsset> shengHenTable;
         public static readonly SortedDictionary<int, GuanQiaInfoAsset> guanQiaInfoTable;
 
         static GameConfigManager()
@@ -27,7 +27,7 @@ namespace Dash.Scripts.Config
             weaponTable = Resources.LoadAll<WeaponInfoAsset>("Config/Weapon").ToSortedDictionary(i => i.typeId, i => i);
             weaponTypeTable = Resources.LoadAll<WeaponTypeInfoAsset>("Config/WeaponType")
                 .ToSortedDictionary(i => i.matchName, i => i);
-            shengHenTable = Resources.LoadAll<ShengHenInfoAsset>("Config/ShengHen")
+            shengHenTable = Resources.LoadAll<SealInfoAsset>("Config/ShengHen")
                 .ToSortedDictionary(i => i.typeId, i => i);
             guanQiaInfoTable = Resources.LoadAll<GuanQiaInfoAsset>("Config/GuanQia")
                 .ToSortedDictionary(i => i.typeId, i => i);

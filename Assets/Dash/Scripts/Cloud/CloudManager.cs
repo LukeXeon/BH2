@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Dash.Scripts.Config;
 using Parse;
+using Photon.Pun;
+using Photon.Realtime;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -262,6 +264,16 @@ namespace Dash.Scripts.Cloud
                 p.Add(userMate);
                 await ParseObject.SaveAllAsync(p);
             }
+
+            PhotonNetwork.AuthValues = new AuthenticationValues
+            {
+                UserId = ParseUser.CurrentUser.ObjectId
+            };
+            PhotonNetwork.ConnectUsingSettings();
+            while (PhotonNetwork.NetworkClientState != ClientState.ConnectedToMasterServer)
+            {
+                await Task.Yield();
+            }
         }
 
         public static async Task LogInWithToken(string token)
@@ -364,6 +376,7 @@ namespace Dash.Scripts.Cloud
         
         public static async Task LogOut()
         {
+            PhotonNetwork.Disconnect();
             await ParseUser.LogOutAsync();
         }
 

@@ -132,7 +132,6 @@ MonoBehaviour:
   onPlayerRelive:
     m_PersistentCalls:
       m_Calls: []
-  audioView: {fileID: 0}
   speed: 10
 --- !u!114 &-4584323755285702024
 MonoBehaviour:

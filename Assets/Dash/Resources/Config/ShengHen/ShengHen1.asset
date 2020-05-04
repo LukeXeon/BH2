@@ -4,21 +4,22 @@
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4cf830e83eb94b10af3f7fa380e3871f, type: 3}
   m_Name: ShengHen1
   m_EditorClassIdentifier: 
-  typeId: 1
   displayName: "\u9B54\u672F\u5E08"
-  image: {fileID: 21300000, guid: aff984164fa93984ea7e05f2ec814aa7, type: 3}
-  jieShao: {fileID: 0}
   effect: {fileID: 0}
   fangYuLi: 0
-  shengMingZhi: 0
-  nengLiangZhi: 0
   fangYuLi2: 0
-  shengMingZhi2: 0
+  image: {fileID: 21300000, guid: aff984164fa93984ea7e05f2ec814aa7, type: 3}
+  nengLiangZhi: 0
   nengLiangZhi2: 0
+  shengMingZhi: 0
+  shengMingZhi2: 0
+  typeId: 1
+  xiaoGuo: {fileID: 0}

@@ -4,14 +4,12 @@ using UnityEngine;
 namespace Dash.Scripts.Config
 {
     [CreateAssetMenu(fileName = "Player", menuName = "Info/Player")]
-    public class PlayerInfoAsset : ScriptableObject
+    public class PlayerInfoAsset : ScriptableObject, ITypedAsset
     {
-        [Header("用于显示")]
-        public string displayName;
+        [Header("用于显示")] public string displayName;
         public TextAsset jieShao;
         public SkeletonDataAsset skel;
-        [Header("人物基础值")] 
-        public int gongJiLi;
+        [Header("人物基础值")] public int gongJiLi;
         public int fangYuLi;
         public int nengLiangZhi;
         public int shengMingZhi;
@@ -20,7 +18,12 @@ namespace Dash.Scripts.Config
         public int nengLiangZhi2;
         public int shengMingZhi2;
         public Sprite icon;
-        [Header("其他")]
-        public int typeId;
+        [Header("其他")] public int typeId;
+
+        public int TypeId
+        {
+            get => typeId;
+            set => typeId = value;
+        }
     }
 }

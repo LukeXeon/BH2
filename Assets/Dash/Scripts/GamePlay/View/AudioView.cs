@@ -12,11 +12,8 @@ namespace Dash.Scripts.GamePlay.View
         {
             inUseSources = new LinkedList<AudioSource>();
             cacheSource = new Stack<AudioSource>();
-            for (int i = 0; i < 8; i++)
-            {
-                var s = gameObject.AddComponent<AudioSource>();
-                cacheSource.Push(s);
-            }
+            var s = gameObject.AddComponent<AudioSource>();
+            cacheSource.Push(s);
         }
 
         private void Update()

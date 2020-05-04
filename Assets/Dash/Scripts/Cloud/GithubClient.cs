@@ -120,6 +120,11 @@ namespace Dash.Scripts.Cloud
                     return result;
                 }
 
+                if (wr.responseCode == 0)
+                {
+                    throw new IOException("国内的Github服务暂时不可用");
+                }
+
                 throw new IOException("error code " + wr.responseCode);
             }
 

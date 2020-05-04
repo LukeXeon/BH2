@@ -9,7 +9,7 @@ namespace Dash.Scripts.Core
         public string guid;
 
 #if UNITY_EDITOR
-        private void OnValidate()
+        public void OnValidate()
         {
             hideFlags = 0;
             if (EditorUtility.IsPersistent(gameObject))

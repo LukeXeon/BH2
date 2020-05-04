@@ -10,7 +10,7 @@ using UnityEngine;
 
 namespace Dash.Scripts.GamePlay.View
 {
-    public class PlayerView : ActorView, IPunObservable
+    public class PlayerView : ActorView, IPunObservable, IHostView
     {
         private static readonly int IS_RUN = Animator.StringToHash("is_run");
         private static readonly int TAOQIANG = Animator.StringToHash("taoqiang");
@@ -20,9 +20,6 @@ namespace Dash.Scripts.GamePlay.View
         private static readonly int KAIQIANG_SPEED = Animator.StringToHash("kaiqiang_speed");
         private static readonly int HIT = Animator.StringToHash("hit");
 
-        private static readonly Dictionary<(Type, string), MethodInfo> methodInfos =
-            new Dictionary<(Type, string), MethodInfo>();
-
 
         public Animator animator;
         public Transform bulletLocator;
@@ -30,7 +27,6 @@ namespace Dash.Scripts.GamePlay.View
         public SkeletonMecanim mecanim;
         public PoseManager poseManager;
         public ActorEvent onPlayerRelive;
-        [HideInInspector] public AudioView audioView;
         private new Rigidbody rigidbody;
         public float speed;
         private WeaponView weaponView;
@@ -57,12 +53,11 @@ namespace Dash.Scripts.GamePlay.View
             {
                 onPlayerRelive = new ActorEvent();
             }
-            
+
             weaponViews = new Dictionary<int, WeaponView>();
             rigidbody = GetComponent<Rigidbody>();
             photonView = GetComponent<PhotonView>();
             flipX = 1;
-            audioView = AudioView.Create(this.transform);
         }
 
         private void Start()
@@ -81,6 +76,7 @@ namespace Dash.Scripts.GamePlay.View
                 weaponView.OnInitialize(this);
                 weaponViews.Add(weaponTypeId, weaponView);
             }
+
             OnWeaponChanged(weaponTypeIds.First());
         }
 
@@ -174,23 +170,14 @@ namespace Dash.Scripts.GamePlay.View
             onActorDamageEvent.Invoke(this, value);
         }
 
+        public PhotonView PhotonView => photonView;
+
         [PunRPC]
         public void OnChildRpc(string method, object[] args)
         {
             if (weaponView)
             {
-                var type = weaponView.GetType();
-                methodInfos.TryGetValue((type, method), out var methodInfo);
-                if (methodInfo == null)
-                {
-                    methodInfo = type.GetMethod(method);
-                    methodInfos[(type, method)] = methodInfo;
-                }
-
-                if (methodInfo != null)
-                {
-                    methodInfo.Invoke(weaponView, args);
-                }
+                this.HandleChildRpc(weaponView, method, args);
             }
         }
 

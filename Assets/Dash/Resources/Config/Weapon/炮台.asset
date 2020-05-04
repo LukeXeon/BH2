@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c05adadf0975f004785ae64569ed32a9, type: 3}
+  m_Name: "\u70AE\u53F0"
+  m_EditorClassIdentifier: 
+  displayName: 
+  gongJiLi: 100
+  gongJiLi2: 5
+  sheCheng: 100
+  sheSu: 3
+  slots:
+  - name: IWeapon
+    attachments:
+    - name: xiangzi
+      sprite: {fileID: 21300000, guid: 9d06a77970c2c904c9eef7c9c10e6f2e, type: 3}
+  sprite: {fileID: 21300000, guid: ab0e51a8cf8f41c49b0eab2b1b82f158, type: 3}
+  typeId: 4
+  weaponType: {fileID: 11400000, guid: af5a07117de93c14bac55ca32a3cbe43, type: 2}
+  weaponView: {fileID: 3278857934928169769, guid: 324611ca05182be40ad44f99c1e6297e,
+    type: 3}
+  xiaoGuo: {fileID: 0}

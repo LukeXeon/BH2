@@ -23,7 +23,7 @@ MonoBehaviour:
     - name: zhongshouqiang
       sprite: {fileID: 21300000, guid: 4543bd955bc985b4bba21a53b036fa22, type: 3}
   sprite: {fileID: 21300000, guid: 4543bd955bc985b4bba21a53b036fa22, type: 3}
-  typeId: 0
+  typeId: 1
   weaponType: {fileID: 11400000, guid: c998eef7973627343b98509420dbe466, type: 2}
   weaponView: {fileID: 8095019966929354405, guid: b50b646fcf2be73488f9657d0d050728,
     type: 3}

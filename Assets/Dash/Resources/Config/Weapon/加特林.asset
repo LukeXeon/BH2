@@ -25,7 +25,7 @@ MonoBehaviour:
     - name: jiatelin2
       sprite: {fileID: 21300000, guid: dd88629dcbb73834c943c3f7616a17a4, type: 3}
   sprite: {fileID: 21300000, guid: ad11fb698dfa4b143bb5a7c53260f7e8, type: 3}
-  typeId: 1
+  typeId: 0
   weaponType: {fileID: 11400000, guid: ba44732947c69ac4284e97b635631cad, type: 2}
   weaponView: {fileID: 5220202882795034429, guid: b3859b8feaa2060408d1cd8b85ed0484,
     type: 3}
