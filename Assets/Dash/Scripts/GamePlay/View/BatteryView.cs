@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using Dash.Scripts.Core;
 using Photon.Pun;
 using TMPro;
@@ -13,6 +14,7 @@ namespace Dash.Scripts.GamePlay.View
         private ParticleSystem[] particleSystems;
         public Transform bulletLocator;
         public Transform bombRoot;
+        public Transform gunRoot;
         public GuidIndexer bullet;
         public TextMeshPro text;
         private int damage;
@@ -42,6 +44,7 @@ namespace Dash.Scripts.GamePlay.View
 
         private void Awake()
         {
+
             particleSystemsDes = bombRoot.GetComponentsInChildren<ParticleSystem>(true);
             particleSystems = bulletLocator.GetComponentsInChildren<ParticleSystem>(true);
             foreach (var particleSystemsDe in particleSystemsDes)
@@ -55,6 +58,14 @@ namespace Dash.Scripts.GamePlay.View
             }
 
             photonView = GetComponent<PhotonView>();
+        }
+
+        private void Start()
+        {
+            var transform1 = gunRoot;
+            var local = transform1.localScale;
+            local.x = (float) photonView.InstantiationData[0];
+            transform1.localScale = local;
         }
 
 

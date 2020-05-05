@@ -82,6 +82,7 @@ namespace Dash.Scripts.Cloud
 
                 localUserEntity.crystal -= 100;
                 await localUserEntity.SaveAsync();
+                userInfoChanged?.Invoke(localUserEntity);
             }
 
             var type = Random.Range(0, 3);

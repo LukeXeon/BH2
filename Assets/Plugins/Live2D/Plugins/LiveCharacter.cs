@@ -186,6 +186,11 @@ public class LiveCharacter : MonoBehaviour
         enableAnimationForIdle = active;
     }
 
+    private void Reset()
+    {
+        Awake();
+    }
+
 
     //립싱크 부분. 오디오 소스의 출력 구간 평균을 부드럽게 Ease해서 입을 움직여준다.
     public void SetLipSync()

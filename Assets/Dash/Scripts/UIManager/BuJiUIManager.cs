@@ -26,9 +26,15 @@ namespace Dash.Scripts.UIManager
         public GameObject playerUnLockCardPrefab;
         public GameObject shengHenPrefab;
         public GameObject weaponCardPrefab;
+        public Button shopping;
+        public ShoppingUIManager shoppingUiManager;
 
         private void Awake()
         {
+            shopping.onClick.AddListener(() =>
+            {
+                shoppingUiManager.Open();
+            });
             begin.onClick.AddListener(async () =>
             {
                 BeginWaitNetwork();
