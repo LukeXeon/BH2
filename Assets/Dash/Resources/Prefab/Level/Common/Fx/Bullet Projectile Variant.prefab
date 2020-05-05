@@ -11,10 +11,14 @@ PrefabInstance:
       propertyPath: viewIdField
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 561815563, guid: f3f858992e1929141a62cca77568f81d, type: 3}
+      propertyPath: ObservedComponents.Array.data[0]
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 1604533757453098696, guid: f3f858992e1929141a62cca77568f81d,
         type: 3}
       propertyPath: guid
-      value: 
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3012313595382938465, guid: f3f858992e1929141a62cca77568f81d,
         type: 3}
@@ -226,5 +230,6 @@ PrefabInstance:
       propertyPath: ColorModule.gradient.maxGradient.key2.b
       value: 1
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 561815564, guid: f3f858992e1929141a62cca77568f81d, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: f3f858992e1929141a62cca77568f81d, type: 3}

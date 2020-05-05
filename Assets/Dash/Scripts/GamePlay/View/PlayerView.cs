@@ -32,6 +32,7 @@ namespace Dash.Scripts.GamePlay.View
         private WeaponView weaponView;
         private float timeBetweenBullets;
         private float lastShoot;
+        public AudioView audioView;
 
 
         //Weapon
@@ -49,6 +50,7 @@ namespace Dash.Scripts.GamePlay.View
         protected override void Awake()
         {
             base.Awake();
+            audioView = AudioView.Create(transform);
             if (onPlayerRelive == null)
             {
                 onPlayerRelive = new ActorEvent();

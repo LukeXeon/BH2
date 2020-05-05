@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using Dash.Scripts.GamePlay.Levels;
 using Photon.Pun;
@@ -15,15 +16,21 @@ namespace Dash.Scripts.GamePlay.View
         private int viewId;
         private int damage;
 
-        public void RunTheBullet(int id, Vector3 speed, int layer, int damage)
+        public void RunTheBullet(int id, int layer, int damage)
         {
             viewId = id;
             this.damage = damage;
-            rigidbody.AddForce(speed);
             targetLayer = layer;
             if (photonView.IsMine)
             {
                 collider.enabled = true;
+
+                IEnumerator AutoDestroy()
+                {
+                    yield return new WaitForSeconds(3);
+                    PhotonNetwork.Destroy(gameObject);
+                }
+
                 coroutine = StartCoroutine(AutoDestroy());
             }
             else
@@ -32,11 +39,11 @@ namespace Dash.Scripts.GamePlay.View
             }
         }
 
-        private IEnumerator AutoDestroy()
+        private void Start()
         {
-            yield return new WaitForSeconds(3);
-            PhotonNetwork.Destroy(gameObject);
+            rigidbody.AddForce((Vector3) photonView.InstantiationData[0]);
         }
+
 
         private void OnDestroy()
         {

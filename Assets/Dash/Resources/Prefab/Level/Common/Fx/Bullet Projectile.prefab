@@ -14,7 +14,6 @@ GameObject:
   - component: {fileID: 3105553189386912801}
   - component: {fileID: 3107135537976269255}
   - component: {fileID: 561815563}
-  - component: {fileID: 561815564}
   - component: {fileID: 1604533757453098696}
   - component: {fileID: 1206737807}
   - component: {fileID: 5567557214625062685}
@@ -4902,32 +4901,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ObservedComponentsFoldoutOpen: 1
+  ObservedComponentsFoldoutOpen: 0
   Group: 0
   prefixField: -1
   Synchronization: 3
   OwnershipTransfer: 0
   ObservedComponents:
-  - {fileID: 561815564}
+  - {fileID: 0}
   viewIdField: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
---- !u!114 &561815564
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3015348069204018871}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 64179f3720bbfe947b7724caa67b7c1d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_SynchronizeVelocity: 1
-  m_SynchronizeAngularVelocity: 0
-  m_TeleportEnabled: 0
-  m_TeleportIfDistanceGreaterThan: 3
 --- !u!114 &1604533757453098696
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4940,7 +4923,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6da75efc22d249c0a4844a1e176b8a59, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  guid: 
+  guid: 0
 --- !u!65 &1206737807
 BoxCollider:
   m_ObjectHideFlags: 0

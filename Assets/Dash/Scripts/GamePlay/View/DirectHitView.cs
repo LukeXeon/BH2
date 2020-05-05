@@ -16,13 +16,11 @@ namespace Dash.Scripts.GamePlay.View
         public LineRenderer shootLine;
         public Transform[] shootLocators;
         private int flipX;
-        private AudioView audioView;
-        
+
         private float timer;
 
         private void Awake()
         {
-            audioView = AudioView.Create(transform);
             particleSystems = GetComponentsInChildren<ParticleSystem>(true);
             foreach (var system in particleSystems) system.Stop();
         }
@@ -124,7 +122,7 @@ namespace Dash.Scripts.GamePlay.View
                 system.Play();
             }
 
-            var audioSource = audioView.GetOrCreateSource();
+            var audioSource = playerView.audioView.GetOrCreateSource();
             audioSource.clip = audioClip;
             audioSource.time = 0;
             audioSource.Play();

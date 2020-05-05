@@ -222,14 +222,14 @@ namespace Dash.Scripts.GamePlay.Levels.Level1
                     var go = PhotonNetwork.InstantiateSceneObject(
                         config1.bullet.guid,
                         config1Locator.position,
-                        config1Locator.rotation
+                        config1Locator.rotation,
+                        data: new object[] {-flipX * Random.Range(2000, 3000) * Vector3.left}
                     );
                     if (go)
                     {
                         var view = go.GetComponent<BulletView>();
                         view.RunTheBullet(
                             photonView.ViewID,
-                            -flipX * Random.Range(2000, 3000) * Vector3.left,
                             LayerMask.NameToLayer("Player"),
                             config.gongJiLi / config1.locators.Length
                         );

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using Dash.Scripts.Core;
 using Photon.Pun;
 using TMPro;
@@ -10,13 +9,14 @@ namespace Dash.Scripts.GamePlay.View
     public class BatteryView : MonoBehaviour
     {
         private PhotonView photonView;
-        private ParticleSystem[] particleSystemsDes;
-        private ParticleSystem[] particleSystems;
+        private ParticleSystem[] particleDes;
+        private ParticleSystem[] particleFire;
         public Transform bulletLocator;
         public Transform bombRoot;
         public Transform gunRoot;
         public GuidIndexer bullet;
         public TextMeshPro text;
+        public Transform fireRoot;
         private int damage;
 
         public void StartWork(int damage, int time)
@@ -44,15 +44,14 @@ namespace Dash.Scripts.GamePlay.View
 
         private void Awake()
         {
-
-            particleSystemsDes = bombRoot.GetComponentsInChildren<ParticleSystem>(true);
-            particleSystems = bulletLocator.GetComponentsInChildren<ParticleSystem>(true);
-            foreach (var particleSystemsDe in particleSystemsDes)
+            particleDes = bombRoot.GetComponentsInChildren<ParticleSystem>(true);
+            particleFire = fireRoot.GetComponentsInChildren<ParticleSystem>(true);
+            foreach (var particleSystemsDe in particleDes)
             {
                 particleSystemsDe.Stop();
             }
 
-            foreach (var system in particleSystems)
+            foreach (var system in particleFire)
             {
                 system.Stop();
             }
@@ -77,7 +76,7 @@ namespace Dash.Scripts.GamePlay.View
         [PunRPC]
         public void BatteryFire()
         {
-            foreach (var system in particleSystems)
+            foreach (var system in particleFire)
             {
                 system.Simulate(0);
                 system.Play();
@@ -85,17 +84,20 @@ namespace Dash.Scripts.GamePlay.View
 
             if (photonView.IsMine)
             {
-                var flipX = transform.localScale.x;
-//                var go = PhotonNetwork.Instantiate(
-//                    bullet.guid,
-//                    bulletLocator.position,
-//                    bulletLocator.rotation
-//                );
-//                var bulletView = go.GetComponent<BulletView>();
-//                bulletView.RunTheBullet(photonView.ViewID,
-//                    -flipX * Random.Range(2000, 3000) * Vector3.left,
-//                    LayerMask.NameToLayer("Npc"),
-//                    damage);
+                var flipX = gunRoot.localScale.x;
+                var go = PhotonNetwork.Instantiate(
+                    bullet.guid,
+                    bulletLocator.position,
+                    bulletLocator.rotation,
+                    data:new object[]
+                    {
+                        -flipX * Random.Range(2000, 3000) * Vector3.left
+                    }
+                );
+                var bulletView = go.GetComponent<BulletView>();
+                bulletView.RunTheBullet(photonView.ViewID,
+                    LayerMask.NameToLayer("NPC"),
+                    damage);
             }
         }
 
@@ -104,7 +106,7 @@ namespace Dash.Scripts.GamePlay.View
         {
             bombRoot.SetParent(null);
             bombRoot.gameObject.SetActive(true);
-            foreach (var particleSystemsDe in particleSystemsDes)
+            foreach (var particleSystemsDe in particleDes)
             {
                 particleSystemsDe.Simulate(0);
                 particleSystemsDe.Play();

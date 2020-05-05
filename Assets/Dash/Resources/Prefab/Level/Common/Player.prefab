@@ -133,6 +133,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   speed: 10
+  audioView: {fileID: 0}
 --- !u!114 &-4584323755285702024
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -161,7 +162,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6da75efc22d249c0a4844a1e176b8a59, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  guid: 
+  guid: 2
 --- !u!1 &8238277081177272650
 GameObject:
   m_ObjectHideFlags: 0
@@ -378,7 +379,7 @@ MonoBehaviour:
     SynchronizeType: 0
     Name: kaiqiang_single
   - Type: 4
-    SynchronizeType: 0
+    SynchronizeType: 1
     Name: kaiqiang_lianshe
   m_SynchronizeLayers:
   - SynchronizeType: 0

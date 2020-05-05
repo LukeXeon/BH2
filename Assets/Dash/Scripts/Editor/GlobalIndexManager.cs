@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Linq;
 using Dash.Scripts.Config;
@@ -22,7 +23,7 @@ namespace Dash.Scripts.Editor
             EditorApplication.projectChanged += UpdatePrefabList;
         }
 
-        private static GlobalIndexAsset GetOrCreateInstance()
+        internal static GlobalIndexAsset GetOrCreateInstance()
         {
             var asset = Resources.Load<GlobalIndexAsset>("GlobalIndexAsset");
             if (!asset)
@@ -40,7 +41,7 @@ namespace Dash.Scripts.Editor
 
             return asset;
         }
-        
+
         internal static void UpdatePrefabList()
         {
             var asset = GetOrCreateInstance();
@@ -52,8 +53,7 @@ namespace Dash.Scripts.Editor
             Debug.Log(indexers.Length);
             foreach (var view in indexers)
             {
-                var path = AssetDatabase.GetAssetPath(view.gameObject);
-                var id = AssetDatabase.AssetPathToGUID(path);
+                var id = Array.IndexOf(indexers, view).ToString();
                 if (view.guid != id)
                 {
                     view.guid = id;

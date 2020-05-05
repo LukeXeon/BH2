@@ -147,7 +147,6 @@ namespace Dash.Scripts.UIManager
             PhotonNetwork.LocalPlayer.SetCustomProperties(table);
             var index = Array.FindIndex(PhotonNetwork.PlayerList,
                 p => p.ActorNumber == PhotonNetwork.LocalPlayer.ActorNumber);
-            Debug.Log(index + "playerTypeId");
             table = new Hashtable
             {
                 [index + "playerTypeId"] = PlayerConfigManager.playerInfo.Item1.typeId
