@@ -4949,7 +4949,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b954f34151144989851c787206556c87, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  photonView: {fileID: 561815563}
   rigidbody: {fileID: 2962727052994780943}
   collider: {fileID: 1206737807}
 --- !u!1 &3015639918345925037

@@ -223,12 +223,15 @@ namespace Dash.Scripts.GamePlay.Levels.Level1
                         config1.bullet.guid,
                         config1Locator.position,
                         config1Locator.rotation,
-                        data: new object[] {-flipX * Random.Range(2000, 3000) * Vector3.left}
+                        data: new object[]
+                        {
+                            -flipX * Random.Range(2000, 3000) * Vector3.left,
+                        }
                     );
                     if (go)
                     {
                         var view = go.GetComponent<BulletView>();
-                        view.RunTheBullet(
+                        view.Initialize(
                             photonView.ViewID,
                             LayerMask.NameToLayer("Player"),
                             config.gongJiLi / config1.locators.Length

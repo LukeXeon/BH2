@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using Dash.Scripts.GamePlay.Levels;
 using Photon.Pun;
@@ -6,9 +5,8 @@ using UnityEngine;
 
 namespace Dash.Scripts.GamePlay.View
 {
-    public class BulletView : MonoBehaviour, IPoolLifecycle
+    public class BulletView : MonoBehaviourPun, IPoolLifecycle, IPunInstantiateMagicCallback
     {
-        public PhotonView photonView;
         public new Rigidbody rigidbody;
         public new BoxCollider collider;
         private Coroutine coroutine;
@@ -16,7 +14,7 @@ namespace Dash.Scripts.GamePlay.View
         private int viewId;
         private int damage;
 
-        public void RunTheBullet(int id, int layer, int damage)
+        public void Initialize(int id, int layer, int damage)
         {
             viewId = id;
             this.damage = damage;
@@ -37,11 +35,6 @@ namespace Dash.Scripts.GamePlay.View
             {
                 collider.enabled = false;
             }
-        }
-
-        private void Start()
-        {
-            rigidbody.AddForce((Vector3) photonView.InstantiationData[0]);
         }
 
 
@@ -78,6 +71,11 @@ namespace Dash.Scripts.GamePlay.View
                 StopCoroutine(coroutine);
                 coroutine = null;
             }
+        }
+
+        public void OnPhotonInstantiate(PhotonMessageInfo info)
+        {
+            rigidbody.AddForce((Vector3) info.photonView.InstantiationData[0]);
         }
     }
 }

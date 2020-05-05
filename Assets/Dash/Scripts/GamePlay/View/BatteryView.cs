@@ -89,13 +89,13 @@ namespace Dash.Scripts.GamePlay.View
                     bullet.guid,
                     bulletLocator.position,
                     bulletLocator.rotation,
-                    data:new object[]
+                    data: new object[]
                     {
                         -flipX * Random.Range(2000, 3000) * Vector3.left
                     }
                 );
                 var bulletView = go.GetComponent<BulletView>();
-                bulletView.RunTheBullet(photonView.ViewID,
+                bulletView.Initialize(photonView.ViewID,
                     LayerMask.NameToLayer("NPC"),
                     damage);
             }
