@@ -40,8 +40,6 @@ namespace Dash.Scripts.GamePlay.Levels.Level1
         public SkeletonMecanim mecanim;
         public GameObject hitEffect;
 
-        //
-
         private ParticleSystem[] particleSystems0;
 
         [Header("Sync")]

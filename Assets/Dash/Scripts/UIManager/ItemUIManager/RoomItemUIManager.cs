@@ -29,7 +29,6 @@ namespace Dash.Scripts.UIManager.ItemUIManager
             for (var i = 0; i < 3; i++)
             {
                 roomInfo.CustomProperties.TryGetValue(i + "playerTypeId", out var playerTypeId);
-                Debug.Log(i + "playerTypeId" + playerTypeId);
                 if (playerTypeId != null && (int) playerTypeId != -1)
                 {
                     playerItems[i].gameObject.SetActive(true);

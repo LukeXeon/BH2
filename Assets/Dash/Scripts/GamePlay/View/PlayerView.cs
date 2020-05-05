@@ -157,6 +157,7 @@ namespace Dash.Scripts.GamePlay.View
         private void ToDie()
         {
             isDie = true;
+            Debug.Log(isDie);
             animator.ResetTrigger(TAOQIANG);
             animator.SetBool(IS_RUN, false);
             animator.SetBool(SINGLE, false);
@@ -220,30 +221,37 @@ namespace Dash.Scripts.GamePlay.View
 
         private void FixedUpdate()
         {
-            if (!isDie && photonView.IsMine)
+            if (photonView.IsMine)
             {
-                var h = ETCInput.GetAxis("Horizontal");
-                var v = ETCInput.GetAxis("Vertical");
-                h = h == 0 ? 0 : Mathf.Sign(h);
-                v = v == 0 ? 0 : Mathf.Sign(v);
-                if (new Vector2(h, v) != Vector2.zero)
+                if (isDie)
                 {
-                    animator.SetBool(IS_RUN, true);
-                    rigidbody.velocity = new Vector3(1 * h * speed, 0, 1 * v * speed);
+                    rigidbody.velocity = Vector3.zero;
                 }
                 else
                 {
-                    animator.SetBool(IS_RUN, false);
-                    rigidbody.velocity = Vector3.zero;
-                }
+                    var h = ETCInput.GetAxis("Horizontal");
+                    var v = ETCInput.GetAxis("Vertical");
+                    h = h == 0 ? 0 : Mathf.Sign(h);
+                    v = v == 0 ? 0 : Mathf.Sign(v);
+                    if (new Vector2(h, v) != Vector2.zero)
+                    {
+                        animator.SetBool(IS_RUN, true);
+                        rigidbody.velocity = new Vector3(1 * h * speed, 0, 1 * v * speed);
+                    }
+                    else
+                    {
+                        animator.SetBool(IS_RUN, false);
+                        rigidbody.velocity = Vector3.zero;
+                    }
 
-                if (h > 0)
-                {
-                    flipX = 1;
-                }
-                else if (h < 0)
-                {
-                    flipX = -1;
+                    if (h > 0)
+                    {
+                        flipX = 1;
+                    }
+                    else if (h < 0)
+                    {
+                        flipX = -1;
+                    }
                 }
             }
 

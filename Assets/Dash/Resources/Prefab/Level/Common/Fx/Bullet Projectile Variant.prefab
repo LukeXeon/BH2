@@ -15,6 +15,10 @@ PrefabInstance:
       propertyPath: ObservedComponents.Array.data[0]
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 561815563, guid: f3f858992e1929141a62cca77568f81d, type: 3}
+      propertyPath: ObservedComponentsFoldoutOpen
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1604533757453098696, guid: f3f858992e1929141a62cca77568f81d,
         type: 3}
       propertyPath: guid

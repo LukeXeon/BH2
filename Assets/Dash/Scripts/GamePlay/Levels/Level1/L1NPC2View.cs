@@ -27,10 +27,12 @@ namespace Dash.Scripts.GamePlay.Levels.Level1
         }
 
         public NPC2Config config1;
+
         [Header("Sync")]
 
         //
         private HashSet<int> viewIds;
+
         private bool isBusy;
         private int targetLayer;
         private ParticleSystem[] particleSystems;
@@ -47,7 +49,7 @@ namespace Dash.Scripts.GamePlay.Levels.Level1
                 system.Stop();
             }
         }
-        
+
 
         private void UpdateMovement()
         {
@@ -155,7 +157,7 @@ namespace Dash.Scripts.GamePlay.Levels.Level1
                 }
 
                 var view = other.GetComponent<ActorView>();
-                if (view)
+                if (view && !view.isDie)
                 {
                     viewIds.Add(view.photonView.ViewID);
                 }
@@ -178,7 +180,7 @@ namespace Dash.Scripts.GamePlay.Levels.Level1
             {
                 return;
             }
-            
+
             animator.SetTrigger(HIT);
 
             var damage = Mathf.Max(0,

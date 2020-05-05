@@ -1,7 +1,7 @@
 using System;
-using System.Linq;
 using Photon.Pun;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Dash.Scripts.GamePlay.View
 {
@@ -20,7 +20,7 @@ namespace Dash.Scripts.GamePlay.View
             base.Awake();
             hp = Mathf.Max(config.shengMingZhi, 1);
             targetLayerMask = LayerMask.GetMask("Player");
-            targetCollider = new Collider[1];
+            targetCollider = new Collider[3];
         }
 
         [Serializable]
@@ -35,23 +35,29 @@ namespace Dash.Scripts.GamePlay.View
 
         protected void RequestTargetView()
         {
-            Physics.OverlapSphereNonAlloc(
+            var count = Physics.OverlapSphereNonAlloc(
                 transform.position,
                 config.findPlayerRange,
                 targetCollider,
                 targetLayerMask
             );
-            var c = targetCollider.FirstOrDefault();
-            if (c != null)
+            Collider c;
+            do
             {
-                var Actor = c.GetComponent<ActorView>();
-                if (Actor && !Actor.isDie)
+                var index = Random.Range(0, count);
+                c = targetCollider[index];
+                if (c)
                 {
-                    target = Actor.photonView;
-                    targetActor = Actor;
-                    return;
+                    var Actor = c.GetComponent<ActorView>();
+                    if (Actor && !Actor.isDie)
+                    {
+                        target = Actor.photonView;
+                        targetActor = Actor;
+                        return;
+                    }
                 }
-            }
+            } while (c == null);
+
 
             targetActor = null;
             target = null;

@@ -19,29 +19,11 @@ namespace Dash.Scripts.GamePlay.View
         public Transform fireRoot;
         private int damage;
 
-        public void StartWork(int damage, int time)
+        public void Initialize(int damage)
         {
             this.damage = damage;
-
-            IEnumerator Wait()
-            {
-                var y = new WaitForSeconds(1);
-                for (int i = time; i >= 1; i--)
-                {
-                    text.text = i.ToString();
-                    yield return y;
-                }
-
-                photonView.RPC(nameof(SyncBatteryDestroy), RpcTarget.All);
-                if (photonView.IsMine)
-                {
-                    PhotonNetwork.Destroy(gameObject);
-                }
-            }
-
-            StartCoroutine(Wait());
         }
-
+        
         private void Awake()
         {
             particleDes = bombRoot.GetComponentsInChildren<ParticleSystem>(true);
@@ -65,6 +47,24 @@ namespace Dash.Scripts.GamePlay.View
             var local = transform1.localScale;
             local.x = (float) photonView.InstantiationData[0];
             transform1.localScale = local;
+            var time = (int) photonView.InstantiationData[1];
+            IEnumerator Wait()
+            {
+                var y = new WaitForSeconds(1);
+                for (int i = time; i >= 1; i--)
+                {
+                    text.text = i.ToString();
+                    yield return y;
+                }
+
+                photonView.RPC(nameof(Fire), RpcTarget.All);
+                if (photonView.IsMine)
+                {
+                    PhotonNetwork.Destroy(gameObject);
+                }
+            }
+
+            StartCoroutine(Wait());
         }
 
 
@@ -102,7 +102,7 @@ namespace Dash.Scripts.GamePlay.View
         }
 
         [PunRPC]
-        public void SyncBatteryDestroy()
+        public void Fire()
         {
             bombRoot.SetParent(null);
             bombRoot.gameObject.SetActive(true);
