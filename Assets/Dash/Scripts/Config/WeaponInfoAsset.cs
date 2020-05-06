@@ -7,7 +7,7 @@ namespace Dash.Scripts.Config
 {
     [CreateAssetMenu(fileName = "Weapon", menuName = "Info/Weapon")]
     [Serializable]
-    public class WeaponInfoAsset : ScriptableObject, ITypedAsset
+    public class WeaponInfoAsset : ScriptableObject
     {
         //显示名称
         public string displayName;
@@ -30,12 +30,6 @@ namespace Dash.Scripts.Config
         public GameObject weaponView;
 
         public TextAsset xiaoGuo;
-        
-        public int TypeId
-        {
-            get => typeId;
-            set => typeId = value;
-        }
 
         [Serializable]
         public struct SlotItem

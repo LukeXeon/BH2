@@ -3,7 +3,7 @@ using UnityEngine;
 namespace Dash.Scripts.Config
 {
     [CreateAssetMenu(fileName = "ShengHen", menuName = "Info/ShengHen")]
-    public class SealInfoAsset : ScriptableObject, ITypedAsset
+    public class SealInfoAsset : ScriptableObject
     {
         public string displayName;
         public MonoBehaviour effect;
@@ -19,11 +19,5 @@ namespace Dash.Scripts.Config
         public int shengMingZhi2;
         public int typeId;
         public TextAsset xiaoGuo;
-
-        public int TypeId
-        {
-            get => typeId;
-            set => typeId = value;
-        }
     }
 }

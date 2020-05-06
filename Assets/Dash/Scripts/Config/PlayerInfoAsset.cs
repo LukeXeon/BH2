@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Dash.Scripts.Config
 {
     [CreateAssetMenu(fileName = "Player", menuName = "Info/Player")]
-    public class PlayerInfoAsset : ScriptableObject, ITypedAsset
+    public class PlayerInfoAsset : ScriptableObject
     {
         [Header("用于显示")] public string displayName;
         public TextAsset jieShao;
@@ -19,11 +19,5 @@ namespace Dash.Scripts.Config
         public int shengMingZhi2;
         public Sprite icon;
         [Header("其他")] public int typeId;
-
-        public int TypeId
-        {
-            get => typeId;
-            set => typeId = value;
-        }
     }
 }
