@@ -46,7 +46,7 @@ namespace Dash.Scripts.GamePlay.View
             ))
             {
                 var actorView = shootHit.collider.GetComponent<ActorView>();
-                if (actorView)
+                if (actorView && !actorView.isDie)
                 {
                     var value = LocalPlayer.gongJiLi;
                     actorView.photonView.RPC(

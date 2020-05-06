@@ -43,7 +43,7 @@ namespace Dash.Scripts.UIManager
 
             back.onClick.AddListener(Close);
             root.SetActive(true);
-            var info = GameConfigManager.shengHenTable[shengHen.typeId];
+            var info = GameConfigManager.SealsTable[shengHen.typeId];
             image.sprite = info.image;
             displayName.text = info.displayName;
             var runtime = RuntimeShengHenInfo.Build(shengHen);

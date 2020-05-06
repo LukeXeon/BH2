@@ -17,7 +17,7 @@ namespace Dash.Scripts.UIManager
 
         public void Apply(SealEntity shengHen, Action<SealEntity> callack)
         {
-            var info = GameConfigManager.shengHenTable[shengHen.typeId];
+            var info = GameConfigManager.SealsTable[shengHen.typeId];
             image.sprite = info.image;
             level.text = "LV " + GameConfigManager.GetShengHenLevel(shengHen.exp).count;
             displayName.text = info.displayName;

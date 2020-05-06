@@ -32,7 +32,7 @@ namespace Dash.Scripts.GamePlay.Config
 
             foreach (var s in shengHens)
             {
-                var sInfo = GameConfigManager.shengHenTable[s.typeId];
+                var sInfo = GameConfigManager.SealsTable[s.typeId];
                 var sLevel = GameConfigManager.GetShengHenLevel(s.exp);
                 fangYuLi += sInfo.fangYuLi;
                 fangYuLi += sInfo.fangYuLi2 * sLevel.count;

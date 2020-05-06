@@ -16,8 +16,8 @@ namespace Dash.Scripts.Config
         public static readonly SortedDictionary<int, PlayerInfoAsset> playerTable;
         public static readonly SortedDictionary<int, WeaponInfoAsset> weaponTable;
         public static readonly SortedDictionary<string, WeaponTypeInfoAsset> weaponTypeTable;
-        public static readonly SortedDictionary<int, SealInfoAsset> shengHenTable;
-        public static readonly SortedDictionary<int, GuanQiaInfoAsset> guanQiaInfoTable;
+        public static readonly SortedDictionary<int, SealInfoAsset> SealsTable;
+        public static readonly SortedDictionary<int, GuanQiaInfoAsset> LevelsInfoTable;
 
         static GameConfigManager()
         {
@@ -27,14 +27,14 @@ namespace Dash.Scripts.Config
             weaponTable = Resources.LoadAll<WeaponInfoAsset>("Config/Weapon").ToSortedDictionary(i => i.typeId, i => i);
             weaponTypeTable = Resources.LoadAll<WeaponTypeInfoAsset>("Config/WeaponType")
                 .ToSortedDictionary(i => i.matchName, i => i);
-            shengHenTable = Resources.LoadAll<SealInfoAsset>("Config/ShengHen")
+            SealsTable = Resources.LoadAll<SealInfoAsset>("Config/Seal")
                 .ToSortedDictionary(i => i.typeId, i => i);
-            guanQiaInfoTable = Resources.LoadAll<GuanQiaInfoAsset>("Config/GuanQia")
+            LevelsInfoTable = Resources.LoadAll<GuanQiaInfoAsset>("Config/Level")
                 .ToSortedDictionary(i => i.typeId, i => i);
             levelInfo = Resources.LoadAll<LevelInfoAsset>("Config/Game").Single();
             maxPlayerId = playerTable.Keys.Max(o => o);
             maxWeaponId = weaponTable.Keys.Max(o => o);
-            maxShengHeId = shengHenTable.Keys.Max(o => o);
+            maxShengHeId = SealsTable.Keys.Max(o => o);
         }
 
         public static LevelInfo GetWeaponLevel(int exp)

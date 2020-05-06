@@ -56,7 +56,7 @@ namespace Dash.Scripts.GamePlay.Levels
         {
             text.text = "Loading";
             PhotonNetwork.CurrentRoom.CustomProperties.TryGetValue("typeId", out var typeId);
-            var scene = GameConfigManager.guanQiaInfoTable[typeId as int? ?? 0];
+            var scene = GameConfigManager.LevelsInfoTable[typeId as int? ?? 0];
             loadingRoot.gameObject.SetActive(true);
             loadingRoot.sprite = scene.image;
             var op = SceneManager.LoadSceneAsync(scene.sceneName);

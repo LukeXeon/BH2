@@ -24,7 +24,7 @@ namespace Dash.Scripts.UIManager.ItemUIManager
 
             roomInfo.CustomProperties.TryGetValue("typeId", out var typeId);
             if (typeId != null)
-                guanQiaMing.text = GameConfigManager.guanQiaInfoTable[(int) typeId]?.displayName ?? "...";
+                guanQiaMing.text = GameConfigManager.LevelsInfoTable[(int) typeId]?.displayName ?? "...";
 
             for (var i = 0; i < 3; i++)
             {

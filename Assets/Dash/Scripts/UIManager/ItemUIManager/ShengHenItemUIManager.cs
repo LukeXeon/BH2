@@ -26,7 +26,7 @@ namespace Dash.Scripts.UIManager.ItemUIManager
         {
             if (shengHen != null)
             {
-                var info = GameConfigManager.shengHenTable[shengHen.typeId];
+                var info = GameConfigManager.SealsTable[shengHen.typeId];
                 level.text = "LV " + GameConfigManager.GetShengHenLevel(shengHen.exp).count;
                 image.sprite = info.image;
                 displayName.text = info.displayName;

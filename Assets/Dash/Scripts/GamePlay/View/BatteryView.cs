@@ -17,15 +17,18 @@ namespace Dash.Scripts.GamePlay.View
         public GuidIndexer bullet;
         public TextMeshPro text;
         public Transform fireRoot;
+        public AudioClip clip;
         private int damage;
+        private AudioView audioView;
 
         public void Initialize(int damage)
         {
             this.damage = damage;
         }
-        
+
         private void Awake()
         {
+            audioView = AudioView.Create(transform);
             particleDes = bombRoot.GetComponentsInChildren<ParticleSystem>(true);
             particleFire = fireRoot.GetComponentsInChildren<ParticleSystem>(true);
             foreach (var particleSystemsDe in particleDes)
@@ -48,6 +51,7 @@ namespace Dash.Scripts.GamePlay.View
             local.x = (float) photonView.InstantiationData[0];
             transform1.localScale = local;
             var time = (int) photonView.InstantiationData[1];
+
             IEnumerator Wait()
             {
                 var y = new WaitForSeconds(1);
@@ -57,7 +61,7 @@ namespace Dash.Scripts.GamePlay.View
                     yield return y;
                 }
 
-                photonView.RPC(nameof(Fire), RpcTarget.All);
+                photonView.RPC(nameof(DestroyEffect), RpcTarget.All);
                 if (photonView.IsMine)
                 {
                     PhotonNetwork.Destroy(gameObject);
@@ -66,8 +70,7 @@ namespace Dash.Scripts.GamePlay.View
 
             StartCoroutine(Wait());
         }
-
-
+        
         public void OnFire()
         {
             photonView.RPC(nameof(BatteryFire), RpcTarget.All);
@@ -81,7 +84,10 @@ namespace Dash.Scripts.GamePlay.View
                 system.Simulate(0);
                 system.Play();
             }
-
+            var source = audioView.GetOrCreateSource();
+            source.clip = clip;
+            source.time = 0;
+            source.Play();
             if (photonView.IsMine)
             {
                 var flipX = gunRoot.localScale.x;
@@ -95,14 +101,16 @@ namespace Dash.Scripts.GamePlay.View
                     }
                 );
                 var bulletView = go.GetComponent<BulletView>();
-                bulletView.Initialize(photonView.ViewID,
+                bulletView.Initialize(
+                    photonView.ViewID,
                     LayerMask.NameToLayer("NPC"),
-                    damage);
+                    damage
+                );
             }
         }
 
         [PunRPC]
-        public void Fire()
+        public void DestroyEffect()
         {
             bombRoot.SetParent(null);
             bombRoot.gameObject.SetActive(true);
@@ -111,7 +119,7 @@ namespace Dash.Scripts.GamePlay.View
                 particleSystemsDe.Simulate(0);
                 particleSystemsDe.Play();
             }
-
+            
             Destroy(bombRoot.gameObject, 2);
         }
     }

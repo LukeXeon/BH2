@@ -5,7 +5,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Dash.Scripts.UIManager
+namespace Dash.Scripts.UIManager.ItemUIManager
 {
     public class WeaponCardUIManager : MonoBehaviour
     {
@@ -17,6 +17,7 @@ namespace Dash.Scripts.UIManager
 
         public void Apply(WeaponEntity weapon, Action<WeaponEntity> callback)
         {
+            Debug.Log(weapon.typeId);
             var info = GameConfigManager.weaponTable[weapon.typeId];
             image.sprite = info.sprite;
             level.text = "LV " + GameConfigManager.GetWeaponLevel(weapon.exp).count;

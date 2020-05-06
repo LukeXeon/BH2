@@ -15,11 +15,18 @@ MonoBehaviour:
   displayName: "\u7535\u952F"
   gongJiLi: 80
   gongJiLi2: 10
-  sheCheng: 1
+  sheCheng: 4
   sheSu: 15
-  slots: []
-  sprite: {fileID: 0}
+  slots:
+  - name: OWeapon
+    attachments:
+    - name: dianju
+      sprite: {fileID: 21300000, guid: 55d8227f53b4d66498f3b7a314db5149, type: 3}
+    - name: dianju2
+      sprite: {fileID: 21300000, guid: 27f94aeb60af6c3459f6e4f5b4670510, type: 3}
+  sprite: {fileID: 21300000, guid: 55d8227f53b4d66498f3b7a314db5149, type: 3}
   typeId: 2
   weaponType: {fileID: 11400000, guid: 73a18f88f2bcc3f4188eb26dd02df27a, type: 2}
-  weaponView: {fileID: 0}
+  weaponView: {fileID: 1615621078881779901, guid: e73049c4bb60fe146a068a40f5ef0edb,
+    type: 3}
   xiaoGuo: {fileID: 0}

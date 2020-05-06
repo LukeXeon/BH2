@@ -42,7 +42,7 @@ namespace Dash.Scripts.UIManager.ItemUIManager
                     break;
                 case LuckDrawResult.Type.Seal:
                 {
-                    var info = GameConfigManager.shengHenTable[result.typeId];
+                    var info = GameConfigManager.SealsTable[result.typeId];
                     image.sprite = info.image;
                     title.text = info.displayName;
                     content.text = "圣痕已获得";

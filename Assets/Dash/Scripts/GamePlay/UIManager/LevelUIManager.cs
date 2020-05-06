@@ -63,8 +63,6 @@ namespace Dash.Scripts.GamePlay.UIManager
 
                 var last = LocalPlayer.weaponIndex - 1;
                 if (last < 0) last = PlayerConfigManager.weaponInfos.Count - 1;
-
-                Debug.Log(last);
                 if (last == LocalPlayer.weaponIndex) return;
 
                 var info = PlayerConfigManager.weaponInfos[last].Item1;

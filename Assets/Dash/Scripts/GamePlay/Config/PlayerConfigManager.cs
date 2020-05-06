@@ -32,7 +32,7 @@ namespace Dash.Scripts.GamePlay.Config
 
             foreach (var eInUseShengHen in completePlayer.seals)
             {
-                var info = GameConfigManager.shengHenTable[eInUseShengHen.typeId];
+                var info = GameConfigManager.SealsTable[eInUseShengHen.typeId];
                 var runtimeInfo = RuntimeShengHenInfo.Build(eInUseShengHen);
                 shengHenInfos.Add(Tuple.Create(info, runtimeInfo));
             }

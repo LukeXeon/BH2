@@ -1,7 +1,8 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Dash.Scripts.Config;
-using Dash.Scripts.Core;
 using Dash.Scripts.GamePlay.Config;
 using Photon.Pun;
 using Spine.Unity;
@@ -9,7 +10,7 @@ using UnityEngine;
 
 namespace Dash.Scripts.GamePlay.View
 {
-    public class PlayerView : ActorView, IPunObservable, IHostView
+    public class PlayerView : ActorView, IPunObservable
     {
         private static readonly int IS_RUN = Animator.StringToHash("is_run");
         private static readonly int TAOQIANG = Animator.StringToHash("taoqiang");
@@ -18,6 +19,8 @@ namespace Dash.Scripts.GamePlay.View
         private static readonly int IS_LIVE = Animator.StringToHash("is_live");
         private static readonly int KAIQIANG_SPEED = Animator.StringToHash("kaiqiang_speed");
         private static readonly int HIT = Animator.StringToHash("hit");
+        private static readonly Dictionary<(Type, string), MethodInfo> methodInfos =
+            new Dictionary<(Type, string), MethodInfo>();
 
 
         public Animator animator;
@@ -178,7 +181,18 @@ namespace Dash.Scripts.GamePlay.View
         {
             if (weaponView)
             {
-                this.HandleChildRpc(weaponView, method, args);
+                var type = weaponView.GetType();
+                methodInfos.TryGetValue((type, method), out var methodInfo);
+                if (methodInfo == null)
+                {
+                    methodInfo = type.GetMethod(method);
+                    methodInfos[(type, method)] = methodInfo;
+                }
+
+                if (methodInfo != null)
+                {
+                    methodInfo.Invoke(weaponView, args);
+                }
             }
         }
 
