@@ -1,8 +1,7 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using Dash.Scripts.Config;
+using Dash.Scripts.Core;
 using Dash.Scripts.GamePlay.Config;
 using Photon.Pun;
 using Spine.Unity;
@@ -16,7 +15,7 @@ namespace Dash.Scripts.GamePlay.View
         private static readonly int TAOQIANG = Animator.StringToHash("taoqiang");
         private static readonly int SINGLE = Animator.StringToHash("kaiqiang_single");
         private static readonly int LIANSHE = Animator.StringToHash("kaiqiang_lianshe");
-        private static readonly int DIE = Animator.StringToHash("die");
+        private static readonly int IS_LIVE = Animator.StringToHash("is_live");
         private static readonly int KAIQIANG_SPEED = Animator.StringToHash("kaiqiang_speed");
         private static readonly int HIT = Animator.StringToHash("hit");
 
@@ -145,7 +144,7 @@ namespace Dash.Scripts.GamePlay.View
                 LocalPlayer.hp -= damage2;
                 if (LocalPlayer.hp <= 0)
                 {
-                    photonView.RPC(nameof(ToDie), RpcTarget.All);
+                    photonView.RPC(nameof(OnDie), RpcTarget.All);
                 }
 
                 photonView.RPC(nameof(OnSyncDamageText), RpcTarget.All, value);
@@ -154,16 +153,15 @@ namespace Dash.Scripts.GamePlay.View
 
 
         [PunRPC]
-        private void ToDie()
+        private void OnDie()
         {
             isDie = true;
-            Debug.Log(isDie);
             animator.ResetTrigger(TAOQIANG);
-            animator.SetBool(IS_RUN, false);
-            animator.SetBool(SINGLE, false);
-            animator.SetBool(LIANSHE, false);
+            animator.ResetTrigger(SINGLE);
             animator.ResetTrigger(HIT);
-            animator.SetTrigger(DIE);
+            animator.SetBool(IS_RUN, false);
+            animator.SetBool(LIANSHE, false);
+            animator.SetBool(IS_LIVE, false);
             onActorDie.Invoke();
         }
 

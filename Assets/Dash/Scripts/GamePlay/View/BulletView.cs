@@ -48,7 +48,7 @@ namespace Dash.Scripts.GamePlay.View
             if (photonView.IsMine && other.gameObject.layer == targetLayer)
             {
                 var view = other.GetComponent<ActorView>();
-                if (view)
+                if (view && !view.isDie)
                 {
                     view.photonView.RPC(nameof(view.OnDamage), RpcTarget.All, viewId, damage);
                 }
