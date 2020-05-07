@@ -6,7 +6,7 @@ using Spine;
 using Spine.Unity;
 using UnityEngine;
 
-namespace Dash.Scripts.GamePlay.View
+namespace Dash.Scripts.Gameplay.View
 {
     public class PoseManager : MonoBehaviour
     {

@@ -4,7 +4,7 @@ using Photon.Pun;
 using TMPro;
 using UnityEngine;
 
-namespace Dash.Scripts.GamePlay.View
+namespace Dash.Scripts.Gameplay.View
 {
     public class BatteryView : MonoBehaviour
     {

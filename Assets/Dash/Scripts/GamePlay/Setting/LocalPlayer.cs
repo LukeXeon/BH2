@@ -1,7 +1,7 @@
 using Photon.Pun;
 using UnityEngine;
 
-namespace Dash.Scripts.GamePlay.Setting
+namespace Dash.Scripts.Gameplay.Setting
 {
     public static class LocalPlayer
     {

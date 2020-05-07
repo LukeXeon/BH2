@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace Dash.Scripts.GamePlay.Levels
+namespace Dash.Scripts.Gameplay.Levels
 {
     public class TriggerEvent : MonoBehaviour
     {

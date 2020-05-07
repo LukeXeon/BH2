@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using Dash.Scripts.Cloud;
-using Dash.Scripts.GamePlay.Setting;
+using Dash.Scripts.Gameplay.Setting;
 using Dash.Scripts.UI;
 using Michsky.UI.ModernUIPack;
 using UnityEngine;

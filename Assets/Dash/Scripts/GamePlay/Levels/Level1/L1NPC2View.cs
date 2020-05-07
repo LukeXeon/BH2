@@ -1,13 +1,13 @@
 using System;
 using System.Collections.Generic;
+using Dash.Scripts.Gameplay.View;
 using Dash.Scripts.Setting;
-using Dash.Scripts.GamePlay.View;
 using Photon.Pun;
 using Spine.Unity;
 using UnityEngine;
 using UnityEngine.AI;
 
-namespace Dash.Scripts.GamePlay.Levels.Level1
+namespace Dash.Scripts.Gameplay.Levels.Level1
 {
     public class L1NPC2View : NpcView, IPunObservable
     {

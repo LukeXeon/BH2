@@ -2,9 +2,9 @@
 using System.Linq;
 using Dash.Scripts.Setting;
 using Dash.Scripts.Core;
-using Dash.Scripts.GamePlay.Setting;
-using Dash.Scripts.GamePlay.Levels;
-using Dash.Scripts.GamePlay.View;
+using Dash.Scripts.Gameplay.Levels;
+using Dash.Scripts.Gameplay.Setting;
+using Dash.Scripts.Gameplay.View;
 using Michsky.UI.ModernUIPack;
 using Photon.Pun;
 using Photon.Realtime;
@@ -14,7 +14,7 @@ using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-namespace Dash.Scripts.GamePlay.UIManager
+namespace Dash.Scripts.Gameplay.UIManager
 {
     public class LevelUIManager : MonoBehaviourPunCallbacks
     {

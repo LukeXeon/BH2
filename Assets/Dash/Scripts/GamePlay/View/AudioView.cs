@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Dash.Scripts.GamePlay.View
+namespace Dash.Scripts.Gameplay.View
 {
     public class AudioView : MonoBehaviour
     {

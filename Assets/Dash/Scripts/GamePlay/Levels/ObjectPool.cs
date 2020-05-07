@@ -5,7 +5,7 @@ using Dash.Scripts.Setting;
 using Dash.Scripts.Core;
 using UnityEngine;
 
-namespace Dash.Scripts.GamePlay.Levels
+namespace Dash.Scripts.Gameplay.Levels
 {
     public sealed class ObjectPool : MonoBehaviour
     {

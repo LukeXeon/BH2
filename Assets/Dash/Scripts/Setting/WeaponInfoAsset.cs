@@ -1,5 +1,5 @@
 ﻿using System;
-using Dash.Scripts.GamePlay.View;
+using Dash.Scripts.Gameplay.View;
 using UnityEditor;
 using UnityEngine;
 

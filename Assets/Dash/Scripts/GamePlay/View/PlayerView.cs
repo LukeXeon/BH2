@@ -2,13 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Dash.Scripts.Gameplay.Setting;
 using Dash.Scripts.Setting;
-using Dash.Scripts.GamePlay.Setting;
 using Photon.Pun;
 using Spine.Unity;
 using UnityEngine;
 
-namespace Dash.Scripts.GamePlay.View
+namespace Dash.Scripts.Gameplay.View
 {
     public class PlayerView : ActorView, IPunObservable
     {

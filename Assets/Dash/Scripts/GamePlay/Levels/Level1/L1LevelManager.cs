@@ -2,11 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Dash.Scripts.Core;
-using Dash.Scripts.GamePlay.UIManager;
+using Dash.Scripts.Gameplay.UIManager;
 using Photon.Pun;
 using UnityEngine;
 
-namespace Dash.Scripts.GamePlay.Levels.Level1
+namespace Dash.Scripts.Gameplay.Levels.Level1
 {
     public class L1LevelManager : LevelManager
     {

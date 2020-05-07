@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Dash.Scripts.GamePlay.Levels
+namespace Dash.Scripts.Gameplay.Levels
 {
     public class LevelDoorManager : MonoBehaviour
     {

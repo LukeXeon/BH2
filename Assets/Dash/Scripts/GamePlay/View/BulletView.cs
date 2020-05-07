@@ -1,9 +1,9 @@
 using System.Collections;
-using Dash.Scripts.GamePlay.Levels;
+using Dash.Scripts.Gameplay.Levels;
 using Photon.Pun;
 using UnityEngine;
 
-namespace Dash.Scripts.GamePlay.View
+namespace Dash.Scripts.Gameplay.View
 {
     public class BulletView : MonoBehaviourPun, IPoolLifecycle, IPunInstantiateMagicCallback
     {

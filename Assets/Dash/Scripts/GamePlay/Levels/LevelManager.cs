@@ -4,13 +4,13 @@ using System.Collections.Generic;
 using System.Linq;
 using Cinemachine;
 using Dash.Scripts.Core;
-using Dash.Scripts.GamePlay.Setting;
-using Dash.Scripts.GamePlay.UIManager;
-using Dash.Scripts.GamePlay.View;
+using Dash.Scripts.Gameplay.Setting;
+using Dash.Scripts.Gameplay.UIManager;
+using Dash.Scripts.Gameplay.View;
 using Photon.Pun;
 using UnityEngine;
 
-namespace Dash.Scripts.GamePlay.Levels
+namespace Dash.Scripts.Gameplay.Levels
 {
     public abstract class LevelManager : MonoBehaviour
     {

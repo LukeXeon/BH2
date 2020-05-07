@@ -1,9 +1,9 @@
 using Dash.Scripts.Core;
-using Dash.Scripts.GamePlay.Setting;
+using Dash.Scripts.Gameplay.Setting;
 using Photon.Pun;
 using UnityEngine;
 
-namespace Dash.Scripts.GamePlay.View
+namespace Dash.Scripts.Gameplay.View
 {
     public class PlaceBatteryView : WeaponView
     {

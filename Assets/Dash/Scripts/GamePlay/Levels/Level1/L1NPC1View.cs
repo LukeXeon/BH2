@@ -2,14 +2,14 @@
 using System.Linq;
 using Dash.Scripts.Setting;
 using Dash.Scripts.Core;
-using Dash.Scripts.GamePlay.View;
+using Dash.Scripts.Gameplay.View;
 using Photon.Pun;
 using Spine.Unity;
 using UnityEngine;
 using UnityEngine.AI;
 using Random = UnityEngine.Random;
 
-namespace Dash.Scripts.GamePlay.Levels.Level1
+namespace Dash.Scripts.Gameplay.Levels.Level1
 {
     public class L1NPC1View : NpcView, IPunObservable
     {

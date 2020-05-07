@@ -4,7 +4,7 @@ using Dash.Scripts.Cloud;
 using Dash.Scripts.Setting;
 using UnityEngine;
 
-namespace Dash.Scripts.GamePlay.Setting
+namespace Dash.Scripts.Gameplay.Setting
 {
     public static class PlayerConfigManager
     {
