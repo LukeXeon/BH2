@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Dash.Scripts.Cloud;
 using Dash.Scripts.UI;
 using Michsky.UI.ModernUIPack;
-using Parse;
 using Photon.Pun;
 using TMPro;
 using UnityEngine;
@@ -121,8 +120,6 @@ namespace Dash.Scripts.UIManager
                     notifySucceed.Show("登录成功", "您已成功登录");
                     windowManager.CloseWindow();
                     yiJingDengLuRoot.SetActive(true);
-                    PlayerPrefs.SetString("token", ParseUser.CurrentUser.SessionToken);
-                    PlayerPrefs.Save();
                 }
                 catch (Exception e)
                 {
@@ -145,8 +142,6 @@ namespace Dash.Scripts.UIManager
                 try
                 {
                     await CloudManager.LogOut();
-                    PlayerPrefs.DeleteKey("token");
-                    PlayerPrefs.Save();
                     yiJingDengLuRoot.SetActive(false);
                     StartCoroutine(ShowWindow1());
                 }
@@ -181,8 +176,6 @@ namespace Dash.Scripts.UIManager
                     notifySucceed.Show("登录成功", "您已成功登录");
                     windowManager.CloseWindow();
                     yiJingDengLuRoot.SetActive(true);
-                    PlayerPrefs.SetString("token", ParseUser.CurrentUser.SessionToken);
-                    PlayerPrefs.Save();
                 }
                 catch (TaskCanceledException e)
                 {
@@ -245,6 +238,7 @@ namespace Dash.Scripts.UIManager
                 {
                     await CloudManager.LogInWithToken(t);
                     yiJingDengLuRoot.SetActive(true);
+                    notifySucceed.Show("团长，欢迎回来", CloudManager.GetUserInfo().name + " 已经登录");
                 }
                 catch (Exception e)
                 {

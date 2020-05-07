@@ -275,6 +275,8 @@ namespace Dash.Scripts.Cloud
             {
                 await Task.Yield();
             }
+            PlayerPrefs.SetString("token", ParseUser.CurrentUser.SessionToken);
+            PlayerPrefs.Save();
         }
 
         public static async Task LogInWithToken(string token)
@@ -286,8 +288,9 @@ namespace Dash.Scripts.Cloud
         public static async Task LogIn(string username, string password)
         {
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
+            {
                 throw new ArgumentException("用户名和密码不能为空");
-
+            }
             await ParseUser.LogInAsync(username, password);
             await HandleLogin();
         }
@@ -379,6 +382,8 @@ namespace Dash.Scripts.Cloud
         {
             PhotonNetwork.Disconnect();
             await ParseUser.LogOutAsync();
+            PlayerPrefs.DeleteKey("token");
+            PlayerPrefs.Save();
         }
 
         public static PlayerEntity GetCurrentPlayer()
