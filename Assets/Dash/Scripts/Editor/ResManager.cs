@@ -25,14 +25,16 @@ namespace Dash.Scripts.Editor
             EditorApplication.projectChanged += UpdateInfoSettings;
         }
 
+        [DidReloadScripts]
         internal static void UpdateIndexersList()
         {
             var asset = Resources.Load<GlobalSettingAsset>("GlobalSetting");
             var indexers = AssetDatabase.FindAssets("t:prefab")
-                .Select(o => AssetDatabase.LoadAssetAtPath<GameObject>(AssetDatabase.GUIDToAssetPath(o)))
-                .Select(o => o.GetComponent<GuidIndexer>())
+                .Select(AssetDatabase.GUIDToAssetPath)
+                .Select(AssetDatabase.LoadAssetAtPath<GuidIndexer>)
                 .Where(o => o != null)
                 .ToArray();
+            Debug.Log(indexers.Length);
             foreach (var view in indexers)
             {
                 var id = Array.IndexOf(indexers, view).ToString();
@@ -46,8 +48,7 @@ namespace Dash.Scripts.Editor
             asset.networkIndexers = indexers;
             EditorUtility.SetDirty(asset);
         }
-
-        [DidReloadScripts]
+        
         private static void UpdateInfoSettings()
         {
             var asset = Resources.Load<GlobalSettingAsset>("GlobalSetting");
