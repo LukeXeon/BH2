@@ -1,6 +1,8 @@
 using System;
 using Dash.Scripts.Core;
+using Dash.Scripts.Setting;
 using UnityEditor;
+using UnityEngine;
 
 namespace Dash.Scripts.Editor
 {
@@ -13,12 +15,12 @@ namespace Dash.Scripts.Editor
             if (EditorUtility.IsPersistent(view.gameObject))
             {
                 int index = -1;
-                var views = GlobalIndexManager.GetOrCreateInstance().indexers;
+                var views = Resources.Load<GlobalSettingAsset>("GlobalSetting")?.networkIndexers;
                 if (views == null || string.IsNullOrEmpty(view.guid) ||
                     (index = Array.IndexOf(views, view)) == -1)
                 {
-                    GlobalIndexManager.UpdatePrefabList();
-                    views = GlobalIndexManager.GetOrCreateInstance().indexers;
+                    ResManager.UpdateIndexersList();
+                    views = Resources.Load<GlobalSettingAsset>("GlobalSetting").networkIndexers;
                 }
 
                 var id = (index == -1 ? Array.IndexOf(views, view) : index).ToString();

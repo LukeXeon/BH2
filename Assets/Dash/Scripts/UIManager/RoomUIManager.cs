@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using agora_gaming_rtc;
 using Dash.Scripts.Cloud;
-using Dash.Scripts.GamePlay.Config;
+using Dash.Scripts.GamePlay.Setting;
 using Dash.Scripts.GamePlay.Levels;
 using Dash.Scripts.UI;
 using Dash.Scripts.UIManager.ItemUIManager;

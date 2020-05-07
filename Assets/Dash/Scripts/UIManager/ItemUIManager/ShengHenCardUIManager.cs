@@ -1,6 +1,6 @@
 using System;
 using Dash.Scripts.Cloud;
-using Dash.Scripts.Config;
+using Dash.Scripts.Setting;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -17,9 +17,9 @@ namespace Dash.Scripts.UIManager
 
         public void Apply(SealEntity shengHen, Action<SealEntity> callack)
         {
-            var info = GameConfigManager.SealsTable[shengHen.typeId];
+            var info = GameSettingManager.SealsTable[shengHen.typeId];
             image.sprite = info.image;
-            level.text = "LV " + GameConfigManager.GetShengHenLevel(shengHen.exp).count;
+            level.text = "LV " + GameSettingManager.GetSealLevel(shengHen.exp).count;
             displayName.text = info.displayName;
             markInUse.SetActive(shengHen.player != null);
             button.onClick.AddListener(() => callack(shengHen));

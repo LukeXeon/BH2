@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using Dash.Scripts.Config;
+using Dash.Scripts.Setting;
 using Spine;
 using Spine.Unity;
 using UnityEngine;

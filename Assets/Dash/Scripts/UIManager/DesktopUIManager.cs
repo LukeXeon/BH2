@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections;
 using Dash.Scripts.Cloud;
-using Dash.Scripts.Config;
+using Dash.Scripts.Setting;
 using Dash.Scripts.UI;
 using Michsky.UI.ModernUIPack;
 using TMPro;
@@ -167,7 +167,7 @@ namespace Dash.Scripts.UIManager
 
         private void CloudManagerOnUserInfoChanged(GameUserEntity obj)
         {
-            var level = GameConfigManager.GetUserLevel(obj.exp);
+            var level = GameSettingManager.GetUserLevel(obj.exp);
             displayName.text = obj.name;
             tiLiText.text = 9999.ToString();
             shuiJingText.text = obj.crystal.ToString();
@@ -178,7 +178,7 @@ namespace Dash.Scripts.UIManager
 
         private void CloudManagerOnPlayerChanged(PlayerEntity obj)
         {
-            var info = GameConfigManager.playerTable[obj.typeId];
+            var info = GameSettingManager.playerTable[obj.typeId];
             icon.sprite = info.icon;
         }
 

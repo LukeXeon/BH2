@@ -1,6 +1,6 @@
 using System;
 using Dash.Scripts.Cloud;
-using Dash.Scripts.Config;
+using Dash.Scripts.Setting;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -25,13 +25,13 @@ namespace Dash.Scripts.UIManager.ItemUIManager
         {
             if (weapon != null)
             {
-                var info = GameConfigManager.weaponTable[weapon.typeId];
+                var info = GameSettingManager.weaponTable[weapon.typeId];
                 image.gameObject.SetActive(true);
                 image.sprite = info.sprite;
                 button.onClick.AddListener(() => onShow());
                 chaKan.onClick.AddListener(() => onChaKan());
                 displayName.text = info.displayName;
-                level.text = "LV " + GameConfigManager.GetWeaponLevel(weapon.exp).count;
+                level.text = "LV " + GameSettingManager.GetWeaponLevel(weapon.exp).count;
             }
             else
             {

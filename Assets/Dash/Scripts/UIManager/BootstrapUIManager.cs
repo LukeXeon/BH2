@@ -67,6 +67,9 @@ namespace Dash.Scripts.UIManager
 
         public GameObject yiJingDengLuRoot;
 
+        public GameObject win32WebView;
+        public GameObject mobileWebView;
+
 
         private void Awake()
         {
@@ -158,12 +161,10 @@ namespace Dash.Scripts.UIManager
             });
             githubLogin.onClick.AddListener(async () =>
             {
-                var go = Resources.Load<GameObject>(
-                    Application.platform == RuntimePlatform.WindowsPlayer ||
-                    Application.platform == RuntimePlatform.WindowsEditor
-                        ? "Prefab/UI/WebView/Win32Webview"
-                        : "Prefab/UI/WebView/MobileWebview"
-                );
+                var go = Application.platform == RuntimePlatform.WindowsPlayer ||
+                         Application.platform == RuntimePlatform.WindowsEditor
+                    ? win32WebView
+                    : mobileWebView;
                 go = Instantiate(go, canvas.transform);
                 go.transform.SetSiblingIndex(waitWindow.transform.GetSiblingIndex());
                 var b = go.GetComponent<IWebUIManager>();

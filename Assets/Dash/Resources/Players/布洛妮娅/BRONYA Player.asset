@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 90b53a7f3dec47c5b7b3e59be2965bad, type: 3}
+  m_Name: BRONYA Player
+  m_EditorClassIdentifier: 
+  displayName: "\u5E03\u6D1B\u59AE\u5A05"
+  jieShao: {fileID: 0}
+  skel: {fileID: 11400000, guid: 816bdfd77cfb526408d692988aa7c12f, type: 2}
+  gongJiLi: 120
+  fangYuLi: 40
+  nengLiangZhi: 80
+  shengMingZhi: 1200
+  gongJiLi2: 10
+  fangYuLi2: 5
+  nengLiangZhi2: 5
+  shengMingZhi2: 100
+  icon: {fileID: 21300000, guid: 8b0f79f1cd1994f4b819f0f2e2cd50ec, type: 3}
+  typeId: 1

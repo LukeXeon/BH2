@@ -1,5 +1,5 @@
 ﻿using System.Collections;
-using Dash.Scripts.Config;
+using Dash.Scripts.Setting;
 using Dash.Scripts.GamePlay.View;
 using Dash.Scripts.UIManager;
 using Photon.Realtime;

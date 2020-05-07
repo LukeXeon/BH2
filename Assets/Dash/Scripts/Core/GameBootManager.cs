@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using agora_gaming_rtc;
 using Dash.Scripts.Cloud;
-using Dash.Scripts.Config;
+using Dash.Scripts.Setting;
 using Dash.Scripts.GamePlay.Levels;
 using Parse;
 using Photon.Pun;
@@ -13,13 +13,13 @@ namespace Dash.Scripts.Core
 {
     public class GameBootManager
     {
-        public static GameBootInfoAsset info;
+        public static GlobalSettingAsset info;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         private static void Initialize()
         {
             Application.targetFrameRate = 60;
-            info = Resources.LoadAll<GameBootInfoAsset>("Config/Game").Single();
+            info = Resources.Load<GlobalSettingAsset>("GlobalSetting");
             ParseClient.Initialize(new ParseClient.Configuration
             {
                 ApplicationID = info.cloudId,
@@ -39,7 +39,7 @@ namespace Dash.Scripts.Core
                 if (!Permission.HasUserAuthorizedPermission(permission))
                     Permission.RequestUserPermission(permission);
 
-            var engine = IRtcEngine.GetEngine(info.agoraAppId);
+            var engine = IRtcEngine.GetEngine(info.rtcAppId);
             engine.SetChannelProfile(CHANNEL_PROFILE.CHANNEL_PROFILE_GAME);
             if (Application.isEditor)
             {
@@ -49,7 +49,7 @@ namespace Dash.Scripts.Core
             {
                 void Callback(string a, string b, LogType c)
                 {
-                    if (c == LogType.Exception)
+                    if (c == LogType.Exception || LogType.Error == c)
                     {
                         Application.logMessageReceived -= Callback;
                         CreateErrorPanel(a + " " + b);

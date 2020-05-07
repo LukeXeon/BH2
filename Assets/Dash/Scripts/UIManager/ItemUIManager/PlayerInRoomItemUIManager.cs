@@ -1,4 +1,4 @@
-﻿using Dash.Scripts.Config;
+﻿using Dash.Scripts.Setting;
 using Dash.Scripts.GamePlay.View;
 using Photon.Realtime;
 using Spine.Unity;
@@ -37,12 +37,12 @@ namespace Dash.Scripts.UIManager.ItemUIManager
             if (playerTypeId != null && (int) playerTypeId != currentPlayerId)
             {
                 currentPlayerId = (int) playerTypeId;
-                skeletonAnimation.skeletonDataAsset = GameConfigManager.playerTable[(int) playerTypeId].skel;
+                skeletonAnimation.skeletonDataAsset = GameSettingManager.playerTable[(int) playerTypeId].skel;
                 skeletonAnimation.Initialize(true);
                 if (weaponTypeId != null && (int) weaponTypeId != currentWeaponTypeId)
                 {
                     currentWeaponTypeId = (int) weaponTypeId;
-                    var weapon = GameConfigManager.weaponTable[(int) weaponTypeId];
+                    var weapon = GameSettingManager.weaponTable[(int) weaponTypeId];
                     var list = SpineUtils.GenerateSpineReplaceInfo(weapon, skeletonAnimation.Skeleton);
                     playerEquipsUiManager.Equip(list);
 

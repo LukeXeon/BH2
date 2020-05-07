@@ -3222,6 +3222,10 @@ MonoBehaviour:
   waitWindow: {fileID: 1844865812}
   windowManager: {fileID: 1182144370}
   yiJingDengLuRoot: {fileID: 1576359348}
+  win32WebView: {fileID: 433647131482267039, guid: 170716461eebebb4caa8f4d8f8249e2a,
+    type: 3}
+  mobileWebView: {fileID: 4714928233640143550, guid: f1ca2f219e9c57a4aa708948c0eb0260,
+    type: 3}
 --- !u!114 &612989348
 MonoBehaviour:
   m_ObjectHideFlags: 0

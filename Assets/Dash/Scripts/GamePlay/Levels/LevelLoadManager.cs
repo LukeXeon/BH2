@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Dash.Scripts.Config;
+using Dash.Scripts.Setting;
 using Dash.Scripts.Core;
 using ExitGames.Client.Photon;
 using Photon.Pun;
@@ -56,7 +56,7 @@ namespace Dash.Scripts.GamePlay.Levels
         {
             text.text = "Loading";
             PhotonNetwork.CurrentRoom.CustomProperties.TryGetValue("typeId", out var typeId);
-            var scene = GameConfigManager.LevelsInfoTable[typeId as int? ?? 0];
+            var scene = GameSettingManager.LevelsInfoTable[typeId as int? ?? 0];
             loadingRoot.gameObject.SetActive(true);
             loadingRoot.sprite = scene.image;
             var op = SceneManager.LoadSceneAsync(scene.sceneName);

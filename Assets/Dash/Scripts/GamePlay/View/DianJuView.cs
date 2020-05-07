@@ -1,5 +1,5 @@
 using System;
-using Dash.Scripts.GamePlay.Config;
+using Dash.Scripts.GamePlay.Setting;
 using Photon.Pun;
 using UnityEngine;
 

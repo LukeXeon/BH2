@@ -1,0 +1,79 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e408ccf9c9d14de7bdb275cc035dfce1, type: 3}
+  m_Name: GlobalSetting
+  m_EditorClassIdentifier: 
+  playerBaseLevelExp: 1000
+  playerLuckDrawExpAddOnce: 500
+  playerMaxLevel: 80
+  sealBaseLevelExp: 1000
+  sealMaxLevel: 30
+  userBaseLevelExp: 1000
+  userMaxLevel: 80
+  weaponBaseLevelExp: 1000
+  weaponMaxLevel: 30
+  rtcAppId: 28bfa92e02b44954a76c40f7b256dd76
+  githubClientId: 92162561b648041eaf15
+  githubClientSecret: ecfe2fd95dc2ccfb32d199648c280de9648a9156
+  cloudId: dae5020c8c7711eaa57502fcdc4e7412
+  cloudKey: e51518ca8c7711ea9afe02fcdc4e7412
+  cloudUrl: http://175.24.83.68:1337/parse/
+  networkIndexers:
+  - {fileID: 1604533757453098696, guid: f3f858992e1929141a62cca77568f81d, type: 3}
+  - {fileID: 2495291320201057235, guid: 6eca6be32238ff745a10f51113c628ff, type: 3}
+  - {fileID: -8116182863712303340, guid: 8fc9fa1c8f1ebfc4ab9bf95c05408eb4, type: 3}
+  - {fileID: 141271807, guid: 8402ef6d3f79d7c43a9930803cce8941, type: 3}
+  - {fileID: -5809969059143972125, guid: 2fc60b7b40514494b8532d3e5ca2c4ba, type: 3}
+  - {fileID: 5577724601210301133, guid: 9bf39456e77fbc24d9c36660e9436aa0, type: 3}
+  - {fileID: -1033340810180098507, guid: a14de13175853ba42a40496caedb7dde, type: 3}
+  weaponInfoAssets:
+  - {fileID: 11400000, guid: 2fbbdebe8bb068c42bc1eed2d2bd8236, type: 2}
+  - {fileID: 11400000, guid: 9cc5c605611c54f4298023df1156e550, type: 2}
+  - {fileID: 11400000, guid: e0b173f520961554c908ddca1bded0c9, type: 2}
+  - {fileID: 11400000, guid: b94cec43bebd28b42a06aa2f0c3eb6a1, type: 2}
+  - {fileID: 11400000, guid: eee6f959e9f58bd44b216511dc3895c5, type: 2}
+  sealInfoAssets:
+  - {fileID: 11400000, guid: 969ad39ac0d02844688c3f3850129d88, type: 2}
+  - {fileID: 11400000, guid: b60bbf6fe8a950e49a127c3fe2a004d0, type: 2}
+  - {fileID: 11400000, guid: 1162b7ca73846e74a9f4dd07826b6b95, type: 2}
+  - {fileID: 11400000, guid: 050a6628d1af3fa48b2ce08c1b2604f5, type: 2}
+  - {fileID: 11400000, guid: 67660a67a73a9eb499d3fc20b146d777, type: 2}
+  - {fileID: 11400000, guid: a6827b25347d04d409dbcd0a32861290, type: 2}
+  - {fileID: 11400000, guid: ad73eaa2a396e5f4096c5ad1da83d18c, type: 2}
+  - {fileID: 11400000, guid: 0e581a6803a83c140baa08c8703fc731, type: 2}
+  - {fileID: 11400000, guid: 0b0e34267d60e424f8bdbcdffc122908, type: 2}
+  - {fileID: 11400000, guid: f6fe58d37e761b149801afe55d0b0f03, type: 2}
+  - {fileID: 11400000, guid: 969a08eb9be45c74f99a516a37d33bc6, type: 2}
+  - {fileID: 11400000, guid: 1d5d1cac82b44af4aafbb6943a1ba0f9, type: 2}
+  - {fileID: 11400000, guid: e88d380a078c8d442be07f735278efc0, type: 2}
+  - {fileID: 11400000, guid: 4c48e8a2e32ead6498aa5ba9e912f7ba, type: 2}
+  - {fileID: 11400000, guid: 3e7515284345d394588685497cb6bbce, type: 2}
+  - {fileID: 11400000, guid: ac165c28a792a0c4c81e8583f076af36, type: 2}
+  - {fileID: 11400000, guid: 29e888533b3c21d4489c8e1491bcdea8, type: 2}
+  - {fileID: 11400000, guid: dcd8cb79f0e0778459b587614b506b2b, type: 2}
+  - {fileID: 11400000, guid: 8ac0a15fc46a526458b501fb23c937fe, type: 2}
+  - {fileID: 11400000, guid: 4526c65afbdaf184f83bd71df7eeb4a1, type: 2}
+  - {fileID: 11400000, guid: 085dca84b20211c43b2a67fa15fa53f2, type: 2}
+  - {fileID: 11400000, guid: 02af63cf55a525344b06488fc6a72d8e, type: 2}
+  playerInfoAssets:
+  - {fileID: 11400000, guid: eb10ab392d586f843bffb627570dfe64, type: 2}
+  - {fileID: 11400000, guid: 632e241b70347ee42ab208c56721db66, type: 2}
+  - {fileID: 11400000, guid: fd9db61ac927c044f9fc48da51421097, type: 2}
+  - {fileID: 11400000, guid: d3a2462507797914c8a1a7d0f5d24045, type: 2}
+  - {fileID: 11400000, guid: 27eca0fd12776ba4a82b599be1ae1eea, type: 2}
+  levelInfoAssets:
+  - {fileID: 11400000, guid: 5e251a00df3e0d747871924ab1da40f3, type: 2}
+  weaponTypeInfoAssets:
+  - {fileID: 11400000, guid: ba44732947c69ac4284e97b635631cad, type: 2}
+  - {fileID: 11400000, guid: c998eef7973627343b98509420dbe466, type: 2}
+  - {fileID: 11400000, guid: af5a07117de93c14bac55ca32a3cbe43, type: 2}
+  - {fileID: 11400000, guid: 73a18f88f2bcc3f4188eb26dd02df27a, type: 2}

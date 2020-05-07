@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Linq;
-using Dash.Scripts.Config;
+using Dash.Scripts.Setting;
 using Dash.Scripts.Core;
-using Dash.Scripts.GamePlay.Config;
+using Dash.Scripts.GamePlay.Setting;
 using Dash.Scripts.GamePlay.Levels;
 using Dash.Scripts.GamePlay.View;
 using Michsky.UI.ModernUIPack;
@@ -90,7 +90,7 @@ namespace Dash.Scripts.GamePlay.UIManager
                 dialog.OpenWindow();
             });
             cancelBack.onClick.AddListener(() => { EnableUI(true); });
-            var x = new UnityAction(async () =>
+            var x = new UnityAction(() =>
             {
                 mask.SetActive(true);
                 PhotonNetwork.LeaveRoom();

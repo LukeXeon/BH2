@@ -1,6 +1,6 @@
 using System;
 using Dash.Scripts.Cloud;
-using Dash.Scripts.Config;
+using Dash.Scripts.Setting;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -26,8 +26,8 @@ namespace Dash.Scripts.UIManager.ItemUIManager
         {
             if (shengHen != null)
             {
-                var info = GameConfigManager.SealsTable[shengHen.typeId];
-                level.text = "LV " + GameConfigManager.GetShengHenLevel(shengHen.exp).count;
+                var info = GameSettingManager.SealsTable[shengHen.typeId];
+                level.text = "LV " + GameSettingManager.GetSealLevel(shengHen.exp).count;
                 image.sprite = info.image;
                 displayName.text = info.displayName;
                 imageRoot.SetActive(true);

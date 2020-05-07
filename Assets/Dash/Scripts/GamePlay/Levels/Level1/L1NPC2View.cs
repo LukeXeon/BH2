@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using Dash.Scripts.Config;
+using Dash.Scripts.Setting;
 using Dash.Scripts.GamePlay.View;
 using Photon.Pun;
 using Spine.Unity;
@@ -184,7 +184,7 @@ namespace Dash.Scripts.GamePlay.Levels.Level1
             animator.SetTrigger(HIT);
 
             var damage = Mathf.Max(0,
-                value - GameConfigManager.GetDamageReduction(config.fangYuLi));
+                value - GameSettingManager.GetDamageReduction(config.fangYuLi));
             hp -= damage;
             isBusy = true;
             if (hp <= 0)

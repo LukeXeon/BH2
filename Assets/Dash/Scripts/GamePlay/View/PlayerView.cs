@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Dash.Scripts.Config;
-using Dash.Scripts.GamePlay.Config;
+using Dash.Scripts.Setting;
+using Dash.Scripts.GamePlay.Setting;
 using Photon.Pun;
 using Spine.Unity;
 using UnityEngine;
@@ -68,12 +68,12 @@ namespace Dash.Scripts.GamePlay.View
         {
             var playerTypeId = (int) photonView.InstantiationData[0];
             var weaponTypeIds = (int[]) photonView.InstantiationData[1];
-            var info = GameConfigManager.playerTable[playerTypeId];
+            var info = GameSettingManager.playerTable[playerTypeId];
             mecanim.skeletonDataAsset = info.skel;
             mecanim.Initialize(true);
             foreach (var weaponTypeId in weaponTypeIds)
             {
-                weaponInfoAsset = GameConfigManager.weaponTable[weaponTypeId];
+                weaponInfoAsset = GameSettingManager.weaponTable[weaponTypeId];
                 var go = Instantiate(weaponInfoAsset.weaponView, transform);
                 go.SetActive(false);
                 weaponView = go.GetComponent<WeaponView>();
@@ -92,7 +92,7 @@ namespace Dash.Scripts.GamePlay.View
                 weaponView.gameObject.SetActive(false);
             }
 
-            weaponInfoAsset = GameConfigManager.weaponTable[typeId];
+            weaponInfoAsset = GameSettingManager.weaponTable[typeId];
             poseManager.SetPose(weaponInfoAsset);
             animator.SetTrigger(TAOQIANG);
             animator.SetBool(LIANSHE, false);
@@ -142,7 +142,7 @@ namespace Dash.Scripts.GamePlay.View
 
             if (photonView.IsMine)
             {
-                var damage2 = Mathf.Max(0, value - GameConfigManager.GetDamageReduction(
+                var damage2 = Mathf.Max(0, value - GameSettingManager.GetDamageReduction(
                                                PlayerConfigManager.playerInfo.Item2.fangYuLi));
                 LocalPlayer.hp -= damage2;
                 if (LocalPlayer.hp <= 0)

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Cinemachine;
 using Dash.Scripts.Core;
-using Dash.Scripts.GamePlay.Config;
+using Dash.Scripts.GamePlay.Setting;
 using Dash.Scripts.GamePlay.UIManager;
 using Dash.Scripts.GamePlay.View;
 using Photon.Pun;

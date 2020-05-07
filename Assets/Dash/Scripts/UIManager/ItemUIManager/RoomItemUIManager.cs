@@ -1,5 +1,5 @@
 ﻿using System;
-using Dash.Scripts.Config;
+using Dash.Scripts.Setting;
 using Photon.Realtime;
 using TMPro;
 using UnityEngine;
@@ -24,7 +24,7 @@ namespace Dash.Scripts.UIManager.ItemUIManager
 
             roomInfo.CustomProperties.TryGetValue("typeId", out var typeId);
             if (typeId != null)
-                guanQiaMing.text = GameConfigManager.LevelsInfoTable[(int) typeId]?.displayName ?? "...";
+                guanQiaMing.text = GameSettingManager.LevelsInfoTable[(int) typeId]?.displayName ?? "...";
 
             for (var i = 0; i < 3; i++)
             {
@@ -32,7 +32,7 @@ namespace Dash.Scripts.UIManager.ItemUIManager
                 if (playerTypeId != null && (int) playerTypeId != -1)
                 {
                     playerItems[i].gameObject.SetActive(true);
-                    playerItems[i].sprite = GameConfigManager.playerTable[(int) playerTypeId].icon;
+                    playerItems[i].sprite = GameSettingManager.playerTable[(int) playerTypeId].icon;
                 }
                 else
                 {

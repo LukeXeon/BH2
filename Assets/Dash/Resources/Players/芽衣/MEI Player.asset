@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 90b53a7f3dec47c5b7b3e59be2965bad, type: 3}
+  m_Name: MEI Player
+  m_EditorClassIdentifier: 
+  displayName: "\u82BD\u8863"
+  jieShao: {fileID: 0}
+  skel: {fileID: 11400000, guid: 90ebaa51e51404f4c83558c5287e2ffc, type: 2}
+  gongJiLi: 100
+  fangYuLi: 50
+  nengLiangZhi: 80
+  shengMingZhi: 100
+  gongJiLi2: 10
+  fangYuLi2: 10
+  nengLiangZhi2: 5
+  shengMingZhi2: 100
+  icon: {fileID: 21300000, guid: b2c1623b1b2b4714d945de5eda05f894, type: 3}
+  typeId: 2

@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
-using Dash.Scripts.Config;
+using Dash.Scripts.Setting;
 using Spine;
 using Spine.Unity.AttachmentTools;
 using UnityEngine;
@@ -54,7 +54,7 @@ namespace Dash.Scripts.GamePlay.View
                     y = 0,
                     width = w,
                     height = h
-                }, GameConfigManager.weaponTypeTable[type]?.offset ?? new Vector2(0.5f, 0.5f),
+                }, GameSettingManager.weaponTypeTable[type]?.offset ?? new Vector2(0.5f, 0.5f),
                 100,
                 1,
                 SpriteMeshType.FullRect

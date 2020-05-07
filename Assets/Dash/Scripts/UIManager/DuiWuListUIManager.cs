@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Dash.Scripts.Cloud;
-using Dash.Scripts.Config;
+using Dash.Scripts.Setting;
 using Dash.Scripts.UI;
 using Dash.Scripts.UIManager.ItemUIManager;
 using ExitGames.Client.Photon;
@@ -45,7 +45,7 @@ namespace Dash.Scripts.UIManager
             var newItem = Instantiate(typeItem, typesRoot);
             var roomType = newItem.GetComponent<RoomTypeItemUIManager>();
             roomType.Apply("全部队伍", () => { });
-            foreach (var guanQiaInfoAsset in GameConfigManager.LevelsInfoTable)
+            foreach (var guanQiaInfoAsset in GameSettingManager.LevelsInfoTable)
             {
                 newItem = Instantiate(typeItem, typesRoot);
                 roomType = newItem.GetComponent<RoomTypeItemUIManager>();

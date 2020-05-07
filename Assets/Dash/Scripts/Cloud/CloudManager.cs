@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Dash.Scripts.Config;
+using Dash.Scripts.Setting;
 using Parse;
 using Photon.Pun;
 using Photon.Realtime;
@@ -90,7 +90,7 @@ namespace Dash.Scripts.Cloud
             {
                 case 0:
                 {
-                    var playerTypeId = Random.Range(0, GameConfigManager.maxWeaponId + 1);
+                    var playerTypeId = Random.Range(0, GameSettingManager.maxWeaponId + 1);
                     var player = (await new ParseQuery<PlayerEntity>()
                         .WhereEqualTo("user", ParseUser.CurrentUser)
                         .WhereEqualTo("typeId", playerTypeId)
@@ -108,7 +108,7 @@ namespace Dash.Scripts.Cloud
                     else
                     {
                         var p = player.First();
-                        p.exp += GameConfigManager.levelInfo.playerLuckDrawExpAddOnce;
+                        p.exp += GameSettingManager.setting.playerLuckDrawExpAddOnce;
                         await ParseObject.SaveAllAsync(new ParseObject[] {p});
                         return new LuckDrawResult
                         {
@@ -120,7 +120,7 @@ namespace Dash.Scripts.Cloud
 
                 case 1:
                 {
-                    var weaponTypeId = Random.Range(0, GameConfigManager.maxWeaponId + 1);
+                    var weaponTypeId = Random.Range(0, GameSettingManager.maxWeaponId + 1);
                     await NewWeapon(weaponTypeId)
                         .SaveAsync();
                     return new LuckDrawResult
@@ -132,7 +132,7 @@ namespace Dash.Scripts.Cloud
 
                 default:
                 {
-                    var sealTypeId = Random.Range(0, GameConfigManager.maxShengHeId + 1);
+                    var sealTypeId = Random.Range(0, GameSettingManager.maxSealId + 1);
                     await NewSeal(null, sealTypeId)
                         .SaveAsync();
                     return new LuckDrawResult

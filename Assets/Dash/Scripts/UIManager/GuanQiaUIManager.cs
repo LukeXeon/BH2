@@ -1,4 +1,4 @@
-﻿using Dash.Scripts.Config;
+﻿using Dash.Scripts.Setting;
 using Michsky.UI.ModernUIPack;
 using Photon.Pun;
 using TMPro;
@@ -51,7 +51,7 @@ namespace Dash.Scripts.UIManager
         private void Load(int id)
         {
             currentId = id;
-            var info = GameConfigManager.LevelsInfoTable[id];
+            var info = GameSettingManager.LevelsInfoTable[id];
             var player = FindObjectOfType<BackgroundMusicPlayer>();
             player.Play(info.music);
             image.sprite = info.image;

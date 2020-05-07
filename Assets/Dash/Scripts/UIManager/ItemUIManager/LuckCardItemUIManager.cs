@@ -1,5 +1,5 @@
 using Dash.Scripts.Cloud;
-using Dash.Scripts.Config;
+using Dash.Scripts.Setting;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -18,7 +18,7 @@ namespace Dash.Scripts.UIManager.ItemUIManager
             {
                 case LuckDrawResult.Type.UnLockPlayer:
                 {
-                    var info = GameConfigManager.playerTable[result.typeId];
+                    var info = GameSettingManager.playerTable[result.typeId];
                     image.sprite = info.icon;
                     title.text = info.displayName;
                     content.text = "角色已解锁";
@@ -26,15 +26,15 @@ namespace Dash.Scripts.UIManager.ItemUIManager
                     break;
                 case LuckDrawResult.Type.AddPlayerExp:
                 {
-                    var info = GameConfigManager.playerTable[result.typeId];
+                    var info = GameSettingManager.playerTable[result.typeId];
                     image.sprite = info.icon;
                     title.text = info.displayName;
-                    content.text = "已转换为经验值（+" + GameConfigManager.levelInfo.playerLuckDrawExpAddOnce + "）";
+                    content.text = "已转换为经验值（+" + GameSettingManager.setting.playerLuckDrawExpAddOnce + "）";
                 }
                     break;
                 case LuckDrawResult.Type.Weapon:
                 {
-                    var info = GameConfigManager.weaponTable[result.typeId];
+                    var info = GameSettingManager.weaponTable[result.typeId];
                     image.sprite = info.sprite;
                     title.text = info.displayName;
                     content.text = "武器已获得";
@@ -42,7 +42,7 @@ namespace Dash.Scripts.UIManager.ItemUIManager
                     break;
                 case LuckDrawResult.Type.Seal:
                 {
-                    var info = GameConfigManager.SealsTable[result.typeId];
+                    var info = GameSettingManager.SealsTable[result.typeId];
                     image.sprite = info.image;
                     title.text = info.displayName;
                     content.text = "圣痕已获得";

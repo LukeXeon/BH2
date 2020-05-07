@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Dash.Scripts.Config;
+using Dash.Scripts.Setting;
 using Dash.Scripts.Core;
 using UnityEngine;
 
@@ -31,8 +31,8 @@ namespace Dash.Scripts.GamePlay.Levels
 
             if (indexers == null)
             {
-                var asset = Resources.Load<GlobalIndexAsset>("GlobalIndexAsset");
-                indexers  = asset.indexers == null ? null : asset.indexers.ToDictionary(i => i.guid, i => i);
+                var asset = GameSettingManager.setting;
+                indexers  = asset.networkIndexers == null ? null : asset.networkIndexers.ToDictionary(i => i.guid, i => i);
             }
 
             if (indexers != null)
