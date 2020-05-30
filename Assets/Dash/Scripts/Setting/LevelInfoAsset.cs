@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Dash.Scripts.Setting
 {
-    [CreateAssetMenu(fileName = "QuanQia", menuName = "Info/GuanQia")]
+    [CreateAssetMenu(fileName = "Level", menuName = "Info/Level")]
     public class LevelInfoAsset : ScriptableObject
     {
         public string displayName;

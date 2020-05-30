@@ -28,5 +28,6 @@ namespace Dash.Scripts.Setting
         public PlayerInfoAsset[] playerInfoAssets;
         public LevelInfoAsset[] levelInfoAssets;
         public WeaponTypeInfoAsset[] weaponTypeInfoAssets;
+        public StoreItemInfoAsset[] storeItemInfoAssets;
     }
 }

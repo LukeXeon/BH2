@@ -19,7 +19,16 @@ namespace Dash.Scripts.UIManager.ItemUIManager
         {
             Debug.Log(weapon.typeId);
             var info = GameSettingManager.weaponTable[weapon.typeId];
-            image.sprite = info.sprite;
+            var rectTransform = image.rectTransform;
+            var v2 = rectTransform.sizeDelta;
+            if (info.sprite)
+            {
+                var rate = info.sprite.rect.width / info.sprite.rect.height;
+                v2.x = v2.y * rate;
+                rectTransform.sizeDelta = v2;
+                image.sprite = info.sprite;
+            }
+
             level.text = "LV " + GameSettingManager.GetWeaponLevel(weapon.exp).count;
             displayName.text = info.displayName;
             markInUse.SetActive(weapon.player != null);

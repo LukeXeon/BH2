@@ -710,7 +710,7 @@ MonoBehaviour:
     materialsInsideMask: []
     materialsOutsideMask: []
   disableRenderingOnOverride: 1
-  _animationName: xiangzi_run
+  _animationName: jiatelin_idle
   loop: 1
   timeScale: 1
 --- !u!23 &389503189

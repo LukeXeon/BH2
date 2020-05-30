@@ -44,12 +44,19 @@ namespace Dash.Scripts.UIManager
 
             back.onClick.AddListener(Close);
             var info = GameSettingManager.weaponTable[weapon.typeId];
+
+            var rectTransform = image.rectTransform;
+            var v2 = rectTransform.sizeDelta;
+            var rate = info.sprite.rect.height / info.sprite.rect.width;
+            v2.y = v2.x * rate;
+            rectTransform.sizeDelta = v2;
             image.sprite = info.sprite;
-            image.SetNativeSize();
+            
+            
             displayName.text = info.displayName;
             var runtime = RuntimeWeaponInfo.Build(weapon);
             gongJiLi.text = runtime.gongJiLi.ToString();
-            sheSu.text = info.sheSu.ToString();
+            sheSu.text = info.sheSu.ToString(CultureInfo.InvariantCulture);
             if (info.xiaoGuo != null)
                 xiaoGuo.text = info.xiaoGuo.text;
             else

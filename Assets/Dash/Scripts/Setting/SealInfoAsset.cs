@@ -2,8 +2,8 @@ using UnityEngine;
 
 namespace Dash.Scripts.Setting
 {
-    [CreateAssetMenu(fileName = "ShengHen", menuName = "Info/ShengHen")]
-    public class SealInfoAsset : ScriptableObject
+    [CreateAssetMenu(fileName = "Seal", menuName = "Info/Seal")]
+    public class SealInfoAsset : ScriptableObject, IBagItem
     {
         public string displayName;
         public MonoBehaviour effect;
@@ -19,5 +19,9 @@ namespace Dash.Scripts.Setting
         public int shengMingZhi2;
         public int typeId;
         public TextAsset xiaoGuo;
+        public string DisplayName => displayName;
+        public Sprite Image => image;
+        
+        public int TypeId => typeId;
     }
 }

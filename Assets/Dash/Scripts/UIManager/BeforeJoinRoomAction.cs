@@ -25,7 +25,7 @@ namespace Dash.Scripts.UIManager
             loadingMask.Play("Fade-in");
             try
             {
-                var player = await CloudManager.GetCompletePlayer();
+                var player = await CloudManager.GetCurrentCompletePlayer();
                 PlayerConfigManager.Prepare(player);
             }
             catch (Exception e)

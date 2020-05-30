@@ -48,7 +48,7 @@ namespace Dash.Scripts.Editor
             asset.networkIndexers = indexers;
             EditorUtility.SetDirty(asset);
         }
-        
+
         private static void UpdateInfoSettings()
         {
             var asset = Resources.Load<GlobalSettingAsset>("GlobalSetting");
@@ -60,6 +60,7 @@ namespace Dash.Scripts.Editor
                 .ToArray();
             asset.levelInfoAssets = LoadRes<LevelInfoAsset>();
             asset.sealInfoAssets = LoadRes<SealInfoAsset>();
+            asset.storeItemInfoAssets = LoadRes<StoreItemInfoAsset>();
             EditorUtility.SetDirty(asset);
         }
 

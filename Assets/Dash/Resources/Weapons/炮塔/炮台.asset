@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c05adadf0975f004785ae64569ed32a9, type: 3}
   m_Name: "\u70AE\u53F0"
   m_EditorClassIdentifier: 
-  displayName: 
+  displayName: "\u81EA\u52A8\u70AE\u53F0"
   gongJiLi: 100
   gongJiLi2: 5
   sheCheng: 100
@@ -22,7 +22,7 @@ MonoBehaviour:
     attachments:
     - name: xiangzi
       sprite: {fileID: 21300000, guid: 18d56270907e8cc4da7555c56435adb3, type: 3}
-  sprite: {fileID: 21300000, guid: de501f29dc4c6624c86b30751dc64b47, type: 3}
+  sprite: {fileID: 21300000, guid: c74a7716327de7d458b2d01b4388a3fb, type: 3}
   typeId: 4
   weaponType: {fileID: 11400000, guid: af5a07117de93c14bac55ca32a3cbe43, type: 2}
   weaponView: {fileID: 3278857934928169769, guid: 324611ca05182be40ad44f99c1e6297e,

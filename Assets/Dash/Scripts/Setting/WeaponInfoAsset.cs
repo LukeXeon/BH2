@@ -7,8 +7,13 @@ namespace Dash.Scripts.Setting
 {
     [CreateAssetMenu(fileName = "Weapon", menuName = "Info/Weapon")]
     [Serializable]
-    public class WeaponInfoAsset : ScriptableObject
+    public class WeaponInfoAsset : ScriptableObject, IBagItem
     {
+        public string DisplayName => displayName;
+        public Sprite Image => sprite;
+        
+        public int TypeId => typeId;
+
         //显示名称
         public string displayName;
 

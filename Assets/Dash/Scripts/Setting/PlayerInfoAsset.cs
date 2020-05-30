@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Dash.Scripts.Setting
 {
     [CreateAssetMenu(fileName = "Player", menuName = "Info/Player")]
-    public class PlayerInfoAsset : ScriptableObject
+    public class PlayerInfoAsset : ScriptableObject, IBagItem
     {
         [Header("用于显示")] public string displayName;
         public TextAsset jieShao;
@@ -19,5 +19,8 @@ namespace Dash.Scripts.Setting
         public int shengMingZhi2;
         public Sprite icon;
         [Header("其他")] public int typeId;
+        public string DisplayName => displayName;
+        public Sprite Image => icon;
+        public int TypeId => typeId;
     }
 }

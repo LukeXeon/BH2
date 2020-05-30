@@ -20,20 +20,20 @@ namespace Dash.Scripts.Cloud
         private const string errorMessageInternal = "游戏内部错误";
 
         private static GameUserEntity localUserEntity;
-        
+
         public static event Action<PlayerEntity> playerChanged;
 
         public static event Action<GameUserEntity> userInfoChanged;
-        
+
         private static WeaponEntity NewWeapon(int typeId)
         {
             var weapon = new WeaponEntity {user = ParseUser.CurrentUser, typeId = typeId, exp = 0};
             return weapon;
         }
 
-        private static SealEntity NewSeal(this PlayerEntity player, int typeId)
+        private static SealEntity NewSeal(int typeId)
         {
-            var seal = new SealEntity {player = player, user = ParseUser.CurrentUser, typeId = typeId, exp = 0};
+            var seal = new SealEntity {user = ParseUser.CurrentUser, typeId = typeId, exp = 0};
             return seal;
         }
 
@@ -133,7 +133,7 @@ namespace Dash.Scripts.Cloud
                 default:
                 {
                     var sealTypeId = Random.Range(0, GameSettingManager.maxSealId + 1);
-                    await NewSeal(null, sealTypeId)
+                    await NewSeal(sealTypeId)
                         .SaveAsync();
                     return new LuckDrawResult
                     {
@@ -275,6 +275,7 @@ namespace Dash.Scripts.Cloud
             {
                 await Task.Yield();
             }
+
             PlayerPrefs.SetString("token", ParseUser.CurrentUser.SessionToken);
             PlayerPrefs.Save();
         }
@@ -291,6 +292,7 @@ namespace Dash.Scripts.Cloud
             {
                 throw new ArgumentException("用户名和密码不能为空");
             }
+
             await ParseUser.LogInAsync(username, password);
             await HandleLogin();
         }
@@ -349,7 +351,7 @@ namespace Dash.Scripts.Cloud
             return new[] {old, weapon};
         }
 
-        public static async Task<CompletePlayer> GetCompletePlayer()
+        public static async Task<CompletePlayer> GetCurrentCompletePlayer()
         {
             var player = localUserEntity.player;
             var task1 = new ParseQuery<InUseWeaponEntity>().WhereEqualTo("player", player)
@@ -377,7 +379,7 @@ namespace Dash.Scripts.Cloud
             await localUserEntity.SaveAsync();
             playerChanged?.Invoke(player);
         }
-        
+
         public static async Task LogOut()
         {
             PhotonNetwork.Disconnect();
@@ -391,9 +393,86 @@ namespace Dash.Scripts.Cloud
             return localUserEntity.player;
         }
 
+        public static async Task<int[]> GetOwnerPlayerTypeIds()
+        {
+            return (await new ParseQuery<PlayerEntity>()
+                    .WhereEqualTo("user", ParseUser.CurrentUser)
+                    .FindAsync())
+                .Select(u => u.typeId)
+                .ToArray();
+        }
+
         public static string GetUserName()
         {
             return localUserEntity.name;
+        }
+
+        public static async Task BuyPlayer(int typeId, int cost)
+        {
+            if (!Application.isEditor)
+            {
+                var c = localUserEntity.crystal;
+                if (c - cost > 0)
+                {
+                    localUserEntity.crystal -= cost;
+                    await localUserEntity.SaveAsync();
+                }
+                else
+                {
+                    throw new Exception("购买失败，水晶不足");
+                }
+            }
+
+            var p = await new ParseQuery<PlayerEntity>()
+                .WhereEqualTo("user", ParseUser.CurrentUser)
+                .WhereEqualTo("typeId", typeId)
+                .FirstOrDefaultAsync();
+            if (p == null)
+            {
+                await ParseObject.SaveAllAsync(NewPlayer(typeId));
+            }
+            else
+            {
+                throw new Exception("角色已存在，不可重复购买");
+            }
+        }
+
+        public static async Task BuySeal(int typeId, int cost)
+        {
+            if (!Application.isEditor)
+            {
+                var c = localUserEntity.crystal;
+                if (c - cost > 0)
+                {
+                    localUserEntity.crystal -= cost;
+                    await localUserEntity.SaveAsync();
+                }
+                else
+                {
+                    throw new Exception("购买失败，水晶不足");
+                }
+            }
+
+            await NewSeal(typeId).SaveAsync();
+        }
+
+        public static async Task BuyWeapon(int typeId, int cost)
+        {
+            if (!Application.isEditor)
+            {
+                var c = localUserEntity.crystal;
+                if (c - cost > 0)
+                {
+                    localUserEntity.crystal -= cost;
+                    await localUserEntity.SaveAsync();
+                }
+                else
+                {
+                    throw new Exception("购买失败，水晶不足");
+                }
+            }
+
+            await NewWeapon(typeId).SaveAsync();
         }
 
         public static GameUserEntity GetUserInfo()

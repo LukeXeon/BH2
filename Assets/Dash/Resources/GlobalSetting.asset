@@ -65,10 +65,10 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 085dca84b20211c43b2a67fa15fa53f2, type: 2}
   - {fileID: 11400000, guid: 02af63cf55a525344b06488fc6a72d8e, type: 2}
   playerInfoAssets:
-  - {fileID: 11400000, guid: eb10ab392d586f843bffb627570dfe64, type: 2}
+  - {fileID: 11400000, guid: d3a2462507797914c8a1a7d0f5d24045, type: 2}
   - {fileID: 11400000, guid: 632e241b70347ee42ab208c56721db66, type: 2}
   - {fileID: 11400000, guid: fd9db61ac927c044f9fc48da51421097, type: 2}
-  - {fileID: 11400000, guid: d3a2462507797914c8a1a7d0f5d24045, type: 2}
+  - {fileID: 11400000, guid: eb10ab392d586f843bffb627570dfe64, type: 2}
   - {fileID: 11400000, guid: 27eca0fd12776ba4a82b599be1ae1eea, type: 2}
   levelInfoAssets:
   - {fileID: 11400000, guid: 5e251a00df3e0d747871924ab1da40f3, type: 2}
@@ -77,3 +77,16 @@ MonoBehaviour:
   - {fileID: 11400000, guid: c998eef7973627343b98509420dbe466, type: 2}
   - {fileID: 11400000, guid: af5a07117de93c14bac55ca32a3cbe43, type: 2}
   - {fileID: 11400000, guid: 73a18f88f2bcc3f4188eb26dd02df27a, type: 2}
+  storeItemInfoAssets:
+  - {fileID: 11400000, guid: a8f9a30d00a22d24b8e1747fb312ea6e, type: 2}
+  - {fileID: 11400000, guid: 8002a763d473d0f42a799dfc7414574f, type: 2}
+  - {fileID: 11400000, guid: b01ccee8102e8014f832c95e0c35f82b, type: 2}
+  - {fileID: 11400000, guid: 08b98ac54600d6a468263ed63ba4d194, type: 2}
+  - {fileID: 11400000, guid: ad431ceed62fdc945b2944be05ec4342, type: 2}
+  - {fileID: 11400000, guid: 588bc12a6a948974d8f4ca9b318c11ad, type: 2}
+  - {fileID: 11400000, guid: 93ac718387fac454b876b8602a889015, type: 2}
+  - {fileID: 11400000, guid: dee823800244a2d45bac53c41ec42565, type: 2}
+  - {fileID: 11400000, guid: 51c16689646a4b9468bf6df4a81c5c4f, type: 2}
+  - {fileID: 11400000, guid: ef0e22e49412ec64faffd8864d5ebf4f, type: 2}
+  - {fileID: 11400000, guid: ba9ca66bc5490fc42a463ec329c170b4, type: 2}
+  - {fileID: 11400000, guid: ccf34d355658a1d4bb066893b4876f69, type: 2}
