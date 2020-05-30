@@ -277,6 +277,7 @@ namespace Dash.Scripts.UIManager
             {
                 titles.First().Select();
             }
+            character.SetRandomLiveMotionAndExpression();
         }
 
         private void Close()

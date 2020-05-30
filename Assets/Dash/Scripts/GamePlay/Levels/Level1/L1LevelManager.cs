@@ -22,6 +22,8 @@ namespace Dash.Scripts.Gameplay.Levels.Level1
         public GameObject room2DoorWall;
         public TriggerEvent room2DoorTrigger;
         private HashSet<int> room2Players = new HashSet<int>();
+        [Header("Room3")] public Transform room3Root;
+        private Transform[] room3Locators;
 
 
         [PunRPC]
@@ -85,7 +87,15 @@ namespace Dash.Scripts.Gameplay.Levels.Level1
                     );
                 }
             });
+            var list = new List<Transform>();
+            foreach (Transform o in room3Root)
+            {
+                list.Add(o);
+            }
+
+            room3Locators = list.ToArray();
         }
+
 
         public void OnShipFinish()
         {
@@ -162,6 +172,18 @@ namespace Dash.Scripts.Gameplay.Levels.Level1
                 return PhotonNetwork.PlayerList.All(i => room2Players.Contains(i.ActorNumber));
             });
             photonView.RPC(nameof(SetRoom1Door), RpcTarget.All, false);
+            for (var i = 0; i < room3Locators.Length; i++)
+            {
+                var go = PhotonNetwork.InstantiateSceneObject(
+                    NpcList[0].guid,
+                    room3Locators[i].position,
+                    Quaternion.identity
+                );
+                list.Add(go.GetComponent<PhotonView>().ViewID);
+            }
+
+            yield return new WaitUntil(() => list.All(i => PhotonView.Find(i) == null));
+            list.Clear();
         }
     }
 }

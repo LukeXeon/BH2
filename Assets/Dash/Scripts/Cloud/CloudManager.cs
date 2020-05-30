@@ -416,6 +416,7 @@ namespace Dash.Scripts.Cloud
                 {
                     localUserEntity.crystal -= cost;
                     await localUserEntity.SaveAsync();
+                    userInfoChanged?.Invoke(localUserEntity);
                 }
                 else
                 {
@@ -446,6 +447,7 @@ namespace Dash.Scripts.Cloud
                 {
                     localUserEntity.crystal -= cost;
                     await localUserEntity.SaveAsync();
+                    userInfoChanged?.Invoke(localUserEntity);
                 }
                 else
                 {
@@ -465,6 +467,7 @@ namespace Dash.Scripts.Cloud
                 {
                     localUserEntity.crystal -= cost;
                     await localUserEntity.SaveAsync();
+                    userInfoChanged?.Invoke(localUserEntity);
                 }
                 else
                 {

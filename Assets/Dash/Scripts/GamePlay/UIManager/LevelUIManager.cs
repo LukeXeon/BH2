@@ -53,7 +53,18 @@ namespace Dash.Scripts.Gameplay.UIManager
             var player = PlayerConfigManager.playerInfo.Item1;
             icon.sprite = player.icon;
             playerName.text = player.displayName;
-            weapon.sprite = PlayerConfigManager.weaponInfos.First().Item1.sprite;
+
+            var sprite = PlayerConfigManager.weaponInfos.First().Item1.sprite;
+            
+            
+            var rectTransform = weapon.rectTransform;
+            var v2 = rectTransform.sizeDelta;
+            var rate = sprite.rect.width / sprite.rect.height;
+            v2.x = v2.y * rate;
+            rectTransform.sizeDelta = v2;
+            weapon.sprite = sprite;
+            
+            
             if (weaponChanged == null) weaponChanged = new OnWeaponChangedEvent();
 
             leftWeapon.onClick.AddListener(() =>
@@ -83,7 +94,9 @@ namespace Dash.Scripts.Gameplay.UIManager
                 weaponChanged.Invoke(info);
                 lastQieQiang = time;
             });
-            weaponChanged.AddListener(info => { weapon.sprite = info.sprite; });
+
+
+            weaponChanged.AddListener(Call);
             back.onClick.AddListener(() =>
             {
                 EnableUI(false);
@@ -112,6 +125,17 @@ namespace Dash.Scripts.Gameplay.UIManager
             {
                 monoBehaviour.enabled = value;
             }
+        }
+        
+        private void Call(WeaponInfoAsset info)
+        {
+            var s = info.sprite;
+            var rectTransform2 = weapon.rectTransform;
+            var v22 = rectTransform2.sizeDelta;
+            var rate2 = s.rect.width / s.rect.height;
+            v22.x = v22.y * rate2;
+            rectTransform2.sizeDelta = v22;
+            weapon.sprite = s;
         }
 
         private void Update()
