@@ -3218,8 +3218,8 @@ MonoBehaviour:
   tabs: {fileID: 504393245}
   username: {fileID: 1184413302}
   usernameInSignUp: {fileID: 977858835}
-  videoPlayer: {fileID: 1068401674}
   waitWindow: {fileID: 1844865812}
+  first: {fileID: 1068401676}
   windowManager: {fileID: 1182144370}
   yiJingDengLuRoot: {fileID: 1576359348}
   win32WebView: {fileID: 433647131482267039, guid: 170716461eebebb4caa8f4d8f8249e2a,
@@ -5587,7 +5587,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1068401671}
   - component: {fileID: 1068401673}
-  - component: {fileID: 1068401674}
   - component: {fileID: 1068401672}
   - component: {fileID: 1068401675}
   - component: {fileID: 1068401676}
@@ -5673,40 +5672,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1068401670}
   m_CullTransparentMesh: 0
---- !u!328 &1068401674
-VideoPlayer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1068401670}
-  m_Enabled: 1
-  m_VideoClip: {fileID: 0}
-  m_TargetCameraAlpha: 1
-  m_TargetCamera3DLayout: 0
-  m_TargetCamera: {fileID: 1068401672}
-  m_TargetTexture: {fileID: 8400000, guid: 2445f49c67ba0b9448a8994c816146c7, type: 2}
-  m_TimeReference: 0
-  m_TargetMaterialRenderer: {fileID: 0}
-  m_TargetMaterialProperty: _MainTex
-  m_RenderMode: 1
-  m_AspectRatio: 5
-  m_DataSource: 0
-  m_PlaybackSpeed: 1
-  m_AudioOutputMode: 0
-  m_TargetAudioSources:
-  - {fileID: 0}
-  m_DirectAudioVolumes:
-  - 0
-  m_Url: 
-  m_EnabledAudioTracks: 00
-  m_DirectAudioMutes: 00
-  m_ControlledAudioTrackCount: 1
-  m_PlayOnAwake: 1
-  m_SkipOnDrop: 1
-  m_Looping: 0
-  m_WaitForFirstFrame: 1
-  m_FrameReadyEventEnabled: 0
 --- !u!114 &1068401675
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -58,9 +58,9 @@ namespace Dash.Scripts.UIManager
 
         [Header("signUp")] public TMP_InputField usernameInSignUp;
 
-        public VideoPlayer videoPlayer;
-
         public Animator waitWindow;
+
+        public Animator first;
 
         public ModalWindowManager windowManager;
 
@@ -72,7 +72,6 @@ namespace Dash.Scripts.UIManager
 
         private void Awake()
         {
-            videoPlayer.gameObject.SetActive(true);
             DesktopUIManager.bootBackground = sprites[Random.Range(0, sprites.Length - 1)];
             background.sprite = DesktopUIManager.bootBackground;
             signUp.onClick.AddListener(async () =>
@@ -191,40 +190,8 @@ namespace Dash.Scripts.UIManager
                     Destroy(go);
                 }
             });
-        }
-
-        public void OnBooted()
-        {
-            StartCoroutine(DoStart());
-        }
-
-        private IEnumerator DoStart()
-        {
-            if (Application.isEditor || PlayerPrefs.GetInt("first startup") == 1)
-            {
-                ShowWindowOnLoad();
-                audioSource.Play();
-                Destroy(videoPlayer.gameObject);
-                videoPlayer = null;
-            }
-            else
-            {
-                PlayerPrefs.SetInt("first startup", 1);
-                PlayerPrefs.Save();
-                videoPlayer.gameObject.SetActive(true);
-                var op = Resources.LoadAsync<VideoClip>("Video/BootVideo");
-                yield return op;
-                videoPlayer.clip = (VideoClip) op.asset;
-                videoPlayer.Prepare();
-                videoPlayer.prepareCompleted += p => p.Play();
-                videoPlayer.loopPointReached += p =>
-                {
-                    Destroy(videoPlayer.gameObject);
-                    videoPlayer = null;
-                    StartCoroutine(ShowWindow1());
-                    audioSource.Play();
-                };
-            }
+            ShowWindowOnLoad();
+            audioSource.Play();
         }
 
         public async void ShowWindowOnLoad()
