@@ -20,7 +20,7 @@ namespace Dash.Scripts.Gameplay.View
             base.Awake();
             hp = Mathf.Max(config.shengMingZhi, 1);
             targetLayerMask = LayerMask.GetMask("Player");
-            targetCollider = new Collider[3];
+            targetCollider = new Collider[20];
         }
 
         [Serializable]
@@ -49,7 +49,7 @@ namespace Dash.Scripts.Gameplay.View
                 if (c)
                 {
                     var Actor = c.GetComponent<ActorView>();
-                    if (Actor && !Actor.isDie)
+                    if (c.gameObject.CompareTag("Player") && Actor && !Actor.isDie)
                     {
                         target = Actor.photonView;
                         targetActor = Actor;

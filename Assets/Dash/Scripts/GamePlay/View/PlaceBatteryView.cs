@@ -13,7 +13,10 @@ namespace Dash.Scripts.Gameplay.View
         protected override void OnFire()
         {
             var go = PhotonNetwork.Instantiate(batteryView.guid, locator.position, locator.rotation,
-                data: new object[] {transform.localScale.x, 5});
+                data: new object[]
+                {
+                    transform.localScale.x, 5
+                });
             var view = go.GetComponent<BatteryView>();
             view.Initialize(LocalPlayer.gongJiLi);
         }
