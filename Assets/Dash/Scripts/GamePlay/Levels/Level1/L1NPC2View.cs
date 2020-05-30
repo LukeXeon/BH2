@@ -136,7 +136,7 @@ namespace Dash.Scripts.Gameplay.Levels.Level1
 
         private void OnTriggerExit(Collider other)
         {
-            if (photonView.IsMine && other.gameObject.layer == targetLayer)
+            if (photonView.IsMine && other.gameObject.layer == targetLayer && other.gameObject.CompareTag("Player"))
             {
                 var view = other.GetComponent<ActorView>();
                 if (view)
@@ -148,18 +148,19 @@ namespace Dash.Scripts.Gameplay.Levels.Level1
 
         private void OnTriggerEnter(Collider other)
         {
-            if (photonView.IsMine && other.gameObject.layer == targetLayer)
+            if (photonView.IsMine && other.gameObject.layer == targetLayer && other.gameObject.CompareTag("Player"))
             {
-                if (!isDie)
-                {
-                    isDie = true;
-                    photonView.RPC(nameof(OnSyncBomb), RpcTarget.All);
-                }
+
 
                 var view = other.GetComponent<ActorView>();
                 if (view && !view.isDie)
                 {
                     viewIds.Add(view.photonView.ViewID);
+                    if (!isDie)
+                    {
+                        isDie = true;
+                        photonView.RPC(nameof(OnSyncBomb), RpcTarget.All);
+                    }
                 }
             }
         }

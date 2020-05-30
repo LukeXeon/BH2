@@ -9,12 +9,12 @@ namespace Dash.Scripts.Gameplay.View
     {
         public new Rigidbody rigidbody;
         public new BoxCollider collider;
-        private Coroutine coroutine;
-        private int targetLayer;
-        private int viewId;
-        private int damage;
+        protected Coroutine coroutine;
+        protected int targetLayer;
+        protected int viewId;
+        protected int damage;
 
-        public void Initialize(int id, int layer, int damage)
+        public virtual void Initialize(int id, int layer, int damage)
         {
             viewId = id;
             this.damage = damage;
@@ -43,7 +43,7 @@ namespace Dash.Scripts.Gameplay.View
             Recycle();
         }
 
-        private void OnTriggerEnter(Collider other)
+        protected virtual void OnTriggerEnter(Collider other)
         {
             if (photonView.IsMine && other.gameObject.layer == targetLayer)
             {
@@ -76,6 +76,8 @@ namespace Dash.Scripts.Gameplay.View
         public void OnPhotonInstantiate(PhotonMessageInfo info)
         {
             rigidbody.AddForce((Vector3) info.photonView.InstantiationData[0]);
+            gameObject.layer = (int) info.photonView.InstantiationData[1];
+            
         }
     }
 }

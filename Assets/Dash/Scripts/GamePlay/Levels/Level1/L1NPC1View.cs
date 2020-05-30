@@ -49,6 +49,9 @@ namespace Dash.Scripts.Gameplay.Levels.Level1
 
         private float lastCloseAttackTime;
         private float lastRemoteAttackTime;
+        
+        private int npc;
+        private int player;
 
 
         protected override void Awake()
@@ -60,6 +63,8 @@ namespace Dash.Scripts.Gameplay.Levels.Level1
             {
                 system.Stop();
             }
+            npc  = LayerMask.NameToLayer("NPC");
+            player = LayerMask.NameToLayer("Player");
         }
 
         public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
@@ -224,6 +229,7 @@ namespace Dash.Scripts.Gameplay.Levels.Level1
                         data: new object[]
                         {
                             -flipX * Random.Range(2000, 3000) * Vector3.left,
+                            npc
                         }
                     );
                     if (go)
@@ -231,7 +237,7 @@ namespace Dash.Scripts.Gameplay.Levels.Level1
                         var view = go.GetComponent<BulletView>();
                         view.Initialize(
                             photonView.ViewID,
-                            LayerMask.NameToLayer("Player"),
+                            player,
                             config.gongJiLi / config1.locators.Length
                         );
                     }

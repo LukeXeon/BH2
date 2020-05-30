@@ -412,7 +412,7 @@ namespace Dash.Scripts.Cloud
             if (!Application.isEditor)
             {
                 var c = localUserEntity.crystal;
-                if (c - cost > 0)
+                if (c - cost >= 0)
                 {
                     localUserEntity.crystal -= cost;
                     await localUserEntity.SaveAsync();
@@ -443,7 +443,7 @@ namespace Dash.Scripts.Cloud
             if (!Application.isEditor)
             {
                 var c = localUserEntity.crystal;
-                if (c - cost > 0)
+                if (c - cost >= 0)
                 {
                     localUserEntity.crystal -= cost;
                     await localUserEntity.SaveAsync();
@@ -463,7 +463,7 @@ namespace Dash.Scripts.Cloud
             if (!Application.isEditor)
             {
                 var c = localUserEntity.crystal;
-                if (c - cost > 0)
+                if (c - cost >= 0)
                 {
                     localUserEntity.crystal -= cost;
                     await localUserEntity.SaveAsync();

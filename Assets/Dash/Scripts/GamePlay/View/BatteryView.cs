@@ -20,6 +20,9 @@ namespace Dash.Scripts.Gameplay.View
         public AudioClip clip;
         private int damage;
         private AudioView audioView;
+        private int npc;
+        private int player;
+        
 
         public void Initialize(int damage)
         {
@@ -40,6 +43,8 @@ namespace Dash.Scripts.Gameplay.View
             {
                 system.Stop();
             }
+            npc  = LayerMask.NameToLayer("NPC");
+            player = LayerMask.NameToLayer("Player");
 
             photonView = GetComponent<PhotonView>();
         }
@@ -97,13 +102,14 @@ namespace Dash.Scripts.Gameplay.View
                     bulletLocator.rotation,
                     data: new object[]
                     {
-                        -flipX * Random.Range(2000, 3000) * Vector3.left
+                        -flipX * Random.Range(2000, 3000) * Vector3.left,
+                        player
                     }
                 );
                 var bulletView = go.GetComponent<BulletView>();
                 bulletView.Initialize(
                     photonView.ViewID,
-                    LayerMask.NameToLayer("NPC"),
+                    npc,
                     damage
                 );
             }

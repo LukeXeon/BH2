@@ -14,12 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   displayName: "\u5973\u796D\u53F8"
   effect: {fileID: 0}
-  fangYuLi: 0
-  fangYuLi2: 0
+  fangYuLi: 10
+  fangYuLi2: 10
   image: {fileID: 21300000, guid: f0bb0e0d467c03944988512c30163da3, type: 3}
-  nengLiangZhi: 0
-  nengLiangZhi2: 0
-  shengMingZhi: 0
-  shengMingZhi2: 0
+  nengLiangZhi: 10
+  nengLiangZhi2: 10
+  shengMingZhi: 10
+  shengMingZhi2: 10
   typeId: 2
   xiaoGuo: {fileID: 0}

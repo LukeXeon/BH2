@@ -60,7 +60,7 @@ namespace Dash.Scripts.Gameplay.Levels.Level1
                 var i1 = i;
                 room1TriggerEvents[i].onTriggerEnter.AddListener(o =>
                 {
-                    if (o.gameObject.layer == LayerMask.NameToLayer("Player"))
+                    if (o.gameObject.layer == LayerMask.NameToLayer("Player") && o.gameObject.CompareTag("Player"))
                     {
                         photonView.RPC(nameof(SetRoom1Trigger), RpcTarget.MasterClient, i1,
                             PhotonNetwork.LocalPlayer.ActorNumber, true);
@@ -68,7 +68,7 @@ namespace Dash.Scripts.Gameplay.Levels.Level1
                 });
                 room1TriggerEvents[i].onTriggerExit.AddListener(o =>
                 {
-                    if (o.gameObject.layer == LayerMask.NameToLayer("Player"))
+                    if (o.gameObject.layer == LayerMask.NameToLayer("Player") && o.gameObject.CompareTag("Player"))
                     {
                         photonView.RPC(nameof(SetRoom1Trigger), RpcTarget.MasterClient, i1,
                             PhotonNetwork.LocalPlayer.ActorNumber, false);
@@ -78,7 +78,7 @@ namespace Dash.Scripts.Gameplay.Levels.Level1
 
             room2DoorTrigger.onTriggerEnter.AddListener(o =>
             {
-                if (o.gameObject.layer == LayerMask.NameToLayer("Player"))
+                if (o.gameObject.layer == LayerMask.NameToLayer("Player") && o.gameObject.CompareTag("Player"))
                 {
                     room2DoorWall.SetActive(true);
                     photonView.RPC(nameof(OnPlayerEnterRoom2),

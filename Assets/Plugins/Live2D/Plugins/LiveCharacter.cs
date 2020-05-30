@@ -255,7 +255,7 @@ public class LiveCharacter : MonoBehaviour
     {
         rawMotionData.setFadeIn(motionFadeSpeed);
         rawMotionData.setFadeOut(motionFadeSpeed);
-        l2dMotionManager.startMotionPrio(rawMotionData, 0);
+        l2dMotionManager?.startMotionPrio(rawMotionData, 0);
         isBreath = false;
     }
 

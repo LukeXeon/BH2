@@ -34,8 +34,10 @@ MonoBehaviour:
   - {fileID: 141271807, guid: 8402ef6d3f79d7c43a9930803cce8941, type: 3}
   - {fileID: -5809969059143972125, guid: 2fc60b7b40514494b8532d3e5ca2c4ba, type: 3}
   - {fileID: 5577724601210301133, guid: 9bf39456e77fbc24d9c36660e9436aa0, type: 3}
+  - {fileID: 318164283534627303, guid: e48f69b1f0220a1428880c1f7cbbe638, type: 3}
   - {fileID: -1033340810180098507, guid: a14de13175853ba42a40496caedb7dde, type: 3}
   weaponInfoAssets:
+  - {fileID: 11400000, guid: d47fd1c5d13f69b4fa0f62223429886c, type: 2}
   - {fileID: 11400000, guid: 2fbbdebe8bb068c42bc1eed2d2bd8236, type: 2}
   - {fileID: 11400000, guid: 9cc5c605611c54f4298023df1156e550, type: 2}
   - {fileID: 11400000, guid: e0b173f520961554c908ddca1bded0c9, type: 2}
@@ -73,6 +75,7 @@ MonoBehaviour:
   levelInfoAssets:
   - {fileID: 11400000, guid: 5e251a00df3e0d747871924ab1da40f3, type: 2}
   weaponTypeInfoAssets:
+  - {fileID: 11400000, guid: 7282dd8bef309ca40b9746b5bb55d5c9, type: 2}
   - {fileID: 11400000, guid: ba44732947c69ac4284e97b635631cad, type: 2}
   - {fileID: 11400000, guid: c998eef7973627343b98509420dbe466, type: 2}
   - {fileID: 11400000, guid: af5a07117de93c14bac55ca32a3cbe43, type: 2}
@@ -86,6 +89,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 588bc12a6a948974d8f4ca9b318c11ad, type: 2}
   - {fileID: 11400000, guid: 93ac718387fac454b876b8602a889015, type: 2}
   - {fileID: 11400000, guid: dee823800244a2d45bac53c41ec42565, type: 2}
+  - {fileID: 11400000, guid: f6efe0b3a4ad7f445902a8211907b2fd, type: 2}
   - {fileID: 11400000, guid: 51c16689646a4b9468bf6df4a81c5c4f, type: 2}
   - {fileID: 11400000, guid: ef0e22e49412ec64faffd8864d5ebf4f, type: 2}
   - {fileID: 11400000, guid: ba9ca66bc5490fc42a463ec329c170b4, type: 2}
